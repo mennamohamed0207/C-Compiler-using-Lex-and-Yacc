@@ -211,7 +211,7 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 {COMMENT}               {printf("\nCommend: { %s }\n", yytext);/*ignore further*/}
 {DIGIT}+{LETTER}+       {fprintf(stderr, "\nError at line %d: Invalid number '%s'\n", yylineno, yytext);}
 {DIGIT}+                {printf("\nInteger: %s\n", yytext); return INTEGER;}
-{ID}                    {printf("\nIdentifier: %s\n", yytext); return INDETIFIER;}
+{ID}                    {printf("\nIdentifier: %s\n", yytext); return IDENTIFIER;}
 {WS}+                   {/* Ignore whitespace*/}
 .                       {printf("\nUnknown character: %s\n", yytext); return *yytext;}
 
