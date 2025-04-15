@@ -9,101 +9,119 @@
 %token INTEGER IDENTIFIER
 
 /* Define tokens for keywords (example subset) */
-%token INT FLOAT CHAR VOID IF ELSE WHILE RETURN FOR
+%token FLOAT CHAR VOID if else while return for break continue do
 
 /* Define operator tokens */
-%token PLUS MINUS MULT DIV ASSIGN EQ NEQ LT GT LTE GTE AND OR NOT
+%token EQ NEQ LTE GTE NOT
 
-%right ASSIGN
-%left OR
-%left AND
-%left EQ NEQ
-%left LT GT LTE GTE
-%left PLUS MINUS
-%left MULT DIV
+%right '='
+%left '||'
+%left '&&'
+%left '<' '>' LTE GTE EQ NEQ
+%left '+' '-'
+%left '*' '/'   
 %right NOT
 
 %%
 
-program:
-    | program function_def
+root:
+    | program
     ;
 
-function_def:
-    type IDENTIFIER '(' params ')' block
+program:
+    | statement
+    | program statement
     ;
+statement:
+    single_statement
+    | compound_statement
+    | '{' program '}'
+    ;
+
+single_statement:
+    assignment_statement
+    | declaration
+    | expr
+    | function
+    | return_statement
+    | break_statement
+    | continue_statement
+    ;
+return_statement:
+    return expr ';'
+    ;
+break_statement:
+    break ';'
+    ;
+continue_statement:
+    continue ';'
+    ;
+
+assignment_statement:
+    IDENTIFIER '=' expr
+    ;
+    
+    
+
+
+function :
+    IDENTIFIER '(' expr ')'
+    ;
+
+
+compound_statement:
+    for_statement
+    | while_statement
+    | if_statement
+    | do_while_statement
+    ;
+
+for_statement:
+    for '(' declaration ';' expr ';' expr ')' statement
+    ;
+while_statement:
+    while '(' expr ')' statement
+    ;
+do_while_statement:
+    do statement while '(' expr ')' ';'
+    ;
+if_statement:
+    if '(' expr ')' statement else statement
+    ;
+
 
 type:
-    INT
+    INTEGER
     | FLOAT
-    | CHAR
+    | CHAR  
     | VOID
     ;
 
-params:
-    | param_list
-    ;
 
-param_list:
-    param
-    | param_list ',' param
-    ;
-
-param:
-    type IDENTIFIER
-    ;
-
-block:
-    '{' statements '}'
-    ;
-
-statements:
-    | statements statement
-    ;
-
-statement:
-    expr ';'
-    | declaration ';'
-    | IF '(' expr ')' block ELSE block
-    | WHILE '(' expr ')' block
-    | RETURN expr ';'
-    ;
 
 declaration:
     type IDENTIFIER
-    | type IDENTIFIER ASSIGN expr
+    | type IDENTIFIER '=' expr
     ;
 
 expr:
-    expr PLUS expr
-    | expr MINUS expr
-    | expr MULT expr
-    | expr DIV expr
+    expr '+' expr
+    | expr '-' expr
+    | expr '*' expr
+    | expr '/' expr
     | expr EQ expr
     | expr NEQ expr
-    | expr LT expr
-    | expr GT expr
+    | expr '<' expr
+    | expr '>' expr
     | expr LTE expr
     | expr GTE expr
-    | expr AND expr
-    | expr OR expr
+    | expr '&&' expr
+    | expr '||' expr
     | NOT expr
-    | IDENTIFIER ASSIGN expr
-    | IDENTIFIER '(' args ')'
     | INTEGER
     | IDENTIFIER
     | '(' expr ')'
     ;
-
-args:
-    | arg_list
-    ;
-
-arg_list:
-    expr
-    | arg_list ',' expr
-    ;
-
 %%
 
 void yyerror(const char *s) {
