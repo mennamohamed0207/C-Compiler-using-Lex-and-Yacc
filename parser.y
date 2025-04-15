@@ -1,144 +1,117 @@
 %{
     #include <stdio.h>
-    int yylex(void);
-    void yyerror(char *);
+    #include <stdlib.h>
+    void yyerror(const char *s);
+    extern int yylex();
+    extern int yylineno;
 %}
 
 %token INTEGER IDENTIFIER
 
-%left '+' '-'
-%left '*' '/' '%'
-%right '='
-%left '>' '<' '>=' '<=' '==' '!='
-%left '&&' '||'
+/* Define tokens for keywords (example subset) */
+%token INT FLOAT CHAR VOID IF ELSE WHILE RETURN FOR
+
+/* Define operator tokens */
+%token PLUS MINUS MULT DIV ASSIGN EQ NEQ LT GT LTE GTE AND OR NOT
+
+%right ASSIGN
+%left OR
+%left AND
+%left EQ NEQ
+%left LT GT LTE GTE
+%left PLUS MINUS
+%left MULT DIV
+%right NOT
 
 %%
 
-root
-    : program
+program:
+    | program function_def
     ;
 
-program
-    : declarations
-    | program declarations
+function_def:
+    type IDENTIFIER '(' params ')' block
     ;
 
-declarations
-    : type_specifier declarator_list ';'
-    | function_definition
-    | statement
+type:
+    INT
+    | FLOAT
+    | CHAR
+    | VOID
     ;
 
-type_specifier
-    : 'integer'     /* INT */
-    | 'float'       /* FLOAT */
-    | 'double'      /* DOUBLE */
-    | 'character'   /* CHAR */
-    | 'boolean'     /* BOOL */
-    | 'void'        /* VOID */
+params:
+    | param_list
     ;
 
-declarator_list
-    : declarator
-    | declarator_list ',' declarator
+param_list:
+    param
+    | param_list ',' param
     ;
 
-declarator
-    : IDENTIFIER
-    | IDENTIFIER '=' expression
-    | IDENTIFIER '[' INTEGER ']'
+param:
+    type IDENTIFIER
     ;
 
-function_definition
-    : type_specifier IDENTIFIER '(' parameter_list ')' compound_statement
+block:
+    '{' statements '}'
     ;
 
-parameter_list
-    : parameter_declaration
-    | parameter_list ',' parameter_declaration
-    | /* empty */
+statements:
+    | statements statement
     ;
 
-parameter_declaration
-    : type_specifier declarator
+statement:
+    expr ';'
+    | declaration ';'
+    | IF '(' expr ')' block ELSE block
+    | WHILE '(' expr ')' block
+    | RETURN expr ';'
     ;
 
-compound_statement
-    : '{' '}'
-    | '{' statement_list '}'
+declaration:
+    type IDENTIFIER
+    | type IDENTIFIER ASSIGN expr
     ;
 
-statement_list
-    : statement
-    | statement_list statement
-    ;
-
-statement
-    : expression_statement
-    | compound_statement
-    | selection_statement
-    | iteration_statement
-    | jump_statement
-    | declarations
-    ;
-
-expression_statement
-    : expression ';'
-    | ';'
-    ;
-
-selection_statement
-    : 'if' '(' expression ')' statement  /* IF */
-    | 'if' '(' expression ')' statement 'else' statement  /* IF-ELSE */
-    | 'switch' '(' expression ')' statement  /* SWITCH */
-    ;
-
-iteration_statement
-    : 'while' '(' expression ')' statement  /* WHILE */
-    | 'do' statement 'while' '(' expression ')' ';'  /* DO-WHILE */
-    | 'for' '(' expression_statement expression_statement expression ')' statement  /* FOR */
-    ;
-
-jump_statement
-    : 'break' ';'      /* break */
-    | 'continue' ';'   /* continue */
-    | 'return' expression ';'  /* return */
-    ;
-
-expression
-    : INTEGER
+expr:
+    expr PLUS expr
+    | expr MINUS expr
+    | expr MULT expr
+    | expr DIV expr
+    | expr EQ expr
+    | expr NEQ expr
+    | expr LT expr
+    | expr GT expr
+    | expr LTE expr
+    | expr GTE expr
+    | expr AND expr
+    | expr OR expr
+    | NOT expr
+    | IDENTIFIER ASSIGN expr
+    | IDENTIFIER '(' args ')'
+    | INTEGER
     | IDENTIFIER
-    | expression '+' expression
-    | expression '-' expression
-    | expression '*' expression
-    | expression '/' expression
-    | expression '%' expression
-    | expression '=' expression
-    | expression '>' expression
-    | expression '<' expression
-    | expression '>=' expression
-    | expression '<=' expression
-    | expression '==' expression
-    | expression '!=' expression
-    | expression '&&' expression
-    | expression '||' expression
-    | '(' expression ')'
-    | IDENTIFIER '(' argument_list ')'
+    | '(' expr ')'
     ;
 
-argument_list
-    : expression
-    | argument_list ',' expression
-    | /* empty */
+args:
+    | arg_list
+    ;
+
+arg_list:
+    expr
+    | arg_list ',' expr
     ;
 
 %%
 
-void yyerror(char *s) {
-    fprintf(stderr, "Error: %s\n", s);
+void yyerror(const char *s) {
+    fprintf(stderr, "Parser Error at line %d: %s\n", yylineno, s);
+    exit(1);
 }
 
-int main(void) {
+int main() {
     yyparse();
     return 0;
 }

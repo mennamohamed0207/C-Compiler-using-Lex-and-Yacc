@@ -219,12 +219,3 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 int yywrap() {
     return 1;
 }
-int main(int argc, char **argv) {
-    while (yylex() != 0) {
-        // Continue lexing until end of input
-    }
-    return 0;
-}
-
-
-
