@@ -28,34 +28,37 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "int"        { printf("\nKeyword: %s\n", yytext); return INT; }
 "return"     { printf("\nKeyword: %s\n", yytext); return RETURN; }
 "and"        {printf("\nKeyword: %s\n", yytext); return AND;}
+"bool"       {printf("\nKeyword: %s\n", yytext); return BOOL;}
+"break"      {printf("\nKeyword: %s\n", yytext); return BREAK;}
+"char"       {printf("\nKeyword: %s\n", yytext); return CHAR;}
+"continue"   {printf("\nKeyword: %s\n", yytext); return CONTINUE;}
+"do"         {printf("\nKeyword: %s\n", yytext); return DO;}
+"else"       {printf("\nKeyword: %s\n", yytext); return ELSE;}
+"float"      {printf("\nKeyword: %s\n", yytext); return FLOAT;}
+"for"        {printf("\nKeyword: %s\n", yytext); return FOR;}
+"if"         {printf("\nKeyword: %s\n", yytext); return IF;}
+"void"       { printf("\nKeyword: %s\n", yytext); return VOID; }
+"while"      { printf("\nKeyword: %s\n", yytext); return WHILE; }
+"or"         {printf("\nKeyword: %s\n", yytext); return OR;}
+"const"      {printf("\nKeyword: %s\n", yytext); return CONST;}
+"false"      {printf("\nKeyword: %s\n", yytext); return FALSE;}
+"true"       {printf("\nKeyword: %s\n", yytext); return TRUE;}
 "and_eq"     |  
 "bitand"     |  
 "bitor"      |  
-"bool"       {printf("\nKeyword: %s\n", yytext); return BOOL;}
-"break"      {printf("\nKeyword: %s\n", yytext); return BREAK;}
 "case"       |  
 "catch"      |  
-"char"       {printf("\nKeyword: %s\n", yytext); return CHAR;}
 "class"      |  
 "compl"      |  
-"const"      |  
-"continue"   {printf("\nKeyword: %s\n", yytext); return CONTINUE;}
 "default"    |  
 "delete"     |  
-"do"         {printf("\nKeyword: %s\n", yytext); return DO;}
 "double"     |  
-"else"       {printf("\nKeyword: %s\n", yytext); return ELSE;}
 "enum"       |  
-"false"      |  
-"float"      {printf("\nKeyword: %s\n", yytext); return FLOAT;}
-"for"        {printf("\nKeyword: %s\n", yytext); return FOR;}
 "friend"     |  
 "goto"       |  
-"if"         {printf("\nKeyword: %s\n", yytext); return IF;}
 "long"       |  
 "namespace"  |  
 "new"        |   
-"or"         |  
 "or_eq"      |  
 "private"    |  
 "protected"  |  
@@ -70,14 +73,11 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "template"   |  
 "this"       |  
 "throw"      |  
-"true"       |  
 "try"        |  
 "typedef"    |  
 "unsigned"   |  
 "using"      |  
 "virtual"    |  
-"void"       { printf("\nKeyword: %s\n", yytext); return VOID; }
-"while"      { printf("\nKeyword: %s\n", yytext); return WHILE; }
 "xor"        |  
 "xor_eq"     |     
 "cerr"       |   

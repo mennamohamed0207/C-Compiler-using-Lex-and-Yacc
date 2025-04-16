@@ -53,15 +53,18 @@
      DO = 269,
      INT = 270,
      BOOL = 271,
-     EQ = 272,
-     NEQ = 273,
-     LTE = 274,
-     GTE = 275,
-     NOT = 276,
-     IF = 277,
-     OR = 278,
-     AND = 279,
-     LOWER_THAN_ELSE = 280
+     CONST = 272,
+     TRUE = 273,
+     FALSE = 274,
+     EQ = 275,
+     NEQ = 276,
+     LTE = 277,
+     GTE = 278,
+     NOT = 279,
+     IF = 280,
+     OR = 281,
+     AND = 282,
+     LOWER_THAN_ELSE = 283
    };
 #endif
 

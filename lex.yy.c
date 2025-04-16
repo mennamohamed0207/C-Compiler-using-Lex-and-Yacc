@@ -309,11 +309,11 @@ static yyconst short int yy_acclist[729] =
       134,  142,  137,  143,  140,  126,  139,  127,  147,  149,
       178,  141,  180,  179,  148,  135,  131,  133,  132,  136,
       145,  181,  181,  181,  181,  181,  181,  181,  181,  181,
-      181,  181,  181,  181,  181,  181,  181,  181,   18,  181,
+      181,  181,  181,  181,  181,  181,  181,  181,    8,  181,
       181,  181,  181,  181,  181,  181,  181,  181,  181,  181,
 
-      181,  181,  181,  181,   27,  181,  181,  181,  181,  181,
-      181,  181,  181,  181,  181,  181,  181,  181,   31,  181,
+      181,  181,  181,  181,   12,  181,  181,  181,  181,  181,
+      181,  181,  181,  181,  181,  181,  181,  181,   15,  181,
       181,  181,  181,  181,  181,  181,  181,  181,  181,  181,
       181,  181,  181,  181,  181,  181,  181,  181,  181,  181,
       181,  181,  181,  181,  181,  181,  144,  138,  146,  178,
@@ -321,55 +321,55 @@ static yyconst short int yy_acclist[729] =
       181,  181,  181,  181,  181,  181,  181,  181,  181,   58,
       181,  181,  181,  181,  181,  181,   79,  181,  181,  181,
       181,  181,  181,  181,   84,  181,   81,  181,  181,  181,
-      181,  181,  181,   89,  181,  181,  181,   24,  181,  181,
+      181,  181,  181,   89,  181,  181,  181,   11,  181,  181,
 
       181,  181,  181,  181,  181,  181,    1,  181,  181,  181,
       181,  100,  181,  181,  181,  181,  181,  181,  108,  181,
-      181,   30,  151,  181,  181,  161,  181,  181,  181,  112,
+      181,   34,  151,  181,  181,  161,  181,  181,  181,  112,
       181,  181,  181,  181,  181,  181,  181,  181,  181,  181,
       181,  119,  181,  181,  181,  181,  181,  181,  181,  122,
-      181,  181,  181,  181,  181,  181,   47,  181,  181,  181,
+      181,  181,  181,  181,  181,  181,   49,  181,  181,  181,
       181,  181,  181,  181,  181,  181,  181,  181,   54,  181,
       178,   69,  181,  181,   71,  181,   73,  181,  181,  181,
-        7,  181,  181,    9,  181,  181,   76,  181,   77,  181,
-       56,  181,   11,  181,  181,   57,  181,  181,  181,  181,
+        4,  181,  181,   22,  181,  181,   76,  181,   77,  181,
+       56,  181,    6,  181,  181,   57,  181,  181,  181,  181,
 
-      181,   80,  181,   59,  181,  181,  181,  181,   20,  181,
-       21,  181,   85,  181,   82,  181,  181,   86,  181,  181,
+      181,   80,  181,   59,  181,  181,  181,  181,    9,  181,
+       29,  181,   85,  181,   82,  181,  181,   86,  181,  181,
        87,  181,  181,  181,  181,   90,  181,   91,  181,   92,
-      181,  181,  181,  181,   26,  181,  181,  181,  181,  181,
-      181,  181,  181,  181,  103,  181,  104,  181,   28,  181,
+      181,  181,  181,  181,   31,  181,  181,  181,  181,  181,
+      181,  181,  181,  181,  103,  181,  104,  181,   32,  181,
       181,  181,  107,  181,  181,  181,  181,  181,  181,  181,
       181,  181,  181,  181,  181,  115,  181,  181,  181,  181,
       181,  120,  181,  181,  181,  121,  181,  181,  181,  181,
-      123,  181,  181,  181,   44,  181,  181,   46,  181,  181,
-      181,  181,  181,  181,   52,  181,  181,   62,  181,  181,
+      123,  181,  181,  181,   47,  181,  181,   18,  181,  181,
+      181,  181,  181,  181,   13,  181,  181,   62,  181,  181,
 
       181,  181,  181,   70,  181,  181,   72,  181,   74,  181,
-       75,  181,  181,    6,  181,    8,  181,   10,  181,   12,
-      181,   13,  181,   14,  181,  181,  181,  181,  181,  181,
-       83,  181,   22,  181,  181,   23,  181,   88,  181,   93,
+       75,  181,  181,   21,  181,    5,  181,   23,  181,   24,
+      181,   25,  181,   16,  181,  181,  181,  181,  181,  181,
+       83,  181,   17,  181,  181,   10,  181,   88,  181,   93,
       181,  181,  181,   94,  181,  181,   95,  181,   96,  181,
       181,  181,  181,  101,  181,  102,  181,  105,  181,  181,
-      181,  181,  181,  181,  181,   32,  181,  181,  181,  181,
-      181,  181,  181,  116,  181,  181,   36,  181,  181,  181,
-      181,  181,  181,  181,  181,  181,   45,  181,  125,  181,
-      181,  181,   50,  181,  181,   60,  181,   61,  181,   63,
+      181,  181,  181,  181,  181,   35,  181,  181,  181,  181,
+      181,  181,  181,  116,  181,  181,   39,  181,  181,  181,
+      181,  181,  181,  181,  181,  181,   48,  181,  125,  181,
+      181,  181,   52,  181,  181,   60,  181,   61,  181,   63,
 
-      181,   53,  181,  181,    4,  181,    5,  181,  181,  181,
-      181,   17,  152,  181,   19,  181,  181,   25,  181,  181,
+      181,   14,  181,  181,   19,  181,   20,  181,  181,  181,
+      181,   27,  152,  181,   28,  181,  181,   30,  181,  181,
       181,   97,  181,   98,  181,  181,  106,  181,  181,  181,
-      181,  181,  181,  181,  181,   35,  181,  181,  114,  181,
-        2,  181,  181,  118,  181,   37,  181,   38,  150,  181,
-      181,   39,  181,   41,  181,   42,  181,  181,  124,  181,
-      181,  181,  181,   55,  181,  181,  181,   16,  181,   64,
+      181,  181,  181,  181,  181,   38,  181,  181,  114,  181,
+        2,  181,  181,  118,  181,   40,  181,   41,  150,  181,
+      181,   42,  181,   44,  181,   45,  181,  181,  124,  181,
+      181,  181,  181,   55,  181,  181,  181,   26,  181,   64,
       181,   65,  181,  181,   99,  181,  181,  181,  181,  181,
-      181,   33,  181,  181,  181,  117,  181,  181,  181,   48,
-      181,  181,   51,  181,   15,  181,   78,  181,   66,  181,
+      181,   36,  181,  181,  181,  117,  181,  181,  181,   50,
+      181,  181,   53,  181,    7,  181,   78,  181,   66,  181,
 
-      181,  181,  181,  181,   67,  181,  181,  181,  181,   43,
-      181,   49,  181,   29,  181,  109,  181,  110,  181,  181,
-       34,  181,  113,  181,   40,  181,  111,  181
+      181,  181,  181,  181,   67,  181,  181,  181,  181,   46,
+      181,   51,  181,   33,  181,  109,  181,  110,  181,  181,
+       37,  181,  113,  181,   43,  181,  111,  181
     } ;
 
 static yyconst short int yy_accept[509] =
@@ -1024,80 +1024,98 @@ YY_RULE_SETUP
 {printf("\nKeyword: %s\n", yytext); return AND;}
 	YY_BREAK
 case 4:
-#line 32 "lexer.l"
+YY_RULE_SETUP
+#line 31 "lexer.l"
+{printf("\nKeyword: %s\n", yytext); return BOOL;}
+	YY_BREAK
 case 5:
-#line 33 "lexer.l"
+YY_RULE_SETUP
+#line 32 "lexer.l"
+{printf("\nKeyword: %s\n", yytext); return BREAK;}
+	YY_BREAK
 case 6:
-#line 34 "lexer.l"
+YY_RULE_SETUP
+#line 33 "lexer.l"
+{printf("\nKeyword: %s\n", yytext); return CHAR;}
+	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 34 "lexer.l"
-{printf("\nKeyword: %s\n", yytext); return BOOL;}
+{printf("\nKeyword: %s\n", yytext); return CONTINUE;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 35 "lexer.l"
-{printf("\nKeyword: %s\n", yytext); return BREAK;}
+{printf("\nKeyword: %s\n", yytext); return DO;}
 	YY_BREAK
 case 9:
-#line 37 "lexer.l"
+YY_RULE_SETUP
+#line 36 "lexer.l"
+{printf("\nKeyword: %s\n", yytext); return ELSE;}
+	YY_BREAK
 case 10:
-#line 38 "lexer.l"
+YY_RULE_SETUP
+#line 37 "lexer.l"
+{printf("\nKeyword: %s\n", yytext); return FLOAT;}
+	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 38 "lexer.l"
-{printf("\nKeyword: %s\n", yytext); return CHAR;}
+{printf("\nKeyword: %s\n", yytext); return FOR;}
 	YY_BREAK
 case 12:
-#line 40 "lexer.l"
+YY_RULE_SETUP
+#line 39 "lexer.l"
+{printf("\nKeyword: %s\n", yytext); return IF;}
+	YY_BREAK
 case 13:
-#line 41 "lexer.l"
+YY_RULE_SETUP
+#line 40 "lexer.l"
+{ printf("\nKeyword: %s\n", yytext); return VOID; }
+	YY_BREAK
 case 14:
-#line 42 "lexer.l"
+YY_RULE_SETUP
+#line 41 "lexer.l"
+{ printf("\nKeyword: %s\n", yytext); return WHILE; }
+	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 42 "lexer.l"
-{printf("\nKeyword: %s\n", yytext); return CONTINUE;}
+{printf("\nKeyword: %s\n", yytext); return OR;}
 	YY_BREAK
 case 16:
-#line 44 "lexer.l"
+YY_RULE_SETUP
+#line 43 "lexer.l"
+{printf("\nKeyword: %s\n", yytext); return CONST;}
+	YY_BREAK
 case 17:
-#line 45 "lexer.l"
+YY_RULE_SETUP
+#line 44 "lexer.l"
+{printf("\nKeyword: %s\n", yytext); return FALSE;}
+	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 45 "lexer.l"
-{printf("\nKeyword: %s\n", yytext); return DO;}
+{printf("\nKeyword: %s\n", yytext); return TRUE;}
 	YY_BREAK
 case 19:
 #line 47 "lexer.l"
 case 20:
-YY_RULE_SETUP
-#line 47 "lexer.l"
-{printf("\nKeyword: %s\n", yytext); return ELSE;}
-	YY_BREAK
+#line 48 "lexer.l"
 case 21:
 #line 49 "lexer.l"
 case 22:
 #line 50 "lexer.l"
 case 23:
-YY_RULE_SETUP
-#line 50 "lexer.l"
-{printf("\nKeyword: %s\n", yytext); return FLOAT;}
-	YY_BREAK
-case 24:
-YY_RULE_SETUP
 #line 51 "lexer.l"
-{printf("\nKeyword: %s\n", yytext); return FOR;}
-	YY_BREAK
+case 24:
+#line 52 "lexer.l"
 case 25:
 #line 53 "lexer.l"
 case 26:
 #line 54 "lexer.l"
 case 27:
-YY_RULE_SETUP
-#line 54 "lexer.l"
-{printf("\nKeyword: %s\n", yytext); return IF;}
-	YY_BREAK
+#line 55 "lexer.l"
 case 28:
 #line 56 "lexer.l"
 case 29:
@@ -1147,15 +1165,9 @@ case 50:
 case 51:
 #line 79 "lexer.l"
 case 52:
-YY_RULE_SETUP
-#line 79 "lexer.l"
-{ printf("\nKeyword: %s\n", yytext); return VOID; }
-	YY_BREAK
-case 53:
-YY_RULE_SETUP
 #line 80 "lexer.l"
-{ printf("\nKeyword: %s\n", yytext); return WHILE; }
-	YY_BREAK
+case 53:
+#line 81 "lexer.l"
 case 54:
 #line 82 "lexer.l"
 case 55:
@@ -1478,7 +1490,7 @@ YY_RULE_SETUP
 #line 217 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1482 "lex.yy.c"
+#line 1494 "lex.yy.c"
 			case YY_STATE_EOF(INITIAL):
 				yyterminate();
 

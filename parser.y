@@ -9,7 +9,7 @@
 %token INTEGER IDENTIFIER
 
 /* Tokens */
-%token FLOAT CHAR VOID ELSE WHILE RETURN FOR BREAK CONTINUE DO INT BOOL
+%token FLOAT CHAR VOID ELSE WHILE RETURN FOR BREAK CONTINUE DO INT BOOL CONST TRUE FALSE
 %token EQ NEQ LTE GTE NOT IF
 
 /* Precedence (lowest to highest) */
@@ -90,6 +90,7 @@ if_statement:
 declaration:
     type IDENTIFIER
     | type IDENTIFIER '=' expr
+    | CONST type IDENTIFIER '=' expr
     ;
 
 type:
@@ -116,9 +117,15 @@ expr:
     | expr OR expr
     | NOT expr
     | INTEGER
+    | FLOAT
+    | CHAR
+    | TRUE
+    | FALSE
+    | BOOL
     | IDENTIFIER
     | '(' expr ')'
     ;
+
 
 args:
     /* empty */
