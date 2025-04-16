@@ -2,7 +2,7 @@ INT MAIN()
 {
     INT X = 10;
     
-    IF (X EQ 5) {
+    IF (X == 5) {
         WHILE (X > 0) {
             X = X - 1;
         }

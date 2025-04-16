@@ -27,7 +27,7 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 
 "int"        { printf("\nKeyword: %s\n", yytext); return INT; }
 "return"     { printf("\nKeyword: %s\n", yytext); return RETURN; }
-"and"        |  
+"and"        {printf("\nKeyword: %s\n", yytext); return AND;}
 "and_eq"     |  
 "bitand"     |  
 "bitor"      |  
@@ -35,7 +35,7 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "break"      {printf("\nKeyword: %s\n", yytext); return BREAK;}
 "case"       |  
 "catch"      |  
-"char"       |  
+"char"       {printf("\nKeyword: %s\n", yytext); return CHAR;}
 "class"      |  
 "compl"      |  
 "const"      |  
@@ -54,9 +54,7 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "if"         {printf("\nKeyword: %s\n", yytext); return IF;}
 "long"       |  
 "namespace"  |  
-"new"        |  
-"not"        |  
-"not_eq"     |  
+"new"        |   
 "or"         |  
 "or_eq"      |  
 "private"    |  
@@ -160,14 +158,14 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "<<="     |              
 ">>="     |              
 "<=>"     |              
-"LTE"      {printf("\nOperator: %s\n", yytext); return LTE;}
-"GTE"      {printf("\nOperator: %s\n", yytext); return GTE;}
-"EQ"      {printf("\nOperator: %s\n", yytext); return EQ;}
-"NEQ"      {printf("\nOperator: %s\n", yytext); return NEQ;}
+"<="      {printf("\nOperator: %s\n", yytext); return LTE;}
+">="      {printf("\nOperator: %s\n", yytext); return GTE;}
+"=="      {printf("\nOperator: %s\n", yytext); return EQ;}
+"!="      {printf("\nOperator: %s\n", yytext); return NEQ;}
 "<<"      |              
 ">>"      |              
-"AND"      {printf("\nOperator: %s\n", yytext); return AND;}             
-"OR"      {printf("\nOperator: %s\n", yytext); return OR;}              
+"&&"      {printf("\nOperator: %s\n", yytext); return AND;}             
+"||"      {printf("\nOperator: %s\n", yytext); return OR;}              
 "+="      |              
 "*="      |              
 "/="      |              
@@ -190,6 +188,7 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "<"       {printf("\nOperator: %s\n", yytext); return '<';}              
 ">"       {printf("\nOperator: %s\n", yytext); return '>';}
 "!"       {printf("\nOperator: %s\n", yytext); return NOT;}                    
+"not"       {printf("\nOperator: %s\n", yytext); return NOT;}                    
 "&"       |              
 "|"       |              
 "^"       |              
