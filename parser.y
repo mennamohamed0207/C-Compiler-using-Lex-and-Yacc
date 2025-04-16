@@ -136,8 +136,8 @@ expr:
     expr '=' expr
     | expr POST_INC
     | expr POST_DEC
-    | expr PRE_INC
-    | expr PRE_DEC
+    | PRE_INC expr
+    | PRE_DEC expr
     | expr '+' expr
     | expr '-' expr
     | expr '*' expr
