@@ -10,6 +10,7 @@
 
 /* Tokens */
 %token FLOAT CHAR VOID ELSE WHILE RETURN FOR BREAK CONTINUE DO INT BOOL CONST TRUE FALSE STRING_TYPE
+%token SWITCH CASE DEFAULT
 %token EQ NEQ LTE GTE NOT IF STRING CHARACTER
 
 /* Precedence (lowest to highest) */
@@ -42,15 +43,23 @@ statement:
 
 single_statement:
     declaration
-    | function_call
     | expr
     | RETURN expr
-    | BREAK
-    | CONTINUE
+    | break_statement
+    | continue_statement
+    ;
+break_statement:
+    BREAK 
+    ;
+continue_statement:
+    CONTINUE 
     ;
 
-function_call:
-    IDENTIFIER '(' args ')'
+
+params:
+    /* empty */
+    | expr
+    | params ',' expr
     ;
 
 compound_statement:
@@ -59,6 +68,7 @@ compound_statement:
     | if_statement
     | do_while_statement
     | function_definition
+    | switch_statement
     ;
 
 function_definition:
@@ -66,12 +76,20 @@ function_definition:
     ;
 
 for_statement:
-    FOR '(' for_init ';' expr ';' expr ')' statement
+    FOR '(' for_init ';' multiple_expr ';' multiple_expr ')' statement
+    ;
+multiple_expr:
+    expr ',' expr
+    | expr
+    ;
+for_init:
+    declarations
+    | multiple_expr
     ;
 
-for_init:
-    declaration
-    | expr
+declarations:
+    declarations ',' declaration
+    | declaration
     ;
 
 while_statement:
@@ -86,7 +104,17 @@ if_statement:
     IF '(' expr ')' statement %prec LOWER_THAN_ELSE
     | IF '(' expr ')' statement ELSE statement
     ;
-
+switch_statement:
+    SWITCH '(' expr ')' '{' switch_cases '}'
+    ;
+switch_cases:
+    switch_case
+    | switch_case switch_cases
+    ;
+switch_case:
+    CASE expr ':' program
+    | DEFAULT ':' program
+    ;
 declaration:
     type IDENTIFIER
     | type IDENTIFIER '=' expr
@@ -126,14 +154,20 @@ expr:
     | STRING
     | CHARACTER
     | IDENTIFIER
+    | IDENTIFIER '(' params ')'
     | '(' expr ')'
+    
     ;
 
 
 args:
     /* empty */
-    | expr
-    | args ',' expr
+    | arg
+    | args ',' arg
+    ;
+arg :
+    type IDENTIFIER
+    | type IDENTIFIER '=' expr
     ;
 
 %%

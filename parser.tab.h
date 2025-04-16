@@ -57,17 +57,20 @@
      TRUE = 273,
      FALSE = 274,
      STRING_TYPE = 275,
-     EQ = 276,
-     NEQ = 277,
-     LTE = 278,
-     GTE = 279,
-     NOT = 280,
-     IF = 281,
-     STRING = 282,
-     CHARACTER = 283,
-     OR = 284,
-     AND = 285,
-     LOWER_THAN_ELSE = 286
+     SWITCH = 276,
+     CASE = 277,
+     DEFAULT = 278,
+     EQ = 279,
+     NEQ = 280,
+     LTE = 281,
+     GTE = 282,
+     NOT = 283,
+     IF = 284,
+     STRING = 285,
+     CHARACTER = 286,
+     OR = 287,
+     AND = 288,
+     LOWER_THAN_ELSE = 289
    };
 #endif
 

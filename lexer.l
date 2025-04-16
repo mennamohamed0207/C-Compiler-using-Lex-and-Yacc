@@ -44,14 +44,15 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "false"      {printf("\nKeyword: %s\n", yytext); return FALSE;}
 "true"       {printf("\nKeyword: %s\n", yytext); return TRUE;}
 "string"     {printf("\nKeyword: %s\n", yytext); return STRING_TYPE;}
+"switch"     {printf("\nKeyword: %s\n", yytext); return SWITCH;}
+"case"       {printf("\nKeyword: %s\n", yytext); return CASE;}
+"default"    {printf("\nKeyword: %s\n", yytext); return DEFAULT;}
 "and_eq"     |  
 "bitand"     |  
 "bitor"      |  
-"case"       |  
 "catch"      |  
 "class"      |  
 "compl"      |  
-"default"    |  
 "delete"     |  
 "double"     |  
 "enum"       |  
@@ -70,7 +71,6 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "static"     |  
 "Specifies"  |  
 "struct"     |  
-"switch"     |  
 "template"   |  
 "this"       |  
 "throw"      |  
