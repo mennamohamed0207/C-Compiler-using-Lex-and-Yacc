@@ -8,104 +8,101 @@
 
 %token INTEGER IDENTIFIER
 
-/* Define tokens for keywords (example subset) */
-%token FLOAT CHAR VOID if else while return for break continue do
+/* Tokens */
+%token FLOAT CHAR VOID ELSE WHILE RETURN FOR BREAK CONTINUE DO INT BOOL
+%token EQ NEQ LTE GTE NOT IF
 
-/* Define operator tokens */
-%token EQ NEQ LTE GTE NOT
-
+/* Precedence (lowest to highest) */
 %right '='
-%left '||'
-%left '&&'
-%left '<' '>' LTE GTE EQ NEQ
+%left OR
+%left AND
+%left EQ NEQ
+%left '<' '>' LTE GTE
 %left '+' '-'
-%left '*' '/'   
+%left '*' '/'
 %right NOT
+%nonassoc LOWER_THAN_ELSE  /* For dangling-else resolution */
+%nonassoc ELSE
 
 %%
 
 root:
-    | program
+    program
     ;
 
 program:
-    | statement
     | program statement
     ;
+
 statement:
-    single_statement
+    single_statement ';'
     | compound_statement
     | '{' program '}'
     ;
 
 single_statement:
-    assignment_statement
-    | declaration
+    declaration
+    | function_call
     | expr
-    | function
-    | return_statement
-    | break_statement
-    | continue_statement
-    ;
-return_statement:
-    return expr ';'
-    ;
-break_statement:
-    break ';'
-    ;
-continue_statement:
-    continue ';'
+    | RETURN expr
+    | BREAK
+    | CONTINUE
     ;
 
-assignment_statement:
-    IDENTIFIER '=' expr
+function_call:
+    IDENTIFIER '(' args ')'
     ;
-    
-    
-
-
-function :
-    IDENTIFIER '(' expr ')'
-    ;
-
 
 compound_statement:
     for_statement
     | while_statement
     | if_statement
     | do_while_statement
+    | function_definition
+    ;
+
+function_definition:
+    type IDENTIFIER '(' args ')' '{' program '}'
     ;
 
 for_statement:
-    for '(' declaration ';' expr ';' expr ')' statement
+    FOR '(' for_init ';' expr ';' expr ')' statement
     ;
+
+for_init:
+    declaration
+    | expr
+    ;
+
 while_statement:
-    while '(' expr ')' statement
+    WHILE '(' expr ')' statement
     ;
+
 do_while_statement:
-    do statement while '(' expr ')' ';'
+    DO statement WHILE '(' expr ')' ';'
     ;
+
 if_statement:
-    if '(' expr ')' statement else statement
+    IF '(' expr ')' statement %prec LOWER_THAN_ELSE
+    | IF '(' expr ')' statement ELSE statement
     ;
-
-
-type:
-    INTEGER
-    | FLOAT
-    | CHAR  
-    | VOID
-    ;
-
-
 
 declaration:
     type IDENTIFIER
     | type IDENTIFIER '=' expr
     ;
 
+type:
+    INT
+    | FLOAT
+    | CHAR
+    | VOID
+    | BOOL
+    ;
+
 expr:
-    expr '+' expr
+    expr '=' expr
+    | expr '+' expr
     | expr '-' expr
     | expr '*' expr
     | expr '/' expr
@@ -115,13 +112,20 @@ expr:
     | expr '>' expr
     | expr LTE expr
     | expr GTE expr
-    | expr '&&' expr
-    | expr '||' expr
+    | expr AND expr
+    | expr OR expr
     | NOT expr
     | INTEGER
     | IDENTIFIER
     | '(' expr ')'
     ;
+
+args:
+    /* empty */
+    | expr
+    | args ',' expr
+    ;
+
 %%
 
 void yyerror(const char *s) {

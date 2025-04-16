@@ -1,3 +1,4 @@
+%option case-insensitive
 %{
     #include "parser.tab.h"
     #include <ctype.h>   
@@ -24,32 +25,33 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 
     /* Keywords */
 
+"int"        { printf("\nKeyword: %s\n", yytext); return INT; }
+"return"     { printf("\nKeyword: %s\n", yytext); return RETURN; }
 "and"        |  
 "and_eq"     |  
 "bitand"     |  
 "bitor"      |  
-"bool"       |  
-"break"      |  
+"bool"       {printf("\nKeyword: %s\n", yytext); return BOOL;}
+"break"      {printf("\nKeyword: %s\n", yytext); return BREAK;}
 "case"       |  
 "catch"      |  
 "char"       |  
 "class"      |  
 "compl"      |  
 "const"      |  
-"continue"   |  
+"continue"   {printf("\nKeyword: %s\n", yytext); return CONTINUE;}
 "default"    |  
 "delete"     |  
-"do"         |  
+"do"         {printf("\nKeyword: %s\n", yytext); return DO;}
 "double"     |  
-"else"       |  
+"else"       {printf("\nKeyword: %s\n", yytext); return ELSE;}
 "enum"       |  
 "false"      |  
-"float"      |  
-"for"        |  
+"float"      {printf("\nKeyword: %s\n", yytext); return FLOAT;}
+"for"        {printf("\nKeyword: %s\n", yytext); return FOR;}
 "friend"     |  
 "goto"       |  
-"if"         |  
-"int"        |  
+"if"         {printf("\nKeyword: %s\n", yytext); return IF;}
 "long"       |  
 "namespace"  |  
 "new"        |  
@@ -60,7 +62,6 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "private"    |  
 "protected"  |  
 "public"     |  
-"return"     |  
 "short"      |  
 "signed"     |  
 "sizeof"     |  
@@ -77,8 +78,8 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "unsigned"   |  
 "using"      |  
 "virtual"    |  
-"void"       |  
-"while"      |  
+"void"       { printf("\nKeyword: %s\n", yytext); return VOID; }
+"while"      { printf("\nKeyword: %s\n", yytext); return WHILE; }
 "xor"        |  
 "xor_eq"     |     
 "cerr"       |   
@@ -159,16 +160,15 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "<<="     |              
 ">>="     |              
 "<=>"     |              
-"<="      |              
-">="      |              
-"=="      |              
-"!="      |              
+"LTE"      {printf("\nOperator: %s\n", yytext); return LTE;}
+"GTE"      {printf("\nOperator: %s\n", yytext); return GTE;}
+"EQ"      {printf("\nOperator: %s\n", yytext); return EQ;}
+"NEQ"      {printf("\nOperator: %s\n", yytext); return NEQ;}
 "<<"      |              
 ">>"      |              
-"&&"      |              
-"||"      |              
+"AND"      {printf("\nOperator: %s\n", yytext); return AND;}             
+"OR"      {printf("\nOperator: %s\n", yytext); return OR;}              
 "+="      |              
-"-="      |              
 "*="      |              
 "/="      |              
 "%="      |              
@@ -187,9 +187,9 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "*"       |              
 "/"       |              
 "%"       |              
-"<"       |              
-">"       |              
-"!"       |              
+"<"       {printf("\nOperator: %s\n", yytext); return '<';}              
+">"       {printf("\nOperator: %s\n", yytext); return '>';}
+"!"       {printf("\nOperator: %s\n", yytext); return NOT;}                    
 "&"       |              
 "|"       |              
 "^"       |              
