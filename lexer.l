@@ -2,6 +2,9 @@
 %{
     #include "parser.tab.h"
     #include <ctype.h>   
+    
+    int check_postfix=0;
+
     char* to_upper(char* text) {
         for (int i = 0; text[i] != '\0'; i++) {
             text[i] = toupper(text[i]);
@@ -46,116 +49,12 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "string"     {printf("\nKeyword: %s\n", yytext); return STRING_TYPE;}
 "switch"     {printf("\nKeyword: %s\n", yytext); return SWITCH;}
 "case"       {printf("\nKeyword: %s\n", yytext); return CASE;}
-"default"    {printf("\nKeyword: %s\n", yytext); return DEFAULT;}
-"and_eq"     |  
-"bitand"     |  
-"bitor"      |  
-"catch"      |  
-"class"      |  
-"compl"      |  
-"delete"     |  
-"double"     |  
-"enum"       |  
-"friend"     |  
-"goto"       |  
-"long"       |  
-"namespace"  |  
-"new"        |   
-"or_eq"      |  
-"private"    |  
-"protected"  |  
-"public"     |  
-"short"      |  
-"signed"     |  
-"sizeof"     |  
-"static"     |  
-"Specifies"  |  
-"struct"     |  
-"template"   |  
-"this"       |  
-"throw"      |  
-"try"        |  
-"typedef"    |  
-"unsigned"   |  
-"using"      |  
-"virtual"    |  
-"xor"        |  
-"xor_eq"     |     
-"cerr"       |   
-"clog"       |   
-"cin"        |   
-"cout"       |   
-"wcerr"      |   
-"wclog"      |       
-"wcin"       |       
-"wcout"      |                  
-"filebuf"    |               
-"fstream"    |               
-"ifstream"   |           
-"ofstream"   |               
-"abs"        |           
-"acos"       |           
-"acosh"      |           
-"asin"       |      
-"asinh"      |      
-"atan"       |        
-"atan2"      |      
-"atanh"      |        
-"cbrt"       |      
-"ceil"       |       
-"copysign"   |      
-"cos"        |       
-"cosh"       |      
-"exp"        |               
-"exp2"       |       
-"expm1"      |       
-"erf"        |       
-"erfc"       |       
-"fabs"       |       
-"fdim"       |           
-"floor"      |           
-"fma"        |           
-"fmax"       |           
-"fmin"       |           
-"fmod"       |           
-"frexp"      |           
-"hypot"      |           
-"ilogb"      |       
-"ldexp"      |       
-"lgamma"     |           
-"llrint"     |       
-"llround"    |       
-"log"        |
-"log10"      |           
-"log1p"      |       
-"log2"       |       
-"logb"       |               
-"lrint"      |       
-"lround"     |               
-"modf"       |
-"nan"        |                       
-"nearbyint"  |               
-"nextafter"  |               
-"nexttoward" |               
-"pow"        |               
-"remainder"  |               
-"remquo"     |           
-"rint"       |           
-"round"      |           
-"scalbln"    |           
-"scalbn"     |       
-"sin"        |                       
-"sinh"       |               
-"sqrt"       |           
-"tan"        |               
-"tanh"       |       
-"tgamma"     |           
-"trunc"      {yytext = to_upper(yytext);printf("\nKeyword: %s\n", yytext);return *yytext;}   
+"default"    {printf("\nKeyword: %s\n", yytext); return DEFAULT;}   
 
     /************/
     /* Operators */
-"++"      {printf("\nOperator: %s\n", yytext); return INC;}              
-"--"      {printf("\nOperator: %s\n", yytext); return DEC;}              
+"++"      {printf("\nOperator: %s\n", yytext); if(check_postfix) {check_postfix=0; return POST_INC;} else return PRE_INC;}              
+"--"      {printf("\nOperator: %s\n", yytext); if(check_postfix) {check_postfix=0; return POST_DEC;} else return PRE_DEC;}              
 "<<="     |              
 ">>="     |              
 "<=>"     |              
@@ -215,8 +114,8 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 '.'                                      {printf("\nChar : %s\n", yytext);return CHARACTER;}
 \"([^"\\]|\\.)*\"                               { printf("\nString: %s\n", yytext); return STRING; }
 '([^'\\]|\\.)*'                                 { printf("\nString: %s\n", yytext); return STRING; }
-{ID}                                            {printf("\nIdentifier: %s\n", yytext); return IDENTIFIER;}
-{WS}+                                           {/* Ignore whitespace*/}
+{ID}                                            {printf("\nIdentifier: %s\n", yytext); check_postfix=1; return IDENTIFIER;}
+{WS}+                                           {/* Ignore whitespace*/ check_postfix=0;}
 .                                               {printf("\nUnknown character: %s\n", yytext); return *yytext;}
 
 %%

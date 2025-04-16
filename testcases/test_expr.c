@@ -4,8 +4,8 @@ int main() {
     int c = b || (a % 2 == 0);
     
     int x = 10;
-    x += 5;
-    x *= 2;
+    x *= 5;
+    x += 2;
     
     return 0;
 }

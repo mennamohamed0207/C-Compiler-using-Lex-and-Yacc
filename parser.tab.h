@@ -70,7 +70,11 @@
      CHARACTER = 286,
      OR = 287,
      AND = 288,
-     LOWER_THAN_ELSE = 289
+     POST_DEC = 289,
+     POST_INC = 290,
+     PRE_DEC = 291,
+     PRE_INC = 292,
+     LOWER_THAN_ELSE = 293
    };
 #endif
 
