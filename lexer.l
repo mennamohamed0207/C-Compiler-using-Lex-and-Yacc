@@ -207,9 +207,12 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 ";"                     {printf("\nOperator: %s\n", yytext); return *yytext;}
     /************/
 
-{COMMENT}               {printf("\nCommend: { %s }\n", yytext);/*ignore further*/}
-{DIGIT}+{LETTER}+       {fprintf(stderr, "\nError at line %d: Invalid number '%s'\n", yylineno, yytext);}
-{DIGIT}+                {printf("\nInteger: %s\n", yytext); return INTEGER;}
+{COMMENT}                                       {printf("\nCommend: { %s }\n", yytext);/*ignore further*/}
+{DIGIT}+{LETTER}+                               {fprintf(stderr, "\nError at line %d: Invalid number '%s'\n", yylineno, yytext);}
+{DIGIT}+                                        {printf("\nInteger: %s\n", yytext); return INTEGER;}
+{DIGIT}+\.{DIGIT}+((e|E|e-|E-){DIGIT}+)?        {printf("\nFloat: %s\n", yytext); return FLOAT;}
+\"([^"\\]|\\.)*\"    { printf("\nString: %s\n", yytext); return STRING; }
+'([^'\\]|\\.)*'      { printf("\nString: %s\n", yytext); return STRING; }
 {ID}                    {printf("\nIdentifier: %s\n", yytext); return IDENTIFIER;}
 {WS}+                   {/* Ignore whitespace*/}
 .                       {printf("\nUnknown character: %s\n", yytext); return *yytext;}
@@ -217,4 +220,13 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 %%
 int yywrap() {
     return 1;
+}
+
+int main(int argc, char** argv) {
+    while (yylex()) {
+        if (yytext[0] == '\0') {
+            break; // End of input
+        }
+    }
+    return 0;
 }
