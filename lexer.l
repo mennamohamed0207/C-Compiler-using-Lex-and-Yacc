@@ -211,11 +211,12 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 {DIGIT}+{LETTER}+                               {fprintf(stderr, "\nError at line %d: Invalid number '%s'\n", yylineno, yytext);}
 {DIGIT}+                                        {printf("\nInteger: %s\n", yytext); return INTEGER;}
 {DIGIT}+\.{DIGIT}+((e|E|e-|E-){DIGIT}+)?        {printf("\nFloat: %s\n", yytext); return FLOAT;}
-\"([^"\\]|\\.)*\"    { printf("\nString: %s\n", yytext); return STRING; }
-'([^'\\]|\\.)*'      { printf("\nString: %s\n", yytext); return STRING; }
-{ID}                    {printf("\nIdentifier: %s\n", yytext); return IDENTIFIER;}
-{WS}+                   {/* Ignore whitespace*/}
-.                       {printf("\nUnknown character: %s\n", yytext); return *yytext;}
+'.'                                      {printf("\nChar : %s\n", yytext);return CHARACTER;}
+\"([^"\\]|\\.)*\"                               { printf("\nString: %s\n", yytext); return STRING; }
+'([^'\\]|\\.)*'                                 { printf("\nString: %s\n", yytext); return STRING; }
+{ID}                                            {printf("\nIdentifier: %s\n", yytext); return IDENTIFIER;}
+{WS}+                                           {/* Ignore whitespace*/}
+.                                               {printf("\nUnknown character: %s\n", yytext); return *yytext;}
 
 %%
 int yywrap() {

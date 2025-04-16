@@ -10,7 +10,7 @@
 
 /* Tokens */
 %token FLOAT CHAR VOID ELSE WHILE RETURN FOR BREAK CONTINUE DO INT BOOL CONST TRUE FALSE
-%token EQ NEQ LTE GTE NOT IF STRING
+%token EQ NEQ LTE GTE NOT IF STRING CHARACTER
 
 /* Precedence (lowest to highest) */
 %right '='
