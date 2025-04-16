@@ -43,6 +43,7 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "const"      {printf("\nKeyword: %s\n", yytext); return CONST;}
 "false"      {printf("\nKeyword: %s\n", yytext); return FALSE;}
 "true"       {printf("\nKeyword: %s\n", yytext); return TRUE;}
+"string"     {printf("\nKeyword: %s\n", yytext); return STRING_TYPE;}
 "and_eq"     |  
 "bitand"     |  
 "bitor"      |  
@@ -221,13 +222,4 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 %%
 int yywrap() {
     return 1;
-}
-
-int main(int argc, char** argv) {
-    while (yylex()) {
-        if (yytext[0] == '\0') {
-            break; // End of input
-        }
-    }
-    return 0;
 }

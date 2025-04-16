@@ -9,7 +9,7 @@
 %token INTEGER IDENTIFIER
 
 /* Tokens */
-%token FLOAT CHAR VOID ELSE WHILE RETURN FOR BREAK CONTINUE DO INT BOOL CONST TRUE FALSE
+%token FLOAT CHAR VOID ELSE WHILE RETURN FOR BREAK CONTINUE DO INT BOOL CONST TRUE FALSE STRING_TYPE
 %token EQ NEQ LTE GTE NOT IF STRING CHARACTER
 
 /* Precedence (lowest to highest) */
@@ -99,6 +99,7 @@ type:
     | CHAR
     | VOID
     | BOOL
+    | STRING_TYPE
     ;
 
 expr:
@@ -122,6 +123,8 @@ expr:
     | TRUE
     | FALSE
     | BOOL
+    | STRING
+    | CHARACTER
     | IDENTIFIER
     | '(' expr ')'
     ;
