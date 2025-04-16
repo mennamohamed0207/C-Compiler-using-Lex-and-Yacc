@@ -12,6 +12,7 @@
 %token FLOAT CHAR VOID ELSE WHILE RETURN FOR BREAK CONTINUE DO INT BOOL CONST TRUE FALSE STRING_TYPE
 %token SWITCH CASE DEFAULT
 %token EQ NEQ LTE GTE NOT IF STRING CHARACTER
+%token INC DEC
 
 /* Precedence (lowest to highest) */
 %right '='
@@ -132,6 +133,10 @@ type:
 
 expr:
     expr '=' expr
+    | expr INC
+    | expr DEC
+    | INC expr
+    | DEC expr
     | expr '+' expr
     | expr '-' expr
     | expr '*' expr

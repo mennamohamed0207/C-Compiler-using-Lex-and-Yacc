@@ -154,8 +154,8 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 
     /************/
     /* Operators */
-"++"      |              
-"--"      |              
+"++"      {printf("\nOperator: %s\n", yytext); return INC;}              
+"--"      {printf("\nOperator: %s\n", yytext); return DEC;}              
 "<<="     |              
 ">>="     |              
 "<=>"     |              
