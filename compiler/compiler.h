@@ -16,14 +16,20 @@
 #include <map>
 
 using namespace std;
-#define INTEGER 258
-#define FLOAT 259
-#define STRING 260
-#define CHARACTER 261
-#define TRUE 262
-#define FALSE 263
-#define BOOL 264
-#define IDENTIFIER 265
+
+// Operators
+#define ASSIGNMENT 1
+#define STATEMENT_LIST 2
+#define COMMA 3
+#define CALL 4
+#define INTEGER 258   // For integer literals (e.g., 42)
+#define FLOAT 259     // For float literals (e.g., 3.14)
+#define STRING 260    // For string literals (e.g., "hello")
+#define CHARACTER 261 // For character literals (e.g., 'a')
+#define TRUE 262      // Boolean true
+#define FALSE 263     // Boolean false
+#define BOOL 264      // Boolean type specifier
+
 
 // Data types
 #define INT_TYPE 270
@@ -33,41 +39,7 @@ using namespace std;
 #define VOID 274
 #define CHAR 275
 
-// Other tokens
-#define CONST 280
-#define DECLARE_ONLY 281
-#define FUNCTION 282
-#define PRINT 283
-#define RETURN 284
-#define BLOCK 285
-#define IF 286
-#define ELSE 287
-#define WHILE 288
-#define DO 289
-#define FOR 290
-#define BREAK 291
-#define CONTINUE 292
-#define SWITCH 293
-#define CASE 294
-#define DEFAULT 295
-
-// Operators
-#define ASSIGNMENT 1
-#define STATEMENT_LIST 2
-#define COMMA 3
-#define CALL 4
-#define NEGATIVE 10
-#define NOT 11
-#define OR 12
-#define AND 13
-#define GREATER_EQUAL 14
-#define LESS_EQUAL 15
-#define EQUAL 16
-#define NOT_EQUAL 17
-#define LTE 18
-#define GTE 19
-#define EQ 20
-#define NEQ 21
+#define SIZEOFNODE ((char *)&p->con - (char *)p)
 
 typedef enum { CONSTANT, IDENTIFIER, OPERATION } NodeType;
 
@@ -115,7 +87,14 @@ struct SymbolTable {
     bool used;
     bool isInitialized;
     bool isFunction;
-    SymbolTable(std::string nm, int ty, int sty, int sc, int ts, bool init, bool func = false);
+    SymbolTable(std::string nm, int ty, int sty, int sc, int ts, bool init, bool func = false)
+    {
+        name = nm;
+        type = ty;
+        symbolType = sty;
+        scope = sc;
+        timestamp = ts;
+    }
 };
 
 // Global symbol table

@@ -789,7 +789,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 31 "lexer.l"
-{ printf("\nKeyword: %s\n", yytext); return INT; }
+{ printf("\nKeyword: %s\n", yytext); return INT_TYPE; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
@@ -804,7 +804,7 @@ YY_RULE_SETUP
 case 4:
 YY_RULE_SETUP
 #line 34 "lexer.l"
-{printf("\nKeyword: %s\n", yytext); return BOOL;}
+{printf("\nKeyword: %s\n", yytext); return BOOL_TYPE;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
@@ -814,7 +814,7 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 36 "lexer.l"
-{printf("\nKeyword: %s\n", yytext); return CHAR;}
+{printf("\nKeyword: %s\n", yytext); return CHAR_TYPE;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
@@ -834,7 +834,7 @@ YY_RULE_SETUP
 case 10:
 YY_RULE_SETUP
 #line 40 "lexer.l"
-{printf("\nKeyword: %s\n", yytext); return FLOAT;}
+{printf("\nKeyword: %s\n", yytext); return FLOAT_TYPE;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP

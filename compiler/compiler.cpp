@@ -15,15 +15,26 @@ int level = 0;
 FILE *assemblyOutFile = NULL;
 extern int line;
 
-void open_assembly_file(const char *filename)
+void open_assembly_file()
 {
-    assemblyOutFile = fopen(filename, "w");
+    assemblyOutFile = fopen("assembly.txt", "w");
     if (!assemblyOutFile)
     {
-        fprintf(stderr, "Error opening assembly file: %s\n", filename);
+        fprintf(stderr, "Error opening assembly file: assembly.txt\n");
         exit(1);
     }
 }
+void add_block_scope()
+{
+    symbol.push_back(map<string, SymbolTable *>());
+    level++;
+}
+void remove_block_scope()
+{
+    symbol.pop_back();
+    level--;
+}
+
 void check_unused_variables()
 {
     // Create an iterator for the symbol table
@@ -86,7 +97,7 @@ void log_symbol_table()
     {
         SymbolTable *st = symbolTable[i];
         fprintf(symbolTableFile, "%s,\t\t%s, \t\t%s, \t\t%d, \t\t%d, \t\t%s, \t\t%s, \t\t%s \n",
-                st->name.c_str(), get_data_type(st->type), st->symbolType == CONST ? "Constant" : "Variable", st->timestamp, st->scope, st->isInitialized == true ? "True" : "False", st->used == true ? "True" : "False", st->isFunction == true ? "True" : "False");
+                st->name.c_str(), get_data_type(st->type), st->symbolType == 1 ? "Constant" : "Variable", st->timestamp, st->scope, st->isInitialized == true ? "True" : "False", st->used == true ? "True" : "False", st->isFunction == true ? "True" : "False");
         free(st);
     }
     fclose(symbolTableFile);
@@ -100,4 +111,55 @@ void log_errors(int line, const char *msg)
         exit(1);
     }
     fprintf(errorFile, "Error at line %d: %s\n", line, msg);
+}
+
+Node *create_label_node(int label)
+{
+    Node *p;
+    size_t nodeSize;
+
+    nodeSize = SIZEOFNODE + sizeof(ConstantNode);
+    if ((p = (Node *)malloc(nodeSize)) == NULL)
+        yyerror("out of memory");
+
+    p->type = CONSTANT;
+    p->con.value.intVal = label;
+    return p;
+}
+int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
+{
+    va_list ap;
+    int l1, l2, l3, type1, type2;
+    Node *lblNode;
+    vector<Node *> argsVector;
+    va_start(ap, args);
+    for (int i = 0; i < args; i++)
+    {
+        argsVector.push_back(va_arg(ap, Node *));
+    }
+    va_end(ap);
+    SymbolTable *symoblTableEntry = NULL;
+    Node *n;
+    Node *switch_var;
+    int endLabel, defaultLabel;
+    if (!p)
+    {
+        // fprintf(stderr,"write_to_assembly: NULL pointer\n");
+        return 0;
+    }
+    switch (p->type)
+    {
+    case CONSTANT:
+        switch (p->con.dataType)
+        {
+        case INT_TYPE:
+        printf("\tpush %s\t%d\n", get_data_type(INT_TYPE), p->con.value.intVal);
+        open_assembly_file();
+        fprintf(assemblyOutFile, "\tpush %s\t%d\n", get_data_type(INT_TYPE), p->con.value.intVal);
+        break;
+        case BOOL_TYPE:
+        case FLOAT_TYPE:
+        case STRING_TYPE:
+        }
+    }
 }

@@ -40,48 +40,70 @@
       know about them.  */
    enum yytokentype {
      INTEGER = 258,
-     IDENTIFIER = 259,
-     FLOAT = 260,
-     CHAR = 261,
-     VOID = 262,
-     ELSE = 263,
-     WHILE = 264,
-     RETURN = 265,
-     FOR = 266,
-     BREAK = 267,
-     CONTINUE = 268,
-     DO = 269,
-     INT = 270,
-     BOOL = 271,
-     CONST = 272,
-     TRUE = 273,
-     FALSE = 274,
+     FLOAT = 259,
+     STRING = 260,
+     CHARACTER = 261,
+     TRUE = 262,
+     FALSE = 263,
+     IDENTIFIER = 264,
+     CHAR_TYPE = 265,
+     VOID = 266,
+     ELSE = 267,
+     WHILE = 268,
+     RETURN = 269,
+     FOR = 270,
+     BREAK = 271,
+     CONTINUE = 272,
+     DO = 273,
+     CONST = 274,
      STRING_TYPE = 275,
-     SWITCH = 276,
-     CASE = 277,
-     DEFAULT = 278,
-     EQ = 279,
-     NEQ = 280,
-     LTE = 281,
-     GTE = 282,
-     NOT = 283,
-     IF = 284,
-     STRING = 285,
-     CHARACTER = 286,
-     OR = 287,
-     AND = 288,
-     POST_DEC = 289,
-     POST_INC = 290,
-     PRE_DEC = 291,
-     PRE_INC = 292,
-     LOWER_THAN_ELSE = 293
+     BOOL_TYPE = 276,
+     INT_TYPE = 277,
+     FLOAT_TYPE = 278,
+     SWITCH = 279,
+     CASE = 280,
+     DEFAULT = 281,
+     EQ = 282,
+     NEQ = 283,
+     LTE = 284,
+     GTE = 285,
+     NOT = 286,
+     IF = 287,
+     OR = 288,
+     AND = 289,
+     POST_DEC = 290,
+     POST_INC = 291,
+     PRE_DEC = 292,
+     PRE_INC = 293,
+     NEGATIVE = 294,
+     LOWER_THAN_ELSE = 295,
+     FUNC = 296
    };
 #endif
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE
+{
+
+/* Line 1676 of yacc.c  */
+#line 21 "parser.y"
+
+  int intValue;            // integer
+  float floatValue;        // float
+  char* stringValue;       // string
+  char* charValue;         // character
+  bool boolValue;          // boolean
+  char *sIndex;            // symbol table index
+  char *varType;           // variable type
+  Node *nodePtr;           // node pointer
+
+
+
+/* Line 1676 of yacc.c  */
+#line 106 "parser.tab.h"
+} YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -40,7 +40,3 @@ Get-Content testcases\test_inc_dec.c | .\compiler
 
 
 
-
-
-
-

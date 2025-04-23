@@ -1,9 +1,22 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
-    void yyerror(const char *s);
+    #include "compiler.h"
+    extern void log_symbol_table();
+    extern void log_errors(int line, const char *msg);
+    extern void check_unused_variables();
+
+
+    Node* create_operation(int oper, int nops,...);
+    Node* create_constant(int type ,int dataType);
+    Node* create_identifier(char* i, int dataType, int qualifier);
+    void free_node(Node *p);
+
+    int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...);
     extern int yylex();
+    void yyerror(const char *s);
     extern int yylineno;
+
 %}
 %union {
   int intValue;            // integer
@@ -41,160 +54,170 @@
 %left POST_INC POST_DEC
 %right PRE_INC PRE_DEC
 %right NOT
+%nonassoc NEGATIVE
+
 %nonassoc LOWER_THAN_ELSE  /* For dangling-else resolution */
 %nonassoc ELSE
+%nonassoc FUNC
 /* Non-terminal types */
-%type <nodePtr> program statement single_statement compound_statement expr
-%type <nodePtr> break_statement continue_statement params function_definition
+%type <nodePtr> program statement single_statement compound_statement expr assignment_statement function_call
+%type <nodePtr>  params function_definition return_statement
 %type <nodePtr> for_statement while_statement do_while_statement if_statement
-%type <nodePtr> switch_statement switch_cases switch_case declaration
-%type <nodePtr> multiple_expr for_init declarations args arg
+%type <nodePtr> switch_statement switch_cases declaration default_statement
+%type <nodePtr> multiple_expr for_init args
 %type <intValue> type
 %%
 
 root:
-    program 
+    program    {check_unused_variables();}
     ;
 
 program:
-    | program statement
+{$$=NULL;}
+    | program statement  {write_to_assembly($2);}
     ;
 
 statement:
-    single_statement ';'
-    | compound_statement
-    | '{' program '}'
+    single_statement ';'  {$$=$1;}
+    | compound_statement {$$=$1;}
+    | '{' program '}' {$$=create_operation(BLOCK,1,NULL);}
     ;
 
 single_statement:
-    declaration
-    | expr
-    | RETURN expr
-    | break_statement
-    | continue_statement
+    declaration {$$=$1;}
+    | expr {$$=$1;}
+    | return_statement {$$=$1;}
+    | BREAK ';' {$$=create_operation(BREAK,1,NULL);}
+    | CONTINUE ';' {$$=create_operation(CONTINUE,1,NULL);}
+    | assignment_statement {$$=$1;}
+    | function_call {$$=$1;}
     ;
-break_statement:
-    BREAK 
+
+compound_statement:
+    for_statement {$$=$1;}
+    | while_statement {$$=$1;}
+    | if_statement {$$=$1;}
+    | do_while_statement {$$=$1;}
+    | function_definition {$$=$1;}
+    | switch_statement {$$=$1;}
     ;
-continue_statement:
-    CONTINUE 
-    ;
+
 
 
 params:
     /* empty */
-    | expr
-    | params ',' expr
+    {$$=NULL;}
+    | expr {$$=$1;}
+    | params ',' expr {$$=create_operation(COMMA,2,$1,$3);}
     ;
 
-compound_statement:
-    for_statement
-    | while_statement
-    | if_statement
-    | do_while_statement
-    | function_definition
-    | switch_statement
+return_statement:
+    RETURN statement {$$=create_operation(RETURN,1,$2);}
     ;
-
 function_definition:
-    type IDENTIFIER '(' args ')' '{' program '}'
+    type IDENTIFIER '(' args ')' '{' program return_statement '}' {$$=create_operation(FUNCTION,4,$2,$4,$7,$8);}
     ;
 
 for_statement:
-    FOR '(' for_init ';' multiple_expr ';' multiple_expr ')' statement
+    FOR '(' for_init ';' multiple_expr ';' multiple_expr ')' statement  {$$=create_operation(FOR,4,$3,$5,$7,$9);}
     ;
 multiple_expr:
-    expr ',' expr
-    | expr
+    expr ',' expr {$$=create_operation(',',2,$1,$3);}
+    | expr {$$=$1;}
     ;
 for_init:
-    declarations
-    | multiple_expr
+    {$$=create_operation(';',2,NULL,NULL);}
+    | declaration {$$=$1;}
     ;
 
-declarations:
-    declarations ',' declaration
-    | declaration
-    ;
+
 
 while_statement:
-    WHILE '(' expr ')' statement
+    WHILE '(' expr ')' statement {$$=create_operation(WHILE,2,$3,$5);}
     ;
 
 do_while_statement:
-    DO statement WHILE '(' expr ')' ';'
+    DO statement WHILE '(' expr ')' ';' {$$=create_operation(DO_WHILE,2,$2,$5);}
     ;
 
 if_statement:
-    IF '(' expr ')' statement %prec LOWER_THAN_ELSE
-    | IF '(' expr ')' statement ELSE statement
+    IF '(' expr ')' statement %prec LOWER_THAN_ELSE {$$=create_operation(IF,2,$3,$5);}
+    | IF '(' expr ')' statement ELSE statement {$$=create_operation(IF,3,$3,$5,$7);}
     ;
 switch_statement:
-    SWITCH '(' expr ')' '{' switch_cases '}'
-    ;
-switch_cases:
-    switch_case
-    | switch_case switch_cases
-    ;
-switch_case:
-    CASE expr ':' program
-    | DEFAULT ':' program
-    ;
-declaration:
-    type IDENTIFIER
-    | type IDENTIFIER '=' expr
-    | CONST type IDENTIFIER '=' expr
+    SWITCH '(' IDENTIFIER ')' '{' switch_cases '}' {$$=create_operation(SWITCH,2,create_identifier($3),$6);}
+    | SWITCH '(' IDENTIFIER ')' '{' switch_cases  default_statement '}' {$$=create_operation(SWITCH,2,create_identifier($3),$6,$7);}
     ;
 
+default_statement:
+    DEFAULT ':' statement {$$=create_operation(DEFAULT,1,$3);}
+    ;
+switch_cases:
+    CASE INTEGER ':' statement BREAK ';' switch_cases {$$=create_operation(CASE,4,create_constant(INTEGER,INTEGER_TYPE,$2),$4,create_operation(BREAK,0),$7);}
+    | CASE STRING ':' statement BREAK ';' switch_cases {$$=create_operation(CASE,4,create_constant(STRING,STRING_TYPE,$2),$4,create_operation(BREAK,0),$7);}
+    | CASE CHARACTER ':' statement BREAK ';' switch_cases {$$=create_operation(CASE,4,create_constant(CHARACTER,CHARACTER_TYPE,$2),$4,create_operation(BREAK,0),$7);}
+    | CASE INTEGER ':' statement BREAK ';' {$$=create_operation(CASE,4,create_constant(INTEGER,INTEGER_TYPE,$2),$4,create_operation(BREAK,0));}
+    | CASE STRING ':' statement BREAK ';' {$$=create_operation(CASE,4,create_constant(STRING,STRING_TYPE,$2),$4,create_operation(BREAK,0));}
+    | CASE CHARACTER ':' statement BREAK ';' {$$=create_operation(CASE,3,create_constant(CHARACTER,CHARACTER_TYPE,$2),$4,create_operation(BREAK,0));}
+    ;
+
+declaration:
+    type IDENTIFIER {$$=create_operation(DECLARATION,1,create_identifier($2,$1,0));}
+    | type IDENTIFIER '=' expr {$$=create_operation('=',2,create_identifier($2,$1),$4);}
+    | CONST type IDENTIFIER '=' expr {$$=create_operation('=',2,create_identifier($3,$2,CONST),$5);}
+    ;
+assignment_statement:
+    IDENTIFIER '=' expr {$$=create_operation('=',2,create_identifier($1),$3);}
+    | IDENTIFIER '=' function_call %prec FUNC {$$=create_operation('=',2,create_identifier($1),$3);}
+    ;
+function_call:
+    IDENTIFIER '(' params ')' {$$=create_operation(CALL,2,create_identifier($1),$3);}
+    ;
 type:
-    INT_TYPE
-    | FLOAT_TYPE
-    | CHAR_TYPE
-    | VOID
-    | BOOL_TYPE
-    | STRING_TYPE
+    INT_TYPE  {$$=INT_TYPE;}
+    | FLOAT_TYPE {$$=FLOAT_TYPE;}
+    | CHAR_TYPE {$$=CHAR_TYPE;}
+    | VOID {$$=VOID;}
+    | BOOL_TYPE {$$=BOOL_TYPE;}
+    | STRING_TYPE {$$=STRING_TYPE;}
     ;
 
 expr:
-    expr '=' expr
-    | expr POST_INC
-    | expr POST_DEC
-    | PRE_INC expr
-    | PRE_DEC expr
-    | expr '+' expr
-    | expr '-' expr
-    | expr '*' expr
-    | expr '/' expr
-    | expr EQ expr
-    | expr NEQ expr
-    | expr '<' expr
-    | expr '>' expr
-    | expr LTE expr
-    | expr GTE expr
-    | expr AND expr
-    | expr OR expr
-    | NOT expr
-    | INTEGER
-    | FLOAT
-    | TRUE
-    | FALSE
-    | STRING
-    | CHARACTER
-    | IDENTIFIER
-    | IDENTIFIER '(' params ')'
-    | '(' expr ')'
+    expr POST_INC {$$=create_operation(POST_INC,1,$1);}
+    | expr POST_DEC {$$=create_operation(POST_DEC,1,$1);}
+    | PRE_INC expr {$$=create_operation(PRE_INC,1,$2);}
+    | PRE_DEC expr {$$=create_operation(PRE_DEC,1,$2);}
+    | expr '+' expr {$$=create_operation('+',2,$1,$3);}
+    | expr '-' expr {$$=create_operation('-',2,$1,$3);}
+    | expr '*' expr {$$=create_operation('*',2,$1,$3);}
+    | expr '/' expr {$$=create_operation('/',2,$1,$3);}
+    | expr EQ expr {$$=create_operation('==',2,$1,$3);}
+    | expr NEQ expr {$$=create_operation('!=',2,$1,$3);}
+    | expr '<' expr {$$=create_operation('<',2,$1,$3);}
+    | expr '>' expr {$$=create_operation('>',2,$1,$3);}
+    | expr LTE expr {$$=create_operation('<=',2,$1,$3);}
+    | expr GTE expr {$$=create_operation('>=',2,$1,$3);}
+    | expr AND expr {$$=create_operation('&&',2,$1,$3);}
+    | expr OR expr {$$=create_operation('||',2,$1,$3);}
+    | NOT expr {$$=create_operation('!',1,$2);}
+    | '-' expr %prec NEGATIVE {$$=create_operation(NEGATIVE,1,$2);}
+    | INTEGER {$$=create_constant(INTEGER,INTEGER_TYPE,$1);}
+    | FLOAT {$$=create_constant(FLOAT,FLOAT_TYPE,$1);}
+    | TRUE {$$=create_constant(BOOL,BOOL_TYPE,1);}
+    | FALSE {$$=create_constant(BOOL,BOOL_TYPE,0);}
+    | STRING {$$=create_constant(STRING,STRING_TYPE,$1);}
+    | CHARACTER {$$=create_constant(CHARACTER,CHARACTER_TYPE,$1);}
+    | IDENTIFIER {$$=create_identifier($1);}
+    | '(' expr ')' {$$=$2;}
     
     ;
 
 
-args:
-    /* empty */
-    | arg
-    | args ',' arg
-    ;
-arg :
-    type IDENTIFIER
-    | type IDENTIFIER '=' expr
+
+args :
+    declaration ',' args {$$=create_operation(COMMA,2,$1,$3);}
+    | declaration {$$=$1;}
+    | {$$=NULL;}
     ;
 
 %%
