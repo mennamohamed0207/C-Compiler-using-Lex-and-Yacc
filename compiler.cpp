@@ -79,6 +79,9 @@ const char *get_data_type(int type)
     case STRING:
     case STRING_TYPE:
         return "string";
+    case CHARACTER:
+    case CHAR_TYPE:
+        return "char";
     case VOID:
         return "void";
     default:
@@ -214,19 +217,51 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
         // fprintf(stderr,"write_to_assembly: NULL pointer\n");
         return 0;
     }
-    // switch (p->type)
-    // {
-    // case CONSTANT:
-    //     switch (p->con.dataType)
-    //     {
-    //     case INT_TYPE:
-    //     printf("\tpush %s\t%d\n", get_data_type(INT_TYPE), p->con.value.intVal);
-    //     open_assembly_file();
-    //     fprintf(assemblyOutFile, "\tpush %s\t%d\n", get_data_type(INT_TYPE), p->con.value.intVal);
-    //     break;
-    //     case BOOL_TYPE:
-    //     case FLOAT_TYPE:
-    //     case STRING_TYPE:
-    //     }
-    // }
+    switch (p->type)
+    {
+    case CONSTANT:
+        switch (p->con.dataType)
+        {
+        case INT_TYPE:
+            printf("\tpush %s\t%d\n", get_data_type(INT_TYPE), p->con.value.intVal);
+            open_assembly_file();
+            fprintf(assemblyOutFile, "\tpush %s\t%d\n", get_data_type(INT_TYPE), p->con.value.intVal);
+            return INT_TYPE;
+        case BOOL_TYPE:
+            printf("\tpush %s\t%d\n", get_data_type(BOOL_TYPE), p->con.value.boolVal);
+            open_assembly_file();
+            fprintf(assemblyOutFile, "\tpush %s\t%d\n", get_data_type(BOOL_TYPE), p->con.value.boolVal);
+            return BOOL_TYPE;
+        case FLOAT_TYPE:
+            printf("\tpush %s\t%f\n", get_data_type(FLOAT_TYPE), p->con.value.floatVal);
+            open_assembly_file();
+            fprintf(assemblyOutFile, "\tpush %s\t%f\n", get_data_type(FLOAT_TYPE), p->con.value.floatVal);
+            return FLOAT_TYPE;
+        case STRING_TYPE:
+            printf("\tpush %s\t%s\n", get_data_type(STRING_TYPE), p->con.value.strVal);
+            open_assembly_file();
+            fprintf(assemblyOutFile, "\tpush %s\t%s\n", get_data_type(STRING_TYPE), p->con.value.strVal);
+            return STRING_TYPE;
+        case CHAR_TYPE:
+            printf("\tpush %s\t%c\n", get_data_type(CHAR_TYPE), p->con.value.charVal);
+            open_assembly_file();
+            fprintf(assemblyOutFile, "\tpush %s\t%c\n", get_data_type(CHAR_TYPE), p->con.value.charVal);
+            return CHAR_TYPE;
+        }
+        break;
+    case VARIABLE:
+        symoblTableEntry = check_variable(p);
+        if (!symoblTableEntry)
+        {
+            return 0;
+        }
+        printf("\tpush\t%s\n", p->id.name);
+        open_assembly_file();
+        fprintf(assemblyOutFile, "\tpush\t%s\n", p->id.name);
+        return symoblTableEntry->type;
+
+        break;
+    case OPERATION:
+        break;
+    }
 }

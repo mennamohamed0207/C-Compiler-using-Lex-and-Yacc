@@ -47,11 +47,13 @@ using namespace std;
 typedef enum { CONSTANT, VARIABLE, OPERATION } NodeType;
 
 struct ValueType {
+
     union {
         int intVal;
-        double floatVal;
+        float floatVal;
         bool boolVal;
         char* strVal;
+        char charVal;
     };
 };
 

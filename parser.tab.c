@@ -187,7 +187,7 @@ typedef union YYSTYPE
   int intValue;            // integer
   float floatValue;        // float
   char* stringValue;       // string
-  char* charValue;         // character
+  char charValue;         // character
   bool boolValue;          // boolean
   char *sIndex;            // symbol table index
   char *varType;           // variable type
