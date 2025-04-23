@@ -262,6 +262,91 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
 
         break;
     case OPERATION:
+        switch (p->opr.symbol)
+        {
+        case DECLARATION:
+        {
+            SymbolTable *entry = declare_variable(p->opr.op[0], true);
+            if (entry != NULL)
+            { // Only write to assembly if declaration was successful
+                printf("\tpop %s\t%s\n", get_data_type(p->opr.op[0]->id.dataType), p->opr.op[0]->id.name);
+                open_assembly_file();
+                fprintf(assemblyOutFile, "\tpop %s\t%s\n", get_data_type(p->opr.op[0]->id.dataType), p->opr.op[0]->id.name);
+            }
+        }
         break;
+        case WHILE:
+            open_assembly_file();
+            add_block_scope();
+            printf("L%03d:\n", l1 = label++); // start
+            fprintf(assemblyOutFile, "L%03d:\n", l1);
+            type1 = write_to_assembly(p->opr.op[0]);
+            if (type1 != BOOL_TYPE)
+            {
+                printf("Semantic Error: while condition must be a boolean expression\n");
+                yyerror("while condition must be a boolean expression");
+            }
+            printf("\tjz\tL%03d\n", l2 = label++); // if false
+            fprintf(assemblyOutFile, "\tjz\tL%03d\n", l2);
+
+            write_to_assembly(p->opr.op[1], l1, l2); // body
+            printf("\tjmp\tL%03d\n", l1);            // continue
+            fprintf(assemblyOutFile, "\tjmp\tL%03d\n", l1);
+
+            printf("L%03d:\n", l2); // end
+            fprintf(assemblyOutFile, "L%03d:\n", l2);
+
+            remove_block_scope();
+            break;
+        case IF:
+            open_assembly_file();
+            add_block_scope();
+            type1 = write_to_assembly(p->opr.op[0]);
+            if (type1 != BOOL_TYPE)
+            {
+                printf("Semantic Error: if condition must be a boolean expression\n");
+                yyerror("if condition must be a boolean expression");
+            }
+            if (p->opr.nops > 2)
+            {
+                // else if
+                printf("\tjz\tL%03d\n", l1 = label++);
+                write_to_assembly(p->opr.op[1], cont, brk);
+                printf("\tjmp\tL%03d\n", l2 = label++);
+                printf("L%03d:\n", l1);
+                write_to_assembly(p->opr.op[2], cont, brk);
+                printf("L%03d:\n", l2);
+            }
+            else
+            {
+                // else
+                printf("\tjz\tL%03d\n", l1 = label++);
+                write_to_assembly(p->opr.op[1], cont, brk);
+                printf("L%03d:\n", l1);
+            }
+            remove_block_scope();
+            break;
+        case FOR:
+            open_assembly_file();
+            add_block_scope();
+            type1 = write_to_assembly(p->opr.op[1]);
+            if (type1 != BOOL_TYPE)
+            {
+                printf("Semantic Error: for condition must be a boolean expression\n");
+                yyerror("for condition must be a boolean expression");
+            }
+            printf("\tjz\tL%03d\n", l2 = label++);
+
+            write_to_assembly(p->opr.op[3], l3 = label++, l2); // body
+
+            printf("L%03d:\n", l3); // continue if true
+
+            write_to_assembly(p->opr.op[2]); // next iter inc/dec
+            printf("\tjmp\tL%03d\n", l1);
+            printf("L%03d:\n", l2);
+
+            remove_block_scope();
+            break;
+        }
     }
 }
