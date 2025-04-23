@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <vector>
+#include "compiler.h"
+#include "parser.tab.h"
 #include <sstream>
 #include <fstream>
-
 using std::vector;
 
 // Global variables
@@ -64,25 +65,91 @@ type:
 */
 const char *get_data_type(int type)
 {
-    // switch (type)
-    // {
-    // case INTEGER:
-    // case INT_TYPE:
-    //     return "int";
-    // case FLOAT:
-    // case FLOAT_TYPE:
-    //     return "float";
-    // case BOOL:
-    // case BOOL_TYPE:
-    //     return "bool";
-    // case STRING:
-    // case STRING_TYPE:
-    //     return "string";
-    // case VOID:
-    //     return "void";
-    // default:
-    //     return "";
-    // }
+    switch (type)
+    {
+    case INTEGER:
+    case INT_TYPE:
+        return "int";
+    case FLOAT:
+    case FLOAT_TYPE:
+        return "float";
+    case BOOL:
+    case BOOL_TYPE:
+        return "bool";
+    case STRING:
+    case STRING_TYPE:
+        return "string";
+    case VOID:
+        return "void";
+    default:
+        return "";
+    }
+}
+SymbolTable *get_function_variable(Node *p)
+{
+    for (int i = level; i >= 0; i--)
+    {
+        if (symbol[i].find(p->id.name) != symbol[i].end())
+        {
+            SymbolTable *entry = symbol[i][p->id.name];
+            if (entry->isFunction == true)
+            {
+                printf("www %s\n", entry->name);
+                return entry;
+            }
+        }
+    }
+    return NULL;
+}
+SymbolTable *check_variable(Node *p, bool isRHS = false)
+{
+    if (p->type != VARIABLE)
+        return NULL;
+    for (int i = level; i >= 0; i--)
+    {
+        if (symbol[i].find(p->id.name) != symbol[i].end())
+        {
+            SymbolTable *entry = symbol[i][p->id.name];
+
+            // Error as the variable is already declared
+            if (isRHS && entry->type == CONSTANT)
+            {
+                char errorMsg[1024];
+                sprintf(errorMsg, "Semantic Error: can't assign values to constant variable '%s'", p->id.name);
+                yyerror(errorMsg);
+                return NULL;
+            }
+            if (!isRHS && entry->isFunction == false && entry->isInitialized == false)
+            {
+                char errorMsg[1024];
+                sprintf(errorMsg, "Semantic Error: variable '%s' must be initialized before use", p->id.name);
+                yyerror(errorMsg);
+                return NULL;
+            }
+            symbol[i][p->id.name]->used = true;
+            return symbol[i][p->id.name];
+        }
+    }
+    return NULL;
+}
+SymbolTable *declare_variable(Node *p, bool isRHS = false)
+{
+    if (p->type != VARIABLE)
+        return NULL;
+    if (p->id.dataType == -1)
+    {
+        return check_variable(p, isRHS);
+    }
+    if (symbol[level].find(p->id.name) != symbol[level].end())
+    {
+        char errorMsg[1024];
+        sprintf(errorMsg, "Semantic Error: variable '%s' already declared in this scope", p->id.name);
+        yyerror(errorMsg);
+        return NULL;
+    }
+    symbol[level][p->id.name] = new SymbolTable(strdup(p->id.name), p->id.dataType, p->id.qualifier, level, timestep++, false);
+    symbolTable.push_back(symbol[level][p->id.name]);
+    return symbol[level][p->id.name];
 }
 void log_symbol_table()
 {
