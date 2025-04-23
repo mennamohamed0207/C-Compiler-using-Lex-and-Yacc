@@ -28,16 +28,16 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 
     /* Keywords */
 
-"int"        { printf("\nKeyword: %s\n", yytext); return INT; }
+"int"        { printf("\nKeyword: %s\n", yytext); return INT_TYPE; }
 "return"     { printf("\nKeyword: %s\n", yytext); return RETURN; }
 "and"        {printf("\nKeyword: %s\n", yytext); return AND;}
-"bool"       {printf("\nKeyword: %s\n", yytext); return BOOL;}
+"bool"       {printf("\nKeyword: %s\n", yytext); return BOOL_TYPE;}
 "break"      {printf("\nKeyword: %s\n", yytext); return BREAK;}
-"char"       {printf("\nKeyword: %s\n", yytext); return CHAR;}
+"char"       {printf("\nKeyword: %s\n", yytext); return CHAR_TYPE;}
 "continue"   {printf("\nKeyword: %s\n", yytext); return CONTINUE;}
 "do"         {printf("\nKeyword: %s\n", yytext); return DO;}
 "else"       {printf("\nKeyword: %s\n", yytext); return ELSE;}
-"float"      {printf("\nKeyword: %s\n", yytext); return FLOAT;}
+"float"      {printf("\nKeyword: %s\n", yytext); return FLOAT_TYPE;}
 "for"        {printf("\nKeyword: %s\n", yytext); return FOR;}
 "if"         {printf("\nKeyword: %s\n", yytext); return IF;}
 "void"       { printf("\nKeyword: %s\n", yytext); return VOID; }
