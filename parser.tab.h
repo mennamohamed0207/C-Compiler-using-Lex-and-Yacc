@@ -32,6 +32,17 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+/* "%code requires" blocks.  */
+
+/* Line 1676 of yacc.c  */
+#line 1 "parser.y"
+
+    #include "compiler.h"  
+
+
+
+/* Line 1676 of yacc.c  */
+#line 46 "parser.tab.h"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -45,39 +56,43 @@
      CHARACTER = 261,
      TRUE = 262,
      FALSE = 263,
-     IDENTIFIER = 264,
-     CHAR_TYPE = 265,
-     VOID = 266,
-     ELSE = 267,
-     WHILE = 268,
-     RETURN = 269,
-     FOR = 270,
-     BREAK = 271,
-     CONTINUE = 272,
-     DO = 273,
-     CONST = 274,
-     STRING_TYPE = 275,
-     BOOL_TYPE = 276,
-     INT_TYPE = 277,
-     FLOAT_TYPE = 278,
-     SWITCH = 279,
-     CASE = 280,
-     DEFAULT = 281,
-     EQ = 282,
-     NEQ = 283,
-     LTE = 284,
-     GTE = 285,
-     NOT = 286,
-     IF = 287,
-     OR = 288,
-     AND = 289,
-     POST_DEC = 290,
-     POST_INC = 291,
-     PRE_DEC = 292,
-     PRE_INC = 293,
-     NEGATIVE = 294,
-     LOWER_THAN_ELSE = 295,
-     FUNC = 296
+     BOOL = 264,
+     IDENTIFIER = 265,
+     CHAR_TYPE = 266,
+     VOID = 267,
+     ELSE = 268,
+     WHILE = 269,
+     RETURN = 270,
+     FOR = 271,
+     BREAK = 272,
+     CONTINUE = 273,
+     DO = 274,
+     CONST = 275,
+     STRING_TYPE = 276,
+     BOOL_TYPE = 277,
+     INT_TYPE = 278,
+     FLOAT_TYPE = 279,
+     SWITCH = 280,
+     CASE = 281,
+     DEFAULT = 282,
+     EQ = 283,
+     NEQ = 284,
+     LTE = 285,
+     GTE = 286,
+     NOT = 287,
+     IF = 288,
+     BLOCK = 289,
+     FUNCTION = 290,
+     DECLARATION = 291,
+     OR = 292,
+     AND = 293,
+     POST_DEC = 294,
+     POST_INC = 295,
+     PRE_DEC = 296,
+     PRE_INC = 297,
+     NEGATIVE = 298,
+     LOWER_THAN_ELSE = 299,
+     FUNC = 300
    };
 #endif
 
@@ -88,7 +103,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 21 "parser.y"
+#line 24 "parser.y"
 
   int intValue;            // integer
   float floatValue;        // float
@@ -102,7 +117,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 106 "parser.tab.h"
+#line 121 "parser.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

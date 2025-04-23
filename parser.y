@@ -1,3 +1,6 @@
+%code requires {
+    #include "compiler.h"  
+}
 %{
     #include <stdio.h>
     #include <stdlib.h>
@@ -33,7 +36,7 @@
 %token <intValue> INTEGER
 %token <floatValue> FLOAT
 %token <stringValue> STRING CHARACTER
-%token <boolValue> TRUE FALSE
+%token <boolValue> TRUE FALSE BOOL
 %token <sIndex> IDENTIFIER
 
 
@@ -42,6 +45,10 @@
 %token CHAR_TYPE VOID ELSE WHILE RETURN FOR BREAK CONTINUE DO CONST STRING_TYPE BOOL_TYPE INT_TYPE FLOAT_TYPE 
 %token SWITCH CASE DEFAULT
 %token EQ NEQ LTE GTE NOT IF
+%token BLOCK
+%token FUNCTION
+%token DECLARATION
+
 
 /* Precedence (lowest to highest) */
 %right '='
@@ -137,7 +144,7 @@ while_statement:
     ;
 
 do_while_statement:
-    DO statement WHILE '(' expr ')' ';' {$$=create_operation(DO_WHILE,2,$2,$5);}
+    DO statement WHILE '(' expr ')' ';' {$$=create_operation(DO,2,$2,$5);}
     ;
 
 if_statement:
@@ -153,12 +160,12 @@ default_statement:
     DEFAULT ':' statement {$$=create_operation(DEFAULT,1,$3);}
     ;
 switch_cases:
-    CASE INTEGER ':' statement BREAK ';' switch_cases {$$=create_operation(CASE,4,create_constant(INTEGER,INTEGER_TYPE,$2),$4,create_operation(BREAK,0),$7);}
+    CASE INTEGER ':' statement BREAK ';' switch_cases {$$=create_operation(CASE,4,create_constant(INTEGER,INT_TYPE,$2),$4,create_operation(BREAK,0),$7);}
     | CASE STRING ':' statement BREAK ';' switch_cases {$$=create_operation(CASE,4,create_constant(STRING,STRING_TYPE,$2),$4,create_operation(BREAK,0),$7);}
-    | CASE CHARACTER ':' statement BREAK ';' switch_cases {$$=create_operation(CASE,4,create_constant(CHARACTER,CHARACTER_TYPE,$2),$4,create_operation(BREAK,0),$7);}
-    | CASE INTEGER ':' statement BREAK ';' {$$=create_operation(CASE,4,create_constant(INTEGER,INTEGER_TYPE,$2),$4,create_operation(BREAK,0));}
+    | CASE CHARACTER ':' statement BREAK ';' switch_cases {$$=create_operation(CASE,4,create_constant(CHARACTER,CHAR_TYPE,$2),$4,create_operation(BREAK,0),$7);}
+    | CASE INTEGER ':' statement BREAK ';' {$$=create_operation(CASE,4,create_constant(INTEGER,INT_TYPE,$2),$4,create_operation(BREAK,0));}
     | CASE STRING ':' statement BREAK ';' {$$=create_operation(CASE,4,create_constant(STRING,STRING_TYPE,$2),$4,create_operation(BREAK,0));}
-    | CASE CHARACTER ':' statement BREAK ';' {$$=create_operation(CASE,3,create_constant(CHARACTER,CHARACTER_TYPE,$2),$4,create_operation(BREAK,0));}
+    | CASE CHARACTER ':' statement BREAK ';' {$$=create_operation(CASE,3,create_constant(CHARACTER,CHAR_TYPE,$2),$4,create_operation(BREAK,0));}
     ;
 
 declaration:
@@ -201,12 +208,12 @@ expr:
     | expr OR expr {$$=create_operation('||',2,$1,$3);}
     | NOT expr {$$=create_operation('!',1,$2);}
     | '-' expr %prec NEGATIVE {$$=create_operation(NEGATIVE,1,$2);}
-    | INTEGER {$$=create_constant(INTEGER,INTEGER_TYPE,$1);}
+    | INTEGER {$$=create_constant(INTEGER,INT_TYPE,$1);}
     | FLOAT {$$=create_constant(FLOAT,FLOAT_TYPE,$1);}
     | TRUE {$$=create_constant(BOOL,BOOL_TYPE,1);}
     | FALSE {$$=create_constant(BOOL,BOOL_TYPE,0);}
     | STRING {$$=create_constant(STRING,STRING_TYPE,$1);}
-    | CHARACTER {$$=create_constant(CHARACTER,CHARACTER_TYPE,$1);}
+    | CHARACTER {$$=create_constant(CHARACTER,CHAR_TYPE,$1);}
     | IDENTIFIER {$$=create_identifier($1);}
     | '(' expr ')' {$$=$2;}
     
@@ -244,7 +251,7 @@ Node* create_operation(int oper, int nops,...) {
 }
 
 // Create constant nodes
-Node* create_constant(int type ,int dataType) {
+Node* create_constant(int type ,int dataType,...) {
     va_list ap;
     Node *p;
     size_t nodeSize;
@@ -266,11 +273,11 @@ Node* create_constant(int type ,int dataType) {
 Node* create_identifier(char* i, int dataType, int qualifier) {
     Node *p;
     size_t nodeSize;
-    nodeSize = sizeof(Node) + sizeof(IdentifierNode);
+    nodeSize = sizeof(Node) + sizeof(VariableNode);
     if ((p = (Node*)malloc(nodeSize)) == NULL)
         yyerror("out of memory");
 
-    p->type = IDENTIFIER;
+    p->type = VARIABLE;
     p->id.name = strdup(i);
     p->id.dataType = dataType;
     p->id.qualifier = qualifier;

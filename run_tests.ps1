@@ -1,7 +1,7 @@
 Write-Host "Generating compiler..."
 flex lexer.l
 bison -d parser.y 
-gcc parser.tab.c lex.yy.c -o compiler
+g++ parser.tab.c lex.yy.c compiler.cpp -o compiler 2> error.txt
 
 
 Write-Host "-----------------------------------Running test_switch.c-----------------------------------"

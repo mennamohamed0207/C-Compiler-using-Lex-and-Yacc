@@ -64,25 +64,25 @@ type:
 */
 const char *get_data_type(int type)
 {
-    switch (type)
-    {
-    case INTEGER:
-    case INT_TYPE:
-        return "int";
-    case FLOAT:
-    case FLOAT_TYPE:
-        return "float";
-    case BOOL:
-    case BOOL_TYPE:
-        return "bool";
-    case STRING:
-    case STRING_TYPE:
-        return "string";
-    case VOID:
-        return "void";
-    default:
-        return "";
-    }
+    // switch (type)
+    // {
+    // case INTEGER:
+    // case INT_TYPE:
+    //     return "int";
+    // case FLOAT:
+    // case FLOAT_TYPE:
+    //     return "float";
+    // case BOOL:
+    // case BOOL_TYPE:
+    //     return "bool";
+    // case STRING:
+    // case STRING_TYPE:
+    //     return "string";
+    // case VOID:
+    //     return "void";
+    // default:
+    //     return "";
+    // }
 }
 void log_symbol_table()
 {
@@ -147,19 +147,19 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
         // fprintf(stderr,"write_to_assembly: NULL pointer\n");
         return 0;
     }
-    switch (p->type)
-    {
-    case CONSTANT:
-        switch (p->con.dataType)
-        {
-        case INT_TYPE:
-        printf("\tpush %s\t%d\n", get_data_type(INT_TYPE), p->con.value.intVal);
-        open_assembly_file();
-        fprintf(assemblyOutFile, "\tpush %s\t%d\n", get_data_type(INT_TYPE), p->con.value.intVal);
-        break;
-        case BOOL_TYPE:
-        case FLOAT_TYPE:
-        case STRING_TYPE:
-        }
-    }
+    // switch (p->type)
+    // {
+    // case CONSTANT:
+    //     switch (p->con.dataType)
+    //     {
+    //     case INT_TYPE:
+    //     printf("\tpush %s\t%d\n", get_data_type(INT_TYPE), p->con.value.intVal);
+    //     open_assembly_file();
+    //     fprintf(assemblyOutFile, "\tpush %s\t%d\n", get_data_type(INT_TYPE), p->con.value.intVal);
+    //     break;
+    //     case BOOL_TYPE:
+    //     case FLOAT_TYPE:
+    //     case STRING_TYPE:
+    //     }
+    // }
 }

@@ -22,26 +22,29 @@ using namespace std;
 #define STATEMENT_LIST 2
 #define COMMA 3
 #define CALL 4
-#define INTEGER 258   // For integer literals (e.g., 42)
-#define FLOAT 259     // For float literals (e.g., 3.14)
-#define STRING 260    // For string literals (e.g., "hello")
-#define CHARACTER 261 // For character literals (e.g., 'a')
-#define TRUE 262      // Boolean true
-#define FALSE 263     // Boolean false
-#define BOOL 264      // Boolean type specifier
+// #define INTEGER 258   // For integer literals (e.g., 42)
+// #define FLOAT 259     // For float literals (e.g., 3.14)
+// #define STRING 260     // For string literals (e.g., "hello")
+// #define CHARACTER 261 // For character literals (e.g., 'a')
+// #define TRUE 262      // Boolean true
+// #define FALSE 263     // Boolean false
+// #define BOOL 264      // Boolean type specifier
 
 
 // Data types
-#define INT_TYPE 270
-#define FLOAT_TYPE 271
-#define BOOL_TYPE 272
-#define STRING_TYPE 273
-#define VOID 274
-#define CHAR 275
+
+// #define INT_TYPE 270
+// #define FLOAT_TYPE 271
+// #define BOOL_TYPE 272
+// #define STRING_TYPE 273
+// #define VOID 266
+// #define CHAR 275
+
+
 
 #define SIZEOFNODE ((char *)&p->con - (char *)p)
 
-typedef enum { CONSTANT, IDENTIFIER, OPERATION } NodeType;
+typedef enum { CONSTANT, VARIABLE, OPERATION } NodeType;
 
 struct ValueType {
     union {
@@ -60,7 +63,7 @@ typedef struct {
     char* name;
     int dataType;
     int qualifier;
-} IdentifierNode;
+} VariableNode;
 
 typedef struct {
     int symbol;
@@ -72,7 +75,7 @@ typedef struct NodeTypeTag {
     NodeType type;
     union {
         ConstantNode con;
-        IdentifierNode id;
+        VariableNode id;
         OperationNode opr;
     };
 } Node;
