@@ -17,11 +17,11 @@ int main()
         }
         WHILE(X < 100);
     }
-
-    FOR(INT I = 0; I < 10; I = I + 1)
+    FOR(int I = 0; I < 10; I = I + 1)
     {
         X = X + 1;
     }
+
 
     RETURN 0;
 }

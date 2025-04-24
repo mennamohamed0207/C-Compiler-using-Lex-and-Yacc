@@ -1,2 +1,43 @@
 	proc	main
 	push int	10
+	pop int	 X
+	push	X
+	push int	5
+	compEQ	
+L001:
+	push	X
+	push int	0
+	compGT	
+	jz	L002
+	push	X
+	push int	1
+	sub	
+	pop int	 X
+	jmp	L001
+L002:
+L004:
+	push	X
+	push int	2
+	mul	
+	pop int	 X
+	push	X
+	push int	100
+	compLT	
+	jnz	L004
+L005:
+	push int	0
+	pop int	 I
+	push	I
+	push int	10
+	compLT	
+	push	X
+	push int	1
+	add	
+	pop int	 X
+	push	I
+	push int	1
+	add	
+	pop int	 I
+	ret	
+	push int	0
+	endproc	

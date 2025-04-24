@@ -27,17 +27,11 @@ void add_block_scope()
 {
     symbol.push_back(map<string, SymbolTable *>());
     level++;
-    printf("Entering scope level %d\n", level); // Debug
 }
-
 void remove_block_scope()
 {
-    if (level > 0)
-    {                                              // Never remove global scope
-        printf("Leaving scope level %d\n", level); // Debug
-        symbol.pop_back();
-        level--;
-    }
+    symbol.pop_back();
+    level--;
 }
 
 void check_unused_variables()
@@ -47,7 +41,7 @@ void check_unused_variables()
     std::string unused_variables = "";
     for (it = symbol[level].begin(); it != symbol[level].end(); it++)
     {
-        if (it->second->used == false && it->second->isFunction == false)
+        if (it->second->used == false)
         {
             unused_variables += it->second->name + ", ";
         }
@@ -113,79 +107,55 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
     if (p->type != VARIABLE)
         return NULL;
 
-    // Search from current scope outward
     for (int i = level; i >= 0; i--)
     {
         if (symbol[i].find(p->id.name) != symbol[i].end())
         {
             SymbolTable *entry = symbol[i][p->id.name];
-            if (!isRHS && !entry->isInitialized && !entry->isFunction)
+
+            // Error as the variable is already declared
+            if (isRHS && entry->type == CONSTANT)
+            {
+                char errorMsg[1024];
+                sprintf(errorMsg, "Semantic Error: can't assign values to constant variable '%s'", p->id.name);
+                yyerror(errorMsg);
+                return NULL;
+            }
+            if (!isRHS && entry->isFunction == false && entry->isInitialized == false)
+            {
+                char errorMsg[1024];
+                sprintf(errorMsg, "Semantic Error: variable '%s' must be initialized before use", p->id.name);
+                yyerror(errorMsg);
+                return NULL;
+            }
+            if (!isRHS && !entry->isInitialized)
             {
                 yyerror("Variable used before initialization");
             }
-            entry->used = true;
-            return entry;
+            symbol[i][p->id.name]->used = true;
+            return symbol[i][p->id.name];
         }
     }
-
-    char errorMsg[1024];
-    sprintf(errorMsg, "Variable '%s' not declared", p->id.name);
-    yyerror(errorMsg);
     return NULL;
 }
-// SymbolTable *declare_variable(Node *p, bool isRHS = false)
-// {
-//     if (p->type != VARIABLE)
-//         return NULL;
-//     if (p->id.dataType == -1)
-//     {
-//         return check_variable(p, isRHS);
-//     }
-//     bool isConst = (p->id.qualifier == 1);
-
-//     if (symbol[level].find(p->id.name) != symbol[level].end())
-//     {
-//         char errorMsg[1024];
-//         sprintf(errorMsg, "Semantic Error: variable '%s' already declared in this scope", p->id.name);
-//         yyerror(errorMsg);
-//         return NULL;
-//     }
-//     symbol[level][p->id.name] = new SymbolTable(
-//         strdup(p->id.name),
-//         p->id.dataType,
-//         isConst ? CONSTANT : VARIABLE, // Set symbolType properly
-//         level,
-//         timestep++,
-//         false);
-//     symbolTable.push_back(symbol[level][p->id.name]);
-//     return symbol[level][p->id.name];
-// }
-SymbolTable *declare_variable(Node *p, bool isRHS = false) {
-    if (p->type != VARIABLE) return NULL;
-
-    // Check if already declared in current scope
-    if (symbol[level].find(p->id.name) != symbol[level].end()) {
-        if (!isRHS) { // Only error if not RHS usage
-            char errorMsg[1024];
-            sprintf(errorMsg, "Variable '%s' already declared in this scope", p->id.name);
-            yyerror(errorMsg);
-            return NULL;
-        }
-        return symbol[level][p->id.name];
+SymbolTable *declare_variable(Node *p, bool isRHS = false)
+{
+    if (p->type != VARIABLE)
+        return NULL;
+    if (p->id.dataType == -1)
+    {
+        return check_variable(p, isRHS);
     }
-
-    // Create new entry
-    SymbolTable *entry = new SymbolTable(
-        p->id.name,
-        p->id.dataType,
-        p->id.qualifier == 1 ? CONSTANT : VARIABLE,
-        level,
-        timestep++,
-        isRHS); // Mark as initialized if this is a declaration with initialization
-    
-    symbol[level][p->id.name] = entry;
-    symbolTable.push_back(entry);
-    return entry;
+    if (symbol[level].find(p->id.name) != symbol[level].end())
+    {
+        char errorMsg[1024];
+        sprintf(errorMsg, "Semantic Error: variable '%s' already declared in this scope", p->id.name);
+        yyerror(errorMsg);
+        return NULL;
+    }
+    symbol[level][p->id.name] = new SymbolTable(strdup(p->id.name), p->id.dataType, p->id.qualifier, level, timestep++, false);
+    symbolTable.push_back(symbol[level][p->id.name]);
+    return symbol[level][p->id.name];
 }
 void log_symbol_table()
 {
@@ -210,14 +180,12 @@ void log_symbol_table()
 void log_errors(int line, const char *msg)
 {
     FILE *errorFile = fopen("errors.txt", "a");
-    if (errorFile == NULL)
+    if (!errorFile)
     {
         fprintf(stderr, "Error opening error file: errors.txt\n");
-        fflush(stderr);
+        exit(1);
     }
-
     fprintf(errorFile, "Error at line %d: %s\n", line, msg);
-    // fclose(errorFile);
 }
 
 Node *create_label_node(int label)
@@ -381,29 +349,26 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             break;
         case FOR:
             open_assembly_file();
-            add_block_scope(); // Create scope for entire FOR
-
-            // Process initialization
+            add_block_scope();
             write_to_assembly(p->opr.op[0], p);
-
             printf("L%03d:\n", l1 = label++);
-            // Process condition
             type1 = write_to_assembly(p->opr.op[1], p);
             if (type1 != BOOL_TYPE)
-                yyerror("for condition must be boolean");
+            {
+                printf("Semantic Error: for condition must be a boolean expression\n");
+                yyerror("for condition must be a boolean expression");
+            }
             printf("\tjz\tL%03d\n", l2 = label++);
 
-            // Process body
-            write_to_assembly(p->opr.op[3], p, l3 = label++, l2);
+            write_to_assembly(p->opr.op[3], p, l3 = label++, l2); // body
 
-            printf("L%03d:\n", l3);
-            // Process increment
-            write_to_assembly(p->opr.op[2], p);
+            printf("L%03d:\n", l3); // continue if true
 
+            write_to_assembly(p->opr.op[2], p); // next iter inc/dec
             printf("\tjmp\tL%03d\n", l1);
             printf("L%03d:\n", l2);
 
-            remove_block_scope(); // Exit FOR scope
+            remove_block_scope();
             break;
         case SWITCH:
             open_assembly_file();
@@ -509,47 +474,31 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             remove_block_scope();
             break;
         case '=':
-        {
-            // Put the entire case in a block
             open_assembly_file();
-
-            // First check if LHS is valid
-            if (p->opr.op[0]->type != VARIABLE)
+            type1 = write_to_assembly(p->opr.op[1], p);
+            if (p->opr.op[1]->type == OPERATION && p->opr.op[1]->opr.symbol == '=') // variable assignment
             {
-                yyerror("Left side of assignment must be a variable");
-                return 0;
+                printf("\tpush\t%s\t%s\n", get_data_type(p->opr.op[1]->opr.op[0]->id.dataType), p->opr.op[1]->opr.op[0]->id.name);
+                // check if it is constant
+                fprintf(assemblyOutFile, "\tpush\t%s\t%s\n", get_data_type(p->opr.op[1]->opr.op[0]->id.dataType), p->opr.op[1]->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
             }
-
-            // Check for constant assignment
-            SymbolTable *lhs = check_variable(p->opr.op[0]);
-            if (lhs && lhs->symbolType == CONSTANT)
-            {
-                char errorMsg[1024];
-                sprintf(errorMsg, "Cannot assign to constant variable '%s'",
-                        p->opr.op[0]->id.name);
-                yyerror(errorMsg);
-                return 0;
-            }
-
-            // Process RHS
-            int rhs_type = write_to_assembly(p->opr.op[1], p);
-
-            // Type checking
-            if (rhs_type != lhs->type)
+            symoblTableEntry = declare_variable(p->opr.op[0], true);
+            if (type1 != symoblTableEntry->type)
             {
                 char msg[1024];
-                sprintf(msg, "Type mismatch: cannot assign %s to %s",
-                        get_data_type(rhs_type),
-                        get_data_type(lhs->type));
+                sprintf(msg, "Semantic ERROR: Type mismatch in assignment %s and '%s' %s",
+                        get_data_type(type1),
+                        p->opr.op[0]->id.name,
+                        get_data_type(symoblTableEntry->type));
                 yyerror(msg);
-                return 0;
             }
-
-            // Generate assignment code
-            printf("\tpop %s\t%s\n", get_data_type(lhs->type), p->opr.op[0]->id.name);
-            return lhs->type;
-        } // End of case block
-        break;
+            symoblTableEntry->isInitialized = true;
+            // check if const
+            printf("\tpop %s\t%s\t%s\n", get_data_type(symoblTableEntry->type), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+            fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_data_type(symoblTableEntry->type), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+            fflush(assemblyOutFile);
+            return symoblTableEntry->type;
         case NEGATIVE:
             open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0], p);
@@ -613,42 +562,58 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             {
                 remove_block_scope();
             }
-
-            break;
         }
+        break;
         case FUNCTION:
-            // Properly handle function declaration
+            // printf("thissssssssssssssssss %s\t\n", p->opr.op[0]->opr.op[0]->id.name);
+            // fflush(stdout);
+            open_assembly_file();
+            add_block_scope();
             symoblTableEntry = declare_variable(p->opr.op[0]->opr.op[0], true);
-            if (!symoblTableEntry)
-            {
-                yyerror("Failed to declare function");
-                break;
-            }
             symoblTableEntry->isFunction = true;
-
-            // Start function in assembly
+            printf("\tproc\t%s\n", p->opr.op[0]->opr.op[0]->id.name);
             fprintf(assemblyOutFile, "\tproc\t%s\n", p->opr.op[0]->opr.op[0]->id.name);
-
-            // Handle parameters (currently in p->opr.op[1])
+            fflush(assemblyOutFile);
             if (p->opr.op[1])
             {
-                // Need to properly process parameters here
-                // Currently just writing them without proper handling
                 write_to_assembly(p->opr.op[1], p);
             }
-
-            // Function body
+            // printf("\thissssssssssssssssss %s\t\n", p->opr.op[3]);
             write_to_assembly(p->opr.op[2], p);
-
-            // Handle return statement if present
-            if (p->opr.op[3])
-            {
-                write_to_assembly(p->opr.op[3], p);
-            }
-
-            fprintf(assemblyOutFile, "\tendproc\t\n");
+            write_to_assembly(p->opr.op[3], p);
             remove_block_scope();
+            return symoblTableEntry->type;
             break;
+        // case FUNCTION:
+        //     open_assembly_file();
+        //     add_block_scope();
+        //     symoblTableEntry = declare_variable(p->opr.op[0]->opr.op[0], true);
+        //     if (!symoblTableEntry)
+        //     {
+        //         yyerror("Function declaration failed");
+        //         return 0;
+        //     }
+        //     symoblTableEntry->isFunction = true;
+        //     printf("\tproc\t%s\n", p->opr.op[0]->opr.op[0]->id.name);
+
+        //     // Process parameters
+        //     if (p->opr.op[1])
+        //     {
+        //         Node *args = p->opr.op[1];
+        //         while (args && args->type == OPERATION && args->opr.symbol == COMMA)
+        //         {
+        //             write_to_assembly(args->opr.op[0]);
+        //             args = args->opr.op[1];
+        //         }
+        //         if (args)
+        //             write_to_assembly(args);
+        //     }
+
+        //     // Process body
+        //     write_to_assembly(p->opr.op[2]);
+        //     write_to_assembly(p->opr.op[3]);
+        //     remove_block_scope();
+        //     return symoblTableEntry->type;
         case CALL:
             open_assembly_file();
             write_to_assembly(p->opr.op[1]);

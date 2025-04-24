@@ -1,4 +1,4 @@
 Name,	DataType,	Qualifier,	TimeStep,	Scope,	Initialized,	Used,	 Function
-main,		, 		Variable, 		0, 		1, 		False, 		False, 		True 
-a,		, 		Variable, 		1, 		1, 		True, 		True, 		False 
-b,		, 		Variable, 		2, 		1, 		True, 		True, 		False 
+main,		int, 		Variable, 		0, 		1, 		False, 		False, 		True 
+X,		int, 		Variable, 		1, 		1, 		True, 		True, 		False 
+I,		int, 		Variable, 		2, 		2, 		True, 		True, 		False 

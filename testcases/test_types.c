@@ -12,8 +12,8 @@ int main()
     }
     else
     {
-        int d = a - b;
-        int e = c - d;
+        int y = a - b;
+        int x = c - d;
     }
 
     char f;
