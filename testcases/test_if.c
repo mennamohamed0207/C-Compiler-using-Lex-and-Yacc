@@ -3,15 +3,15 @@ int main() {
     
     // Simple if-else
     if (a > 5) {
-        printf("A is greater than 5");
+        int y=5;
     } else {
-        printf("A is 5 or less");
+        int x=10;
     }
 
     // Nested if
     if (a > 0) {
         if (a < 20) {
-            printf("A is between 1-19");
+            int r=15;
         }
     }
     

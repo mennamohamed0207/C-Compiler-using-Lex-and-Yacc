@@ -1,7 +1,7 @@
 Write-Host "Generating compiler..."
 flex lexer.l
 bison -d parser.y 
-g++ parser.tab.c lex.yy.c compiler.cpp -o compiler 2> error.txt
+g++ parser.tab.c lex.yy.c compiler.cpp -o mycompiler 2> error.txt
 
 
 
@@ -14,17 +14,12 @@ g++ parser.tab.c lex.yy.c compiler.cpp -o compiler 2> error.txt
 # Write-Host "-----------------------------------Running test_switch.c-----------------------------------"
 # Get-Content testcases\test_switch.c | .\compiler
 
-# Write-Host "`n-----------------------------------Running test_if.c-----------------------------------"
-# Get-Content testcases\test_if.c | .\compiler 
-
 # Write-Host "`n-----------------------------------Running test_while.c-----------------------------------"
 # Get-Content testcases\test_while.c | .\compiler 
 
-# Write-Host "`n-----------------------------------Running test_for.c-----------------------------------"
-# Get-Content testcases\test_for.c | .\compiler 
 
 Write-Host "`n-----------------------------------Running test_dowhile.c-----------------------------------"
-Get-Content testcases\test_dowhile.c | .\compiler 
+Get-Content testcases\test_dowhile.c | .\mycompiler 
 
 # Write-Host "`n-----------------------------------Running test_function.c-----------------------------------"
 # Get-Content testcases\test_function.c | .\compiler 
@@ -40,3 +35,8 @@ Get-Content testcases\test_dowhile.c | .\compiler
 # Get-Content testcases\test_valid.c | .\compiler 
 # Write-Host "`n-----------------------------------Running test_inc_dec.c-----------------------------------"
 # Get-Content testcases\test_inc_dec.c | .\compiler 
+
+# Write-Host "`n-----------------------------------Running test_if.c-----------------------------------"
+# Get-Content testcases\test_if.c | .\compiler 
+# Write-Host "`n-----------------------------------Running test_for.c-----------------------------------"
+# Get-Content testcases\test_for.c | .\compiler 

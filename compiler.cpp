@@ -352,6 +352,8 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             add_block_scope();
             write_to_assembly(p->opr.op[0], p);
             printf("L%03d:\n", l1 = label++);
+            fprintf(assemblyOutFile, "L%03d:\n", l1);
+            fflush(assemblyOutFile);
             type1 = write_to_assembly(p->opr.op[1], p);
             if (type1 != BOOL_TYPE)
             {
@@ -359,14 +361,22 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 yyerror("for condition must be a boolean expression");
             }
             printf("\tjz\tL%03d\n", l2 = label++);
+            fprintf(assemblyOutFile, "\tjz\tL%03d\n", l2);
+            fflush(assemblyOutFile);
 
             write_to_assembly(p->opr.op[3], p, l3 = label++, l2); // body
 
             printf("L%03d:\n", l3); // continue if true
+            fprintf(assemblyOutFile, "L%03d:\n", l3);
+            fflush(assemblyOutFile);
 
             write_to_assembly(p->opr.op[2], p); // next iter inc/dec
             printf("\tjmp\tL%03d\n", l1);
+            fprintf(assemblyOutFile, "\tjmp\tL%03d\n", l1);
+            fflush(assemblyOutFile);
             printf("L%03d:\n", l2);
+            fprintf(assemblyOutFile, "L%03d:\n", l2);
+            fflush(assemblyOutFile);
 
             remove_block_scope();
             break;
@@ -576,7 +586,8 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                                       (parent->type == OPERATION &&
                                        (parent->opr.symbol == IF ||
                                         parent->opr.symbol == WHILE ||
-                                        parent->opr.symbol == FOR)));
+                                        parent->opr.symbol == FOR ||
+                                        parent->opr.symbol == DO)));
 
             if (should_add_scope)
             {
@@ -659,8 +670,10 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             printf("\tret\t\n");
             fprintf(assemblyOutFile, "\tret\t\n");
             fflush(assemblyOutFile);
-
-            write_to_assembly(p->opr.op[0]);
+            if (p->opr.op[0])
+            {
+                write_to_assembly(p->opr.op[0]);
+            }
             printf("\tendproc\t\n");
             fprintf(assemblyOutFile, "\tendproc\t\n");
             fflush(assemblyOutFile);
