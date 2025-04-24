@@ -86,7 +86,7 @@
     Node* create_identifier(char* i, int dataType, int qualifier);
     void free_node(Node *p);
 
-    int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...);
+    int write_to_assembly(Node *p, Node *parent=NULL, int cont = -1, int brk = -1, int args = 0, ...);
     extern int yylex();
     void yyerror(const char *s);
     extern int yylineno;

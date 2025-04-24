@@ -5,8 +5,16 @@ int main()
     a = 10;
     const int c = 30;
 
-    int d = a + b;
-    int e = c + d;
+    if (a < b)
+    {
+        int d = a + b;
+        int e = c + d;
+    }
+    else
+    {
+        int d = a - b;
+        int e = c - d;
+    }
 
     char f;
     bool h = true;

@@ -9,19 +9,15 @@
 	pop int	const c
 	push	a
 	push	b
+	compLT	
+	push	a
+	push	b
 	add	
 	pop int	 d
 	push	c
 	push	d
 	add	
 	pop int	 e
-	pop char	f
-	push bool	1
-	pop bool	 h
-	push char	a
-	pop char	 j
-	push string	"Hello, World!"
-	pop string	 i
-	ret	
-	push int	0
-	endproc	
+	push	a
+	push	b
+	sub	

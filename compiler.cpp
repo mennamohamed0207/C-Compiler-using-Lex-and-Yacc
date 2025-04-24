@@ -201,7 +201,7 @@ Node *create_label_node(int label)
     p->con.value.intVal = label;
     return p;
 }
-int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
+int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1, int args = 0, ...)
 {
     printf("write_to_assembly %d\n", p->opr.symbol);
     fflush(stdout);
@@ -298,7 +298,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             printf("L%03d:\n", l1 = label++); // start
             fprintf(assemblyOutFile, "L%03d:\n", l1);
             fflush(assemblyOutFile);
-            type1 = write_to_assembly(p->opr.op[0]);
+            type1 = write_to_assembly(p->opr.op[0], p);
             if (type1 != BOOL_TYPE)
             {
                 printf("Semantic Error: while condition must be a boolean expression\n");
@@ -308,8 +308,8 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             fprintf(assemblyOutFile, "\tjz\tL%03d\n", l2);
             fflush(assemblyOutFile);
 
-            write_to_assembly(p->opr.op[1], l1, l2); // body
-            printf("\tjmp\tL%03d\n", l1);            // continue
+            write_to_assembly(p->opr.op[1], p, l1, l2); // body
+            printf("\tjmp\tL%03d\n", l1);               // continue
             fprintf(assemblyOutFile, "\tjmp\tL%03d\n", l1);
             fflush(assemblyOutFile);
 
@@ -322,7 +322,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
         case IF:
             open_assembly_file();
             add_block_scope();
-            type1 = write_to_assembly(p->opr.op[0]);
+            type1 = write_to_assembly(p->opr.op[0], p);
             if (type1 != BOOL_TYPE)
             {
                 printf("Semantic Error: if condition must be a boolean expression\n");
@@ -332,17 +332,17 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             {
                 // else if
                 printf("\tjz\tL%03d\n", l1 = label++);
-                write_to_assembly(p->opr.op[1], cont, brk);
+                write_to_assembly(p->opr.op[1], p, cont, brk);
                 printf("\tjmp\tL%03d\n", l2 = label++);
                 printf("L%03d:\n", l1);
-                write_to_assembly(p->opr.op[2], cont, brk);
+                write_to_assembly(p->opr.op[2], p, cont, brk);
                 printf("L%03d:\n", l2);
             }
             else
             {
                 // else
                 printf("\tjz\tL%03d\n", l1 = label++);
-                write_to_assembly(p->opr.op[1], cont, brk);
+                write_to_assembly(p->opr.op[1], p, cont, brk);
                 printf("L%03d:\n", l1);
             }
             remove_block_scope();
@@ -350,7 +350,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
         case FOR:
             open_assembly_file();
             add_block_scope();
-            type1 = write_to_assembly(p->opr.op[1]);
+            type1 = write_to_assembly(p->opr.op[1], p);
             if (type1 != BOOL_TYPE)
             {
                 printf("Semantic Error: for condition must be a boolean expression\n");
@@ -358,11 +358,11 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             }
             printf("\tjz\tL%03d\n", l2 = label++);
 
-            write_to_assembly(p->opr.op[3], l3 = label++, l2); // body
+            write_to_assembly(p->opr.op[3], p, l3 = label++, l2); // body
 
             printf("L%03d:\n", l3); // continue if true
 
-            write_to_assembly(p->opr.op[2]); // next iter inc/dec
+            write_to_assembly(p->opr.op[2], p); // next iter inc/dec
             printf("\tjmp\tL%03d\n", l1);
             printf("L%03d:\n", l2);
 
@@ -396,7 +396,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
                 printf("\tpush\t%s\n", switch_var->id.name);
                 fprintf(assemblyOutFile, "\tpush\t%s\n", switch_var->id.name);
                 fflush(assemblyOutFile);
-                write_to_assembly(n->opr.op[0], cont, brk);
+                write_to_assembly(n->opr.op[0], p, cont, brk);
                 printf("\tcompEQ\t\n");
                 fprintf(assemblyOutFile, "\tcompEQ\t\n");
                 fflush(assemblyOutFile);
@@ -421,7 +421,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
                     fprintf(assemblyOutFile, "\tjz\tL%03d\n", l1);
                     fflush(assemblyOutFile);
                 }
-                write_to_assembly(n->opr.op[1], cont, brk);
+                write_to_assembly(n->opr.op[1], p, cont, brk);
                 printf("\tjmp\tL%03d\n", endLabel);
                 fprintf(assemblyOutFile, "\tjmp\tL%03d\n", endLabel);
                 fflush(assemblyOutFile);
@@ -438,7 +438,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
                 printf("L%03d:\n", l1 = defaultLabel);
                 fprintf(assemblyOutFile, "L%03d:\n", l1);
                 fflush(assemblyOutFile);
-                write_to_assembly(p->opr.op[2]->opr.op[0], cont, brk);
+                write_to_assembly(p->opr.op[2]->opr.op[0], p, cont, brk);
                 printf("\tjmp\tL%03d\n", endLabel);
                 fprintf(assemblyOutFile, "\tjmp\tL%03d\n", endLabel);
                 fflush(assemblyOutFile);
@@ -453,8 +453,8 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             printf("L%03d:\n", l1 = label++);
             fprintf(assemblyOutFile, "L%03d:\n", l1);
             fflush(assemblyOutFile);
-            write_to_assembly(p->opr.op[0], l1, l2 = label++);
-            type1 = write_to_assembly(p->opr.op[1]);
+            write_to_assembly(p->opr.op[0], p, l1, l2 = label++);
+            type1 = write_to_assembly(p->opr.op[1], p);
             if (type1 != BOOL_TYPE)
             {
                 printf("Semantic Error: do while condition must be a boolean expression\n");
@@ -473,7 +473,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             break;
         case '=':
             open_assembly_file();
-            type1 = write_to_assembly(p->opr.op[1]);
+            type1 = write_to_assembly(p->opr.op[1], p);
             if (p->opr.op[1]->type == OPERATION && p->opr.op[1]->opr.symbol == '=') // variable assignment
             {
                 printf("\tpush\t%s\t%s\n", get_data_type(p->opr.op[1]->opr.op[0]->id.dataType), p->opr.op[1]->opr.op[0]->id.name);
@@ -499,14 +499,14 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             return symoblTableEntry->type;
         case NEGATIVE:
             open_assembly_file();
-            type1 = write_to_assembly(p->opr.op[0]);
+            type1 = write_to_assembly(p->opr.op[0], p);
             printf("\tneg\t\n");
             fprintf(assemblyOutFile, "\tneg\t\n");
             fflush(assemblyOutFile);
             return type1;
         case NOT:
             open_assembly_file();
-            type1 = write_to_assembly(p->opr.op[0]);
+            type1 = write_to_assembly(p->opr.op[0], p);
             printf("\tnot\t\n");
             fprintf(assemblyOutFile, "\tnot\t\n");
             fflush(assemblyOutFile);
@@ -536,18 +536,32 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
         case DEFAULT:
             open_assembly_file();
             add_block_scope();
-            write_to_assembly(p->opr.op[0], cont, brk);
+            write_to_assembly(p->opr.op[0], p, cont, brk);
             remove_block_scope();
             break;
         case BLOCK:
+        {
             open_assembly_file();
-            add_block_scope();
+            bool should_add_scope = !(parent &&
+                                      (parent->type == OPERATION &&
+                                       (parent->opr.symbol == IF ||
+                                        parent->opr.symbol == WHILE ||
+                                        parent->opr.symbol == FOR)));
+
+            if (should_add_scope)
+            {
+                add_block_scope();
+            }
             for (int i = 0; i < p->opr.nops; i++)
             {
-                write_to_assembly(p->opr.op[i], cont, brk);
+                write_to_assembly(p->opr.op[i], p, cont, brk);
             }
-            remove_block_scope();
-            break;
+            if (should_add_scope)
+            {
+                remove_block_scope();
+            }
+        }
+        break;
         case FUNCTION:
             printf("thissssssssssssssssss %s\t\n", p->opr.op[0]->opr.op[0]->id.name);
             fflush(stdout);
@@ -560,11 +574,11 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             fflush(assemblyOutFile);
             if (p->opr.op[1])
             {
-                write_to_assembly(p->opr.op[1]);
+                write_to_assembly(p->opr.op[1], p);
             }
             printf("\thissssssssssssssssss %s\t\n", p->opr.op[3]);
-            write_to_assembly(p->opr.op[2]);
-            write_to_assembly(p->opr.op[3]);
+            write_to_assembly(p->opr.op[2], p);
+            write_to_assembly(p->opr.op[3], p);
             remove_block_scope();
             return symoblTableEntry->type;
             break;
@@ -623,12 +637,12 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             break;
         case ';':
             for (int i = 0; i < p->opr.nops; i++)
-                write_to_assembly(p->opr.op[i], cont, brk);
+                write_to_assembly(p->opr.op[i], p, cont, brk);
             break;
         default:
             open_assembly_file();
-            type1 = write_to_assembly(p->opr.op[0], cont, brk);
-            type2 = write_to_assembly(p->opr.op[1], cont, brk);
+            type1 = write_to_assembly(p->opr.op[0], p, cont, brk);
+            type2 = write_to_assembly(p->opr.op[1], p, cont, brk);
             if (type1 != type2)
             {
                 char msg[1024];

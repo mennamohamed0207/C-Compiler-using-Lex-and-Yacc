@@ -13,3 +13,4 @@ Error at line 4: syntax error
 Error at line 1: syntax error
 Error at line 1: syntax error
 Error at line 4: syntax error
+Error at line 24: Semantic Error: variable 'd' already declared in this scope
