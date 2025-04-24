@@ -14,9 +14,14 @@ class CompilerGUI:
         
         # Execution queue for thread-safe operations
         self.queue = queue.Queue()
+        self.current_file = None
         
-        # Create UI components
+        # Initialize widgets first
+        self.code_editor = None
         self.create_widgets()
+        
+        # Then create menu bar that depends on widgets
+        self.create_menu_bar()
         
         # Start queue checker
         self.check_queue()
@@ -72,6 +77,37 @@ class CompilerGUI:
         self.error_tab = self.create_tab("Errors")
         self.console_tab = self.create_tab("Console")
         
+    def create_menu_bar(self):
+        menubar = tk.Menu(self.root)
+        
+        # File menu
+        file_menu = tk.Menu(menubar, tearoff=0)
+        file_menu.add_command(label="New", command=self.new_file, accelerator="Ctrl+N")
+        file_menu.add_command(label="Open", command=self.open_file, accelerator="Ctrl+O")
+        file_menu.add_command(label="Save", command=self.save_file, accelerator="Ctrl+S")
+        file_menu.add_command(label="Save As", command=self.save_file_as)
+        file_menu.add_separator()
+        file_menu.add_command(label="Exit", command=self.root.quit)
+        menubar.add_cascade(label="File", menu=file_menu)
+        
+        # # Edit menu (only add if code_editor exists)
+        # if hasattr(self, 'code_editor'):
+        #     edit_menu = tk.Menu(menubar, tearoff=0)
+        #     edit_menu.add_command(label="Undo", command=self.code_editor.edit_undo, accelerator="Ctrl+Z")
+        #     edit_menu.add_command(label="Redo", command=self.code_editor.edit_redo, accelerator="Ctrl+Y")
+        #     edit_menu.add_separator()
+        #     edit_menu.add_command(label="Cut", command=self.cut_text, accelerator="Ctrl+X")
+        #     edit_menu.add_command(label="Copy", command=self.copy_text, accelerator="Ctrl+C")
+        #     edit_menu.add_command(label="Paste", command=self.paste_text, accelerator="Ctrl+V")
+        #     menubar.add_cascade(label="Edit", menu=edit_menu)
+        
+        self.root.config(menu=menubar)
+        
+        # Bind keyboard shortcuts
+        self.root.bind_all("<Control-n>", lambda e: self.new_file())
+        self.root.bind_all("<Control-o>", lambda e: self.open_file())
+        self.root.bind_all("<Control-s>", lambda e: self.save_file())
+        
     def create_tab(self, name):
         frame = ttk.Frame(self.tabs)
         text = tk.Text(frame, wrap=tk.WORD, font=('Consolas', 10))
@@ -84,6 +120,66 @@ class CompilerGUI:
         self.tabs.add(frame, text=name)
         return text
     
+    # File operations
+    def new_file(self):
+        self.code_editor.delete("1.0", tk.END)
+        self.current_file = None
+        self.status_var.set("🟢 New file created")
+        self.log("Created new file")
+        
+    def open_file(self):
+        file_path = filedialog.askopenfilename(
+            filetypes=[("C Files", "*.c"), ("Text Files", "*.txt"), ("All Files", "*.*")]
+        )
+        if file_path:
+            try:
+                with open(file_path, 'r') as f:
+                    content = f.read()
+                self.code_editor.delete("1.0", tk.END)
+                self.code_editor.insert(tk.END, content)
+                self.current_file = file_path
+                self.status_var.set(f"🟢 Opened: {os.path.basename(file_path)}")
+                self.log(f"Opened file: {file_path}")
+            except Exception as e:
+                self.log(f"Error opening file: {str(e)}")
+                messagebox.showerror("Error", f"Failed to open file:\n{str(e)}")
+    
+    def save_file(self):
+        if self.current_file:
+            self._save_to_file(self.current_file)
+        else:
+            self.save_file_as()
+    
+    def save_file_as(self):
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".c",
+            filetypes=[("C Files", "*.c"), ("Text Files", "*.txt"), ("All Files", "*.*")]
+        )
+        if file_path:
+            self.current_file = file_path
+            self._save_to_file(file_path)
+    
+    def _save_to_file(self, file_path):
+        try:
+            with open(file_path, 'w') as f:
+                f.write(self.code_editor.get("1.0", tk.END))
+            self.status_var.set(f"🟢 Saved: {os.path.basename(file_path)}")
+            self.log(f"Saved file: {file_path}")
+        except Exception as e:
+            self.log(f"Error saving file: {str(e)}")
+            messagebox.showerror("Error", f"Failed to save file:\n{str(e)}")
+    
+    # Edit operations
+    def cut_text(self):
+        self.code_editor.event_generate("<<Cut>>")
+    
+    def copy_text(self):
+        self.code_editor.event_generate("<<Copy>>")
+    
+    def paste_text(self):
+        self.code_editor.event_generate("<<Paste>>")
+    
+    # Compilation and output handling
     def check_queue(self):
         """Process events from the queue in the main thread"""
         try:
@@ -145,7 +241,7 @@ class CompilerGUI:
             
             # Create the process with stdin pipe
             self.compiler_process = subprocess.Popen(
-                ["compiler.exe"],  # Changed to match your execution pattern
+                ["compiler.exe"],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
