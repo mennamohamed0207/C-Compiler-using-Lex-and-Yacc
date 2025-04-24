@@ -65,14 +65,7 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "<<"      |              
 ">>"      |              
 "&&"      {printf("\nOperator: %s\n", yytext); return AND;}             
-"||"      {printf("\nOperator: %s\n", yytext); return OR;}              
-"+="      |              
-"*="      |              
-"/="      |              
-"%="      |              
-"&="      |              
-"|="      |              
-"^="      |              
+"||"      {printf("\nOperator: %s\n", yytext); return OR;}                            
 "->*"     |              
 "->"      |              
 "::"      |              

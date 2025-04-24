@@ -1,23 +1,28 @@
 	proc	main
-	push int	10
+	push int	5
+	push int	3
+	push int	2
+	add	
+	mul	
 	pop int	 a
-	push int	20
-	pop int	 b
+	push	a
 	push int	10
-	pop int	 a
+	compGT	
+	push	a
 	push int	30
-	pop int	const c
-	push	a
-	push	b
 	compLT	
-	push	a
+	compAND	
+	pop int	 b
 	push	b
-	add	
-	pop int	 d
-	push	c
-	push	d
-	add	
-	pop int	 e
 	push	a
-	push	b
-	sub	
+	push int	2
+	mod	
+	push int	0
+	compEQ	
+	compOR	
+	pop int	 c
+	push int	10
+	pop int	const x
+	ret	
+	push int	0
+	endproc	

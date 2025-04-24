@@ -114,7 +114,9 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
             SymbolTable *entry = symbol[i][p->id.name];
 
             // Error as the variable is already declared
-            if (isRHS && entry->type == CONSTANT)
+            printf("p->id.qualifier %d\n", p->id.qualifier);
+            printf("p->id.name %s\n", p->id.name);
+            if (isRHS && p->id.qualifier == 1)
             {
                 char errorMsg[1024];
                 sprintf(errorMsg, "Semantic Error: can't assign values to constant variable '%s'", p->id.name);
@@ -142,10 +144,12 @@ SymbolTable *declare_variable(Node *p, bool isRHS = false)
 {
     if (p->type != VARIABLE)
         return NULL;
-    if (p->id.dataType == -1)
-    {
-        return check_variable(p, isRHS);
-    }
+    // if (p->id.dataType == -1)
+    // {
+    //     return check_variable(p, isRHS);
+    // }
+    bool isConst = (p->id.qualifier == 1);
+
     if (symbol[level].find(p->id.name) != symbol[level].end())
     {
         char errorMsg[1024];
@@ -153,7 +157,13 @@ SymbolTable *declare_variable(Node *p, bool isRHS = false)
         yyerror(errorMsg);
         return NULL;
     }
-    symbol[level][p->id.name] = new SymbolTable(strdup(p->id.name), p->id.dataType, p->id.qualifier, level, timestep++, false);
+    symbol[level][p->id.name] = new SymbolTable(
+        strdup(p->id.name),
+        p->id.dataType,
+        isConst ? CONSTANT : VARIABLE, // Set symbolType properly
+        level,
+        timestep++,
+        false);
     symbolTable.push_back(symbol[level][p->id.name]);
     return symbol[level][p->id.name];
 }
@@ -473,7 +483,32 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             break;
         case '=':
             open_assembly_file();
+            if (p->opr.op[0]->type == VARIABLE)
+            {
+                SymbolTable *lhs = check_variable(p->opr.op[0]);
+                if (lhs && lhs->symbolType == CONSTANT)
+                {
+                    char errorMsg[1024];
+                    sprintf(errorMsg, "Cannot assign to constant variable '%s'",
+                            p->opr.op[0]->id.name);
+                    yyerror(errorMsg);
+                    return 0;
+                }
+            }
             type1 = write_to_assembly(p->opr.op[1], p);
+            // First check if left-hand side is a constant
+            if (p->opr.op[0]->type == VARIABLE)
+            {
+                SymbolTable *lhs_entry = check_variable(p->opr.op[0]);
+                if (lhs_entry && lhs_entry->symbolType == CONSTANT)
+                {
+                    char errorMsg[1024];
+                    sprintf(errorMsg, "Semantic Error: cannot assign to constant variable '%s'",
+                            p->opr.op[0]->id.name);
+                    yyerror(errorMsg);
+                    return 0;
+                }
+            }
             if (p->opr.op[1]->type == OPERATION && p->opr.op[1]->opr.symbol == '=') // variable assignment
             {
                 printf("\tpush\t%s\t%s\n", get_data_type(p->opr.op[1]->opr.op[0]->id.dataType), p->opr.op[1]->opr.op[0]->id.name);
