@@ -23,14 +23,12 @@ g++ parser.tab.c lex.yy.c compiler.cpp -o compiler 2> error.txt
 # Write-Host "`n-----------------------------------Running test_for.c-----------------------------------"
 # Get-Content testcases\test_for.c | .\compiler 
 
-# Write-Host "`n-----------------------------------Running test_dowhile.c-----------------------------------"
-# Get-Content testcases\test_dowhile.c | .\compiler 
+Write-Host "`n-----------------------------------Running test_dowhile.c-----------------------------------"
+Get-Content testcases\test_dowhile.c | .\compiler 
 
 # Write-Host "`n-----------------------------------Running test_function.c-----------------------------------"
 # Get-Content testcases\test_function.c | .\compiler 
 
-Write-Host "`n-----------------------------------Running test_inc_dec.c-----------------------------------"
-Get-Content testcases\test_inc_dec.c | .\compiler 
 
 
 
@@ -40,3 +38,5 @@ Get-Content testcases\test_inc_dec.c | .\compiler
 # Get-Content testcases\test_types.c | .\compiler
 # Write-Host "`n-----------------------------------Running test_valid.c-----------------------------------"
 # Get-Content testcases\test_valid.c | .\compiler 
+# Write-Host "`n-----------------------------------Running test_inc_dec.c-----------------------------------"
+# Get-Content testcases\test_inc_dec.c | .\compiler 
