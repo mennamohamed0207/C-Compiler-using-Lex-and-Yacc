@@ -513,6 +513,34 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             fprintf(assemblyOutFile, "\tnot\t\n");
             fflush(assemblyOutFile);
             return BOOL_TYPE;
+        case POST_DEC:
+            open_assembly_file();
+            type1 = write_to_assembly(p->opr.op[0], p);
+            printf("\tdec\t%s\n", p->opr.op[0]->id.name);
+            fprintf(assemblyOutFile, "\tdec\t%s\n", p->opr.op[0]->id.name);
+            fflush(assemblyOutFile);
+            return type1;
+        case POST_INC:
+            open_assembly_file();
+            type1 = write_to_assembly(p->opr.op[0], p);
+            printf("\tinc\t%s\n", p->opr.op[0]->id.name);
+            fprintf(assemblyOutFile, "\tinc\t%s\n", p->opr.op[0]->id.name);
+            fflush(assemblyOutFile);
+            return type1;
+        case PRE_DEC:
+            open_assembly_file();
+            type1 = write_to_assembly(p->opr.op[0], p);
+            printf("\tdec\t%s\n", p->opr.op[0]->id.name);
+            fprintf(assemblyOutFile, "\tdec\t%s\n", p->opr.op[0]->id.name);
+            fflush(assemblyOutFile);
+            return type1;
+        case PRE_INC:
+            open_assembly_file();
+            type1 = write_to_assembly(p->opr.op[0], p);
+            printf("\tinc\t%s\n", p->opr.op[0]->id.name);
+            fprintf(assemblyOutFile, "\tinc\t%s\n", p->opr.op[0]->id.name);
+            fflush(assemblyOutFile);
+            return type1;
         case BREAK:
             open_assembly_file();
             if (brk == -1)
@@ -721,16 +749,6 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 fprintf(assemblyOutFile, "\tcompOR\t\n");
                 fflush(assemblyOutFile);
                 return BOOL_TYPE;
-            case POST_DEC:
-                printf("\tdec\t%s\n", p->opr.op[0]->id.name);
-                fprintf(assemblyOutFile, "\tdec\t%s\n", p->opr.op[0]->id.name);
-                fflush(assemblyOutFile);
-                return type1;
-            case POST_INC:
-                printf("\tinc\t%s\n", p->opr.op[0]->id.name);
-                fprintf(assemblyOutFile, "\tinc\t%s\n", p->opr.op[0]->id.name);
-                fflush(assemblyOutFile);
-                return type1;
             }
         }
     }

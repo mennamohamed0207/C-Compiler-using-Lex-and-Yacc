@@ -29,8 +29,8 @@ g++ parser.tab.c lex.yy.c compiler.cpp -o compiler 2> error.txt
 # Write-Host "`n-----------------------------------Running test_function.c-----------------------------------"
 # Get-Content testcases\test_function.c | .\compiler 
 
-# Write-Host "`n-----------------------------------Running test_inc_dec.c-----------------------------------"
-# Get-Content testcases\test_inc_dec.c | .\compiler 
+Write-Host "`n-----------------------------------Running test_inc_dec.c-----------------------------------"
+Get-Content testcases\test_inc_dec.c | .\compiler 
 
 
 
