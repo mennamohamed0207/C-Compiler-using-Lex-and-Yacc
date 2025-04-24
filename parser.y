@@ -57,7 +57,7 @@
 %left EQ NEQ
 %left '<' '>' LTE GTE
 %left '+' '-'
-%left '*' '/'
+%left '*' '/' MOD
 %left POST_INC POST_DEC
 %right PRE_INC PRE_DEC
 %right NOT
@@ -198,15 +198,16 @@ expr:
     | expr '-' expr {$$=create_operation('-',2,$1,$3);}
     | expr '*' expr {$$=create_operation('*',2,$1,$3);}
     | expr '/' expr {$$=create_operation('/',2,$1,$3);}
-    | expr EQ expr {$$=create_operation('==',2,$1,$3);}
-    | expr NEQ expr {$$=create_operation('!=',2,$1,$3);}
+    | expr EQ expr {$$=create_operation(EQ,2,$1,$3);}
+    | expr NEQ expr {$$=create_operation(NEQ,2,$1,$3);}
     | expr '<' expr {$$=create_operation('<',2,$1,$3);}
+    | expr MOD expr {$$=create_operation(MOD,2,$1,$3);}
     | expr '>' expr {$$=create_operation('>',2,$1,$3);}
-    | expr LTE expr {$$=create_operation('<=',2,$1,$3);}
-    | expr GTE expr {$$=create_operation('>=',2,$1,$3);}
-    | expr AND expr {$$=create_operation('&&',2,$1,$3);}
-    | expr OR expr {$$=create_operation('||',2,$1,$3);}
-    | NOT expr {$$=create_operation('!',1,$2);}
+    | expr LTE expr {$$=create_operation(LTE,2,$1,$3);}
+    | expr GTE expr {$$=create_operation(GTE,2,$1,$3);}
+    | expr AND expr {$$=create_operation(AND,2,$1,$3);}
+    | expr OR expr {$$=create_operation(OR,2,$1,$3);}
+    | NOT expr {$$=create_operation(NOT,1,$2);}
     | '-' expr %prec NEGATIVE {$$=create_operation(NEGATIVE,1,$2);}
     | INTEGER {$$=create_constant(INTEGER,INT_TYPE,$1);}
     | FLOAT {$$=create_constant(FLOAT,FLOAT_TYPE,$1);}

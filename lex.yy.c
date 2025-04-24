@@ -985,7 +985,10 @@ case 52:
 case 53:
 #line 87 "lexer.l"
 case 54:
-#line 88 "lexer.l"
+YY_RULE_SETUP
+#line 87 "lexer.l"
+{printf("\nOperator: %s\n", yytext); return MOD;}                    
+	YY_BREAK
 case 55:
 YY_RULE_SETUP
 #line 88 "lexer.l"
@@ -1097,7 +1100,7 @@ YY_RULE_SETUP
 #line 121 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1101 "lex.yy.c"
+#line 1104 "lex.yy.c"
 			case YY_STATE_EOF(INITIAL):
 				yyterminate();
 

@@ -86,13 +86,14 @@
      DECLARATION = 291,
      OR = 292,
      AND = 293,
-     POST_DEC = 294,
-     POST_INC = 295,
-     PRE_DEC = 296,
-     PRE_INC = 297,
-     NEGATIVE = 298,
-     LOWER_THAN_ELSE = 299,
-     FUNC = 300
+     MOD = 294,
+     POST_DEC = 295,
+     POST_INC = 296,
+     PRE_DEC = 297,
+     PRE_INC = 298,
+     NEGATIVE = 299,
+     LOWER_THAN_ELSE = 300,
+     FUNC = 301
    };
 #endif
 
@@ -117,7 +118,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 121 "parser.tab.h"
+#line 122 "parser.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

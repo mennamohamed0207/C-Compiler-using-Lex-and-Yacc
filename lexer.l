@@ -84,7 +84,7 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "-"       |              
 "*"       |              
 "/"       |              
-"%"       |              
+"%"       {printf("\nOperator: %s\n", yytext); return MOD;}                    
 "<"       {printf("\nOperator: %s\n", yytext); return '<';}              
 ">"       {printf("\nOperator: %s\n", yytext); return '>';}
 "!"       {printf("\nOperator: %s\n", yytext); return NOT;}                    
