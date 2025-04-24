@@ -1,23 +1,23 @@
 	push int	10
-	pop int	a
+	pop int		a
 	push int	20
-	pop int	b
+	pop int		b
 	push int	10
-	pop int	a
+	pop int		a
 	push int	30
-	pop int	c
+	pop int	const	c
 	push	a
 	push	b
 	add	
-	pop int	d
+	pop int		d
 	push	c
 	push	d
 	add	
-	pop int	e
+	pop int		e
 	pop char	f
 	push bool	1
-	pop bool	h
+	pop bool		h
 	push char	a
-	pop char	j
+	pop char		j
 	push string	"Hello, World!"
-	pop string	i
+	pop string		i

@@ -1942,7 +1942,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 182 "parser.y"
-    {(yyval.nodePtr)=create_operation('=',2,create_identifier((yyvsp[(3) - (5)].sIndex),(yyvsp[(2) - (5)].intValue),CONST),(yyvsp[(5) - (5)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation('=',2,create_identifier((yyvsp[(3) - (5)].sIndex),(yyvsp[(2) - (5)].intValue),1),(yyvsp[(5) - (5)].nodePtr));;}
     break;
 
   case 49:
@@ -2459,23 +2459,7 @@ Node* create_operation(int oper, int nops,...) {
 }
 
 // Create constant nodes
-/* Node* create_constant(int type ,int dataType,...) {
-    va_list ap;
-    Node *p;
-    size_t nodeSize;
 
-    nodeSize = sizeof(Node) + sizeof(ConstantNode);
-    if ((p = (Node*)malloc(nodeSize)) == NULL)
-        yyerror("out of memory");
-
-    p->type = CONSTANT;
-    p->con.dataType = dataType;
-    va_start(ap, dataType);
-    p->con.value = va_arg(ap, ValueType);
-    va_end(ap);
-
-    return p;
-} */
 Node* create_constant(int type, int dataType, ...) {
     va_list ap;
     Node *p;
@@ -2510,19 +2494,6 @@ Node* create_constant(int type, int dataType, ...) {
     return p;
 }
 // Create identifier nodes
-/* Node* create_identifier(char* i, int dataType, int qualifier) {
-    Node *p;
-    size_t nodeSize;
-    nodeSize = sizeof(Node) + sizeof(VariableNode);
-    if ((p = (Node*)malloc(nodeSize)) == NULL)
-        yyerror("out of memory");
-
-    p->type = VARIABLE;
-    p->id.name = strdup(i);
-    p->id.dataType = dataType;
-    p->id.qualifier = qualifier;
-    return p;
-} */
 Node* create_identifier(char* i, int dataType, int qualifier) {
     Node *p;
     size_t nodeSize;
@@ -2533,7 +2504,7 @@ Node* create_identifier(char* i, int dataType, int qualifier) {
             yyerror("out of memory");}
     if(i == NULL)
     {
-        
+
         printf("data %d\n", dataType);
         printf("qual %d\n", qualifier);
     }
@@ -2541,6 +2512,7 @@ Node* create_identifier(char* i, int dataType, int qualifier) {
     p->id.name =  strdup(i) ;  // Handle null case
     p->id.dataType = dataType;
     p->id.qualifier = qualifier;
+    
     return p;
 }
 

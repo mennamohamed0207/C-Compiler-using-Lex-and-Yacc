@@ -179,7 +179,7 @@ switch_cases:
 declaration:
     type IDENTIFIER {$$=create_operation(DECLARATION,1,create_identifier($2,$1,0));}
     | type IDENTIFIER '=' expr {$$=create_operation('=',2,create_identifier($2,$1),$4);}
-    | CONST type IDENTIFIER '=' expr {$$=create_operation('=',2,create_identifier($3,$2,CONST),$5);}
+    | CONST type IDENTIFIER '=' expr {$$=create_operation('=',2,create_identifier($3,$2,1),$5);}
     ;
 assignment_statement:
     IDENTIFIER '=' expr {$$=create_operation('=',2,create_identifier($1),$3);}
@@ -261,23 +261,7 @@ Node* create_operation(int oper, int nops,...) {
 }
 
 // Create constant nodes
-/* Node* create_constant(int type ,int dataType,...) {
-    va_list ap;
-    Node *p;
-    size_t nodeSize;
 
-    nodeSize = sizeof(Node) + sizeof(ConstantNode);
-    if ((p = (Node*)malloc(nodeSize)) == NULL)
-        yyerror("out of memory");
-
-    p->type = CONSTANT;
-    p->con.dataType = dataType;
-    va_start(ap, dataType);
-    p->con.value = va_arg(ap, ValueType);
-    va_end(ap);
-
-    return p;
-} */
 Node* create_constant(int type, int dataType, ...) {
     va_list ap;
     Node *p;
@@ -312,19 +296,6 @@ Node* create_constant(int type, int dataType, ...) {
     return p;
 }
 // Create identifier nodes
-/* Node* create_identifier(char* i, int dataType, int qualifier) {
-    Node *p;
-    size_t nodeSize;
-    nodeSize = sizeof(Node) + sizeof(VariableNode);
-    if ((p = (Node*)malloc(nodeSize)) == NULL)
-        yyerror("out of memory");
-
-    p->type = VARIABLE;
-    p->id.name = strdup(i);
-    p->id.dataType = dataType;
-    p->id.qualifier = qualifier;
-    return p;
-} */
 Node* create_identifier(char* i, int dataType, int qualifier) {
     Node *p;
     size_t nodeSize;
@@ -335,7 +306,7 @@ Node* create_identifier(char* i, int dataType, int qualifier) {
             yyerror("out of memory");}
     if(i == NULL)
     {
-        
+
         printf("data %d\n", dataType);
         printf("qual %d\n", qualifier);
     }
@@ -343,6 +314,7 @@ Node* create_identifier(char* i, int dataType, int qualifier) {
     p->id.name =  strdup(i) ;  // Handle null case
     p->id.dataType = dataType;
     p->id.qualifier = qualifier;
+    
     return p;
 }
 

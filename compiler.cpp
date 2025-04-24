@@ -472,6 +472,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             if (p->opr.op[1]->type == OPERATION && p->opr.op[1]->opr.symbol == '=') // variable assignment
             {
                 printf("\tpush\t%s\n", p->opr.op[1]->opr.op[0]->id.name);
+                //check if it is constant 
                 fprintf(assemblyOutFile, "\tpush\t%s\n", p->opr.op[1]->opr.op[0]->id.name);
                 fflush(assemblyOutFile);
             }
@@ -486,8 +487,9 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
                 yyerror(msg);
             }
             symoblTableEntry->isInitialized = true;
-            printf("\tpop %s\t%s\n", get_data_type(symoblTableEntry->type), p->opr.op[0]->id.name);
-            fprintf(assemblyOutFile, "\tpop %s\t%s\n", get_data_type(symoblTableEntry->type), p->opr.op[0]->id.name);
+            //check if const 
+            printf("\tpop %s\t%s\t%s\n", get_data_type(symoblTableEntry->type),p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+            fprintf(assemblyOutFile, "\tpop %s\t%s\t%s\n", get_data_type(symoblTableEntry->type),p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
             fflush(assemblyOutFile);
             return symoblTableEntry->type;
         case NEGATIVE:
