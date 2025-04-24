@@ -122,7 +122,7 @@ params:
     ;
 
 return_statement:
-    RETURN statement {$$=create_operation(RETURN,1,$2);}
+    RETURN expr ';' {$$=create_operation(RETURN,1,$2);}
     ;
 function_definition:
     type IDENTIFIER '(' args ')' '{' program return_statement '}' {$$=create_operation(FUNCTION,4,$2,$4,$7,$8);}

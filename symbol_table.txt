@@ -1,3 +1,10 @@
 Name,	DataType,	Qualifier,	TimeStep,	Scope,	Initialized,	Used,	 Function
-a,		int, 		Variable, 		0, 		0, 		True, 		False, 		False 
-b,		int, 		Variable, 		1, 		0, 		True, 		False, 		False 
+a,		int, 		Variable, 		0, 		0, 		True, 		True, 		False 
+b,		int, 		Variable, 		1, 		0, 		True, 		True, 		False 
+c,		int, 		Constant, 		2, 		0, 		True, 		True, 		False 
+d,		int, 		Variable, 		3, 		0, 		True, 		True, 		False 
+e,		int, 		Variable, 		4, 		0, 		True, 		False, 		False 
+f,		char, 		Variable, 		5, 		0, 		False, 		False, 		False 
+h,		bool, 		Variable, 		6, 		0, 		True, 		False, 		False 
+j,		char, 		Variable, 		7, 		0, 		True, 		False, 		False 
+i,		string, 		Variable, 		8, 		0, 		True, 		False, 		False 

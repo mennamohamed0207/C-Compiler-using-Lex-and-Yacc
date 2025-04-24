@@ -159,19 +159,21 @@ SymbolTable *declare_variable(Node *p, bool isRHS = false)
 }
 void log_symbol_table()
 {
+    printf("Loggin symbol table\n");
     FILE *symbolTableFile = fopen("symbol_table.txt", "w");
-    if (!symbolTableFile)
+    if (symbolTableFile == NULL)
     {
-        fprintf(stderr, "Error opening symbol table file: symbol_table.txt\n");
-        exit(1);
+        printf("Error opening symbol table file: symbol_table.txt\n");
+        return;
     }
     fprintf(symbolTableFile, "Name,\tDataType,\tQualifier,\tTimeStep,\tScope,\tInitialized,\tUsed,\t Function\n");
+    fflush(symbolTableFile);
     for (int i = 0; i < symbolTable.size(); i++)
     {
         SymbolTable *st = symbolTable[i];
         fprintf(symbolTableFile, "%s,\t\t%s, \t\t%s, \t\t%d, \t\t%d, \t\t%s, \t\t%s, \t\t%s \n",
                 st->name.c_str(), get_data_type(st->type), st->symbolType == 1 ? "Constant" : "Variable", st->timestamp, st->scope, st->isInitialized == true ? "True" : "False", st->used == true ? "True" : "False", st->isFunction == true ? "True" : "False");
-        free(st);
+        fflush(symbolTableFile);
     }
     fclose(symbolTableFile);
 }
@@ -471,9 +473,9 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             type1 = write_to_assembly(p->opr.op[1]);
             if (p->opr.op[1]->type == OPERATION && p->opr.op[1]->opr.symbol == '=') // variable assignment
             {
-                printf("\tpush\t%s\n", p->opr.op[1]->opr.op[0]->id.name);
-                //check if it is constant 
-                fprintf(assemblyOutFile, "\tpush\t%s\n", p->opr.op[1]->opr.op[0]->id.name);
+                printf("\tpush\t%s\t%s\n", get_data_type(p->opr.op[1]->opr.op[0]->id.dataType), p->opr.op[1]->opr.op[0]->id.name);
+                // check if it is constant
+                fprintf(assemblyOutFile, "\tpush\t%s\t%s\n", get_data_type(p->opr.op[1]->opr.op[0]->id.dataType), p->opr.op[1]->opr.op[0]->id.name);
                 fflush(assemblyOutFile);
             }
             symoblTableEntry = declare_variable(p->opr.op[0], true);
@@ -487,9 +489,9 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
                 yyerror(msg);
             }
             symoblTableEntry->isInitialized = true;
-            //check if const 
-            printf("\tpop %s\t%s\t%s\n", get_data_type(symoblTableEntry->type),p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
-            fprintf(assemblyOutFile, "\tpop %s\t%s\t%s\n", get_data_type(symoblTableEntry->type),p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+            // check if const
+            printf("\tpop %s\t%s\t%s\n", get_data_type(symoblTableEntry->type), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+            fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_data_type(symoblTableEntry->type), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
             fflush(assemblyOutFile);
             return symoblTableEntry->type;
         case NEGATIVE:

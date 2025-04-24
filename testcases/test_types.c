@@ -1,4 +1,3 @@
-int main() {
     int a = 10;
     int b = 20;
     a = 10;
@@ -9,5 +8,4 @@ int main() {
     bool h = true;
     char j = 'a';
     string i = "Hello, World!";
-    return 0;
-}
+
