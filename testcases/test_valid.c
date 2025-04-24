@@ -1,6 +1,6 @@
-INT MAIN()
+int main()
 {
-    INT X = 10;
+    int X = 10;
 
     IF(X == 5)
     {
@@ -20,6 +20,7 @@ INT MAIN()
 
     FOR(INT I = 0; I < 10; I = I + 1)
     {
+        X = X + 1;
     }
 
     RETURN 0;

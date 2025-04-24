@@ -87,6 +87,7 @@ program:
     | program statement  {write_to_assembly($2);}
     ;
 statement_list:
+
     statement {$$=$1;}
     | statement_list statement {$$=create_operation(';',2,$1,$2);}
     ;
@@ -95,6 +96,7 @@ statement:
     |single_statement ';'  {$$=$1;}
     | compound_statement {$$=$1;}
     | '{' statement_list '}' {$$=create_operation(BLOCK,1,$2);}
+    
 
     ;
 
@@ -139,6 +141,7 @@ function_definition:
 
 for_statement:
     FOR '(' for_init ';' multiple_expr ';' for_assignment ')' statement  {$$=create_operation(FOR,4,$3,$5,$7,$9);}
+    
     ;
 
 for_assignment:
@@ -186,8 +189,8 @@ switch_cases:
     ;
 
 declaration:
-    type IDENTIFIER {$$=create_operation(DECLARATION,1,create_identifier($2,$1,0));}
-    | type IDENTIFIER '=' expr {$$=create_operation('=',2,create_identifier($2,$1),$4);}
+    type IDENTIFIER  {$$=create_operation(DECLARATION,1,create_identifier($2,$1,0));}
+    | type IDENTIFIER '=' expr {$$=create_operation('=',2,create_identifier($2,$1,0),$4);}
     | CONST type IDENTIFIER '=' expr {$$=create_operation('=',2,create_identifier($3,$2,1),$5);}
     ;
 assignment_statement:
@@ -338,9 +341,9 @@ void free_node(Node *p) {
 }
     
 void yyerror(const char *s) {
-    fprintf(stderr, "Parser Error at line %d: %s\n", yylineno, s);
+    fprintf(stderr, "Line %d: %s\n", yylineno, s);
     log_errors(yylineno, s);
-    log_symbol_table();
+    fflush(stderr);
 }
 
 int main() {
@@ -361,6 +364,8 @@ int main() {
             
             printf("Generating symbol table...\n");
             log_symbol_table();
+            printf("log errors\n");
+            /* log_errors(0, "test"); */
             
             printf("Compilation completed successfully\n");
         } else {

@@ -101,11 +101,11 @@ struct SymbolTable
     bool used;
     bool isInitialized;
     bool isFunction;
-    SymbolTable(std::string nm, int ty, int sty, int sc, int ts, bool init, bool func = false)
+    SymbolTable(std::string nm, int type, int symbolType, int sc, int ts, bool init, bool func = false)
     {
         name = nm;
-        type = ty;
-        symbolType = sty;
+        type = type; // data type of the symbol int, float, bool, char, string
+        symbolType = symbolType;// variable, constant
         scope = sc;
         timestamp = ts;
     }
