@@ -8,16 +8,16 @@
 	pop int	c
 	push	a
 	push	b
-	mod	
+	add	
 	pop int	d
 	push	c
 	push	d
-	mod	
+	add	
 	pop int	e
 	pop char	f
 	push bool	1
 	pop bool	h
-	push char	 
+	push char	a
 	pop char	j
 	push string	"Hello, World!"
 	pop string	i

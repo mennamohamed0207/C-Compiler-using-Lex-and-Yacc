@@ -80,10 +80,10 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "sizeof"  |              
 "new"     |              
 "delete"  |              
-"+"       |              
-"-"       |              
-"*"       |              
-"/"       |              
+"+"       {printf("\nOperator: %s\n", yytext); return '+';}              
+"-"       {printf("\nOperator: %s\n", yytext); return '-';}              
+"*"       {printf("\nOperator: %s\n", yytext); return '*';}              
+"/"       {printf("\nOperator: %s\n", yytext); return '/';}              
 "%"       {printf("\nOperator: %s\n", yytext); return MOD;}                    
 "<"       {printf("\nOperator: %s\n", yytext); return '<';}              
 ">"       {printf("\nOperator: %s\n", yytext); return '>';}
@@ -111,7 +111,7 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 {DIGIT}+{LETTER}+                               {fprintf(stderr, "\nError at line %d: Invalid number '%s'\n", yylineno, yytext);}
 {DIGIT}+                                        {printf("\nInteger: %s\n", yytext); yylval.intValue = atoi(yytext);  return INTEGER;}
 {DIGIT}+\.{DIGIT}+((e|E|e-|E-){DIGIT}+)?        {printf("\nFloat: %s\n", yytext); char * x = strdup(yytext);  yylval.floatValue = atof(x); return FLOAT;}
-'.'                                      {printf("\nChar : %s\n", yytext); return CHARACTER;}
+'.'                                      {printf("\nChar : %s\n", yytext); yylval.charValue = yytext[1]; return CHARACTER;}
 \"([^"\\]|\\.)*\"                               { printf("\nString: %s\n", yytext); yylval.stringValue = strdup(yytext); return STRING; }
 '([^'\\]|\\.)*'                                 { printf("\nString: %s\n", yytext); yylval.stringValue = strdup(yytext); return STRING; }
 {ID}                                            {printf("\nIdentifier: %s\n", yytext); check_postfix=1;  yylval.sIndex = strdup(yytext); return IDENTIFIER;}

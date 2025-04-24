@@ -600,6 +600,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             }
             switch (p->opr.symbol)
             {
+                printf("www %s\n", p->opr.symbol);
             case '+':
                 printf("\tadd\t\n");
                 fprintf(assemblyOutFile, "\tadd\t\n");

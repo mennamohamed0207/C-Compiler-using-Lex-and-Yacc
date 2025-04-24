@@ -977,13 +977,25 @@ case 48:
 case 49:
 #line 83 "lexer.l"
 case 50:
-#line 84 "lexer.l"
+YY_RULE_SETUP
+#line 83 "lexer.l"
+{printf("\nOperator: %s\n", yytext); return '+';}              
+	YY_BREAK
 case 51:
-#line 85 "lexer.l"
+YY_RULE_SETUP
+#line 84 "lexer.l"
+{printf("\nOperator: %s\n", yytext); return '-';}              
+	YY_BREAK
 case 52:
-#line 86 "lexer.l"
+YY_RULE_SETUP
+#line 85 "lexer.l"
+{printf("\nOperator: %s\n", yytext); return '*';}              
+	YY_BREAK
 case 53:
-#line 87 "lexer.l"
+YY_RULE_SETUP
+#line 86 "lexer.l"
+{printf("\nOperator: %s\n", yytext); return '/';}              
+	YY_BREAK
 case 54:
 YY_RULE_SETUP
 #line 87 "lexer.l"
@@ -1068,7 +1080,7 @@ YY_RULE_SETUP
 case 79:
 YY_RULE_SETUP
 #line 114 "lexer.l"
-{printf("\nChar : %s\n", yytext); return CHARACTER;}
+{printf("\nChar : %s\n", yytext); yylval.charValue = yytext[1]; return CHARACTER;}
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
@@ -1100,7 +1112,7 @@ YY_RULE_SETUP
 #line 121 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1104 "lex.yy.c"
+#line 1116 "lex.yy.c"
 			case YY_STATE_EOF(INITIAL):
 				yyterminate();
 
