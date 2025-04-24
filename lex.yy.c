@@ -1058,32 +1058,32 @@ YY_RULE_SETUP
 case 77:
 YY_RULE_SETUP
 #line 112 "lexer.l"
-{printf("\nInteger: %s\n", yytext); return INTEGER;}
+{printf("\nInteger: %s\n", yytext); yylval.intValue = atoi(yytext);  return INTEGER;}
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
 #line 113 "lexer.l"
-{printf("\nFloat: %s\n", yytext); return FLOAT;}
+{printf("\nFloat: %s\n", yytext); char * x = strdup(yytext);  yylval.floatValue = atof(x); return FLOAT;}
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
 #line 114 "lexer.l"
-{printf("\nChar : %s\n", yytext);return CHARACTER;}
+{printf("\nChar : %s\n", yytext); return CHARACTER;}
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
 #line 115 "lexer.l"
-{ printf("\nString: %s\n", yytext); return STRING; }
+{ printf("\nString: %s\n", yytext); yylval.stringValue = strdup(yytext); return STRING; }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
 #line 116 "lexer.l"
-{ printf("\nString: %s\n", yytext); return STRING; }
+{ printf("\nString: %s\n", yytext); yylval.stringValue = strdup(yytext); return STRING; }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
 #line 117 "lexer.l"
-{printf("\nIdentifier: %s\n", yytext); check_postfix=1; return IDENTIFIER;}
+{printf("\nIdentifier: %s\n", yytext); check_postfix=1;  yylval.sIndex = strdup(yytext); return IDENTIFIER;}
 	YY_BREAK
 case 83:
 YY_RULE_SETUP

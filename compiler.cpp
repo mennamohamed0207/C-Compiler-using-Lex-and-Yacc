@@ -18,11 +18,9 @@ extern int line;
 
 void open_assembly_file()
 {
-    assemblyOutFile = fopen("assembly.txt", "w");
-    if (!assemblyOutFile)
+    if (assemblyOutFile == NULL)
     {
-        fprintf(stderr, "Error opening assembly file: assembly.txt\n");
-        exit(1);
+        assemblyOutFile = fopen("assembly.txt", "w");
     }
 }
 void add_block_scope()
@@ -108,6 +106,7 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
 {
     if (p->type != VARIABLE)
         return NULL;
+
     for (int i = level; i >= 0; i--)
     {
         if (symbol[i].find(p->id.name) != symbol[i].end())
@@ -128,6 +127,10 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
                 sprintf(errorMsg, "Semantic Error: variable '%s' must be initialized before use", p->id.name);
                 yyerror(errorMsg);
                 return NULL;
+            }
+            if (!isRHS && !entry->isInitialized)
+            {
+                yyerror("Variable used before initialization");
             }
             symbol[i][p->id.name]->used = true;
             return symbol[i][p->id.name];
@@ -226,26 +229,31 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             printf("\tpush %s\t%d\n", get_data_type(INT_TYPE), p->con.value.intVal);
             open_assembly_file();
             fprintf(assemblyOutFile, "\tpush %s\t%d\n", get_data_type(INT_TYPE), p->con.value.intVal);
+            fflush(assemblyOutFile);
             return INT_TYPE;
         case BOOL_TYPE:
             printf("\tpush %s\t%d\n", get_data_type(BOOL_TYPE), p->con.value.boolVal);
             open_assembly_file();
             fprintf(assemblyOutFile, "\tpush %s\t%d\n", get_data_type(BOOL_TYPE), p->con.value.boolVal);
+            fflush(assemblyOutFile);
             return BOOL_TYPE;
         case FLOAT_TYPE:
             printf("\tpush %s\t%f\n", get_data_type(FLOAT_TYPE), p->con.value.floatVal);
             open_assembly_file();
             fprintf(assemblyOutFile, "\tpush %s\t%f\n", get_data_type(FLOAT_TYPE), p->con.value.floatVal);
+            fflush(assemblyOutFile);
             return FLOAT_TYPE;
         case STRING_TYPE:
             printf("\tpush %s\t%s\n", get_data_type(STRING_TYPE), p->con.value.strVal);
             open_assembly_file();
             fprintf(assemblyOutFile, "\tpush %s\t%s\n", get_data_type(STRING_TYPE), p->con.value.strVal);
+            fflush(assemblyOutFile);
             return STRING_TYPE;
         case CHAR_TYPE:
             printf("\tpush %s\t%c\n", get_data_type(CHAR_TYPE), p->con.value.charVal);
             open_assembly_file();
             fprintf(assemblyOutFile, "\tpush %s\t%c\n", get_data_type(CHAR_TYPE), p->con.value.charVal);
+            fflush(assemblyOutFile);
             return CHAR_TYPE;
         }
         break;
@@ -253,25 +261,29 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
         symoblTableEntry = check_variable(p);
         if (!symoblTableEntry)
         {
+            char errorMsg[1024];
+            sprintf(errorMsg, "Semantic Error: variable '%s' not declared", p->id.name);
+            yyerror(errorMsg);
             return 0;
         }
         printf("\tpush\t%s\n", p->id.name);
-        open_assembly_file();
         fprintf(assemblyOutFile, "\tpush\t%s\n", p->id.name);
+        fflush(assemblyOutFile);
         return symoblTableEntry->type;
 
-        break;
     case OPERATION:
         switch (p->opr.symbol)
         {
         case DECLARATION:
         {
+            printf("www %s\n", p->opr.op[0]);
             SymbolTable *entry = declare_variable(p->opr.op[0], true);
             if (entry != NULL)
             { // Only write to assembly if declaration was successful
                 printf("\tpop %s\t%s\n", get_data_type(p->opr.op[0]->id.dataType), p->opr.op[0]->id.name);
                 open_assembly_file();
                 fprintf(assemblyOutFile, "\tpop %s\t%s\n", get_data_type(p->opr.op[0]->id.dataType), p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
             }
         }
         break;
@@ -280,6 +292,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             add_block_scope();
             printf("L%03d:\n", l1 = label++); // start
             fprintf(assemblyOutFile, "L%03d:\n", l1);
+            fflush(assemblyOutFile);
             type1 = write_to_assembly(p->opr.op[0]);
             if (type1 != BOOL_TYPE)
             {
@@ -288,13 +301,16 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             }
             printf("\tjz\tL%03d\n", l2 = label++); // if false
             fprintf(assemblyOutFile, "\tjz\tL%03d\n", l2);
+            fflush(assemblyOutFile);
 
             write_to_assembly(p->opr.op[1], l1, l2); // body
             printf("\tjmp\tL%03d\n", l1);            // continue
             fprintf(assemblyOutFile, "\tjmp\tL%03d\n", l1);
+            fflush(assemblyOutFile);
 
             printf("L%03d:\n", l2); // end
             fprintf(assemblyOutFile, "L%03d:\n", l2);
+            fflush(assemblyOutFile);
 
             remove_block_scope();
             break;
@@ -360,6 +376,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             }
             printf("\tpop %s\t\n", switch_var->id.name);
             fprintf(assemblyOutFile, "\tpop %s\t\n", switch_var->id.name);
+            fflush(assemblyOutFile);
             n = p->opr.op[1];
             while (n->opr.symbol == CASE)
             {
@@ -370,32 +387,39 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
                 }
                 printf("L%03d:\n", l1 = label++);
                 fprintf(assemblyOutFile, "L%03d:\n", l1);
+                fflush(assemblyOutFile);
                 printf("\tpush\t%s\n", switch_var->id.name);
                 fprintf(assemblyOutFile, "\tpush\t%s\n", switch_var->id.name);
+                fflush(assemblyOutFile);
                 write_to_assembly(n->opr.op[0], cont, brk);
                 printf("\tcompEQ\t\n");
                 fprintf(assemblyOutFile, "\tcompEQ\t\n");
+                fflush(assemblyOutFile);
                 if (lastCase)
                 {
                     if (p->opr.nops == 3)
                     {
                         printf("\tjz\tL%03d\n", l1 = defaultLabel);
                         fprintf(assemblyOutFile, "\tjz\tL%03d\n", l1);
+                        fflush(assemblyOutFile);
                     }
                     else
                     {
                         printf("\tjz\tL%03d\n", l1 = endLabel);
                         fprintf(assemblyOutFile, "\tjz\tL%03d\n", l1);
+                        fflush(assemblyOutFile);
                     }
                 }
                 else
                 {
                     printf("\tjz\tL%03d\n", l1 = ++label);
                     fprintf(assemblyOutFile, "\tjz\tL%03d\n", l1);
+                    fflush(assemblyOutFile);
                 }
                 write_to_assembly(n->opr.op[1], cont, brk);
                 printf("\tjmp\tL%03d\n", endLabel);
                 fprintf(assemblyOutFile, "\tjmp\tL%03d\n", endLabel);
+                fflush(assemblyOutFile);
                 if (lastCase)
                     break;
                 else
@@ -408,18 +432,22 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             {
                 printf("L%03d:\n", l1 = defaultLabel);
                 fprintf(assemblyOutFile, "L%03d:\n", l1);
+                fflush(assemblyOutFile);
                 write_to_assembly(p->opr.op[2]->opr.op[0], cont, brk);
                 printf("\tjmp\tL%03d\n", endLabel);
                 fprintf(assemblyOutFile, "\tjmp\tL%03d\n", endLabel);
+                fflush(assemblyOutFile);
             }
             printf("L%03d:\n", endLabel);
             fprintf(assemblyOutFile, "L%03d:\n", endLabel);
+            fflush(assemblyOutFile);
             break;
         case DO:
             open_assembly_file();
             add_block_scope();
             printf("L%03d:\n", l1 = label++);
             fprintf(assemblyOutFile, "L%03d:\n", l1);
+            fflush(assemblyOutFile);
             write_to_assembly(p->opr.op[0], l1, l2 = label++);
             type1 = write_to_assembly(p->opr.op[1]);
             if (type1 != BOOL_TYPE)
@@ -430,9 +458,11 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
 
             printf("\tjnz\tL%03d\n", l1); // if true repeat
             fprintf(assemblyOutFile, "\tjnz\tL%03d\n", l1);
+            fflush(assemblyOutFile);
 
             printf("L%03d:\n", l2);
             fprintf(assemblyOutFile, "L%03d:\n", l2);
+            fflush(assemblyOutFile);
 
             remove_block_scope();
             break;
@@ -443,6 +473,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             {
                 printf("\tpush\t%s\n", p->opr.op[1]->opr.op[0]->id.name);
                 fprintf(assemblyOutFile, "\tpush\t%s\n", p->opr.op[1]->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
             }
             symoblTableEntry = declare_variable(p->opr.op[0], true);
             if (type1 != symoblTableEntry->type)
@@ -457,18 +488,21 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             symoblTableEntry->isInitialized = true;
             printf("\tpop %s\t%s\n", get_data_type(symoblTableEntry->type), p->opr.op[0]->id.name);
             fprintf(assemblyOutFile, "\tpop %s\t%s\n", get_data_type(symoblTableEntry->type), p->opr.op[0]->id.name);
+            fflush(assemblyOutFile);
             return symoblTableEntry->type;
         case NEGATIVE:
             open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0]);
             printf("\tneg\t\n");
             fprintf(assemblyOutFile, "\tneg\t\n");
+            fflush(assemblyOutFile);
             return type1;
         case NOT:
             open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0]);
             printf("\tnot\t\n");
             fprintf(assemblyOutFile, "\tnot\t\n");
+            fflush(assemblyOutFile);
             return BOOL_TYPE;
         case BREAK:
             open_assembly_file();
@@ -479,6 +513,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             }
             printf("\tjmp\tL%03d\n", brk);
             fprintf(assemblyOutFile, "\tjmp\tL%03d\n", brk);
+            fflush(assemblyOutFile);
             break;
         case CONTINUE:
             open_assembly_file();
@@ -489,6 +524,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             }
             printf("\tjmp\tL%03d\n", cont);
             fprintf(assemblyOutFile, "\tjmp\tL%03d\n", cont);
+            fflush(assemblyOutFile);
             break;
         case DEFAULT:
             open_assembly_file();
@@ -512,6 +548,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             symoblTableEntry->isFunction = true;
             printf("\tproc\t%s\n", p->opr.op[0]->opr.op[0]->id.name);
             fprintf(assemblyOutFile, "\tproc\t%s\n", p->opr.op[0]->opr.op[0]->id.name);
+            fflush(assemblyOutFile);
             if (p->opr.op[1])
             {
                 write_to_assembly(p->opr.op[1]);
@@ -526,6 +563,7 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             write_to_assembly(p->opr.op[1]);
             printf("\tcall\t%s\n", p->opr.op[0]->opr.op[0]->id.name);
             fprintf(assemblyOutFile, "\tcall\t%s\n", p->opr.op[0]->opr.op[0]->id.name);
+            fflush(assemblyOutFile);
             return 274;
             break;
         case COMMA:
@@ -536,10 +574,12 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
         case RETURN:
             printf("\tret\t\n");
             fprintf(assemblyOutFile, "\tret\t\n");
+            fflush(assemblyOutFile);
 
             write_to_assembly(p->opr.op[0]);
             printf("\tendproc\t\n");
             fprintf(assemblyOutFile, "\tendproc\t\n");
+            fflush(assemblyOutFile);
             break;
         case ';':
             for (int i = 0; i < p->opr.nops; i++)
@@ -563,61 +603,76 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             case '+':
                 printf("\tadd\t\n");
                 fprintf(assemblyOutFile, "\tadd\t\n");
+                fflush(assemblyOutFile);
                 return type1;
             case '-':
                 printf("\tsub\t\n");
                 fprintf(assemblyOutFile, "\tsub\t\n");
+                fflush(assemblyOutFile);
                 return type1;
             case '*':
                 printf("\tmul\t\n");
                 fprintf(assemblyOutFile, "\tmul\t\n");
+                fflush(assemblyOutFile);
                 return type1;
             case '/':
                 printf("\tdiv\t\n");
                 fprintf(assemblyOutFile, "\tdiv\t\n");
+                fflush(assemblyOutFile);
             case MOD:
                 printf("\tmod\t\n");
                 fprintf(assemblyOutFile, "\tmod\t\n");
+                fflush(assemblyOutFile);
                 return type1;
             case '<':
                 printf("\tcompLT\t\n");
                 fprintf(assemblyOutFile, "\tcompLT\t\n");
+                fflush(assemblyOutFile);
                 return BOOL_TYPE;
             case '>':
                 printf("\tcompGT\t\n");
                 fprintf(assemblyOutFile, "\tcompGT\t\n");
+                fflush(assemblyOutFile);
                 return BOOL_TYPE;
             case LTE:
                 printf("\tcompLTE\t\n");
                 fprintf(assemblyOutFile, "\tcompLTE\t\n");
+                fflush(assemblyOutFile);
                 return BOOL_TYPE;
             case GTE:
                 printf("\tcompGTE\t\n");
                 fprintf(assemblyOutFile, "\tcompGTE\t\n");
+                fflush(assemblyOutFile);
                 return BOOL_TYPE;
             case EQ:
                 printf("\tcompEQ\t\n");
                 fprintf(assemblyOutFile, "\tcompEQ\t\n");
+                fflush(assemblyOutFile);
                 return BOOL_TYPE;
             case NEQ:
                 printf("\tcompNEQ\t\n");
                 fprintf(assemblyOutFile, "\tcompNEQ\t\n");
+                fflush(assemblyOutFile);
                 return BOOL_TYPE;
             case AND:
                 printf("\tcompAND\t\n");
                 fprintf(assemblyOutFile, "\tcompAND\t\n");
+                fflush(assemblyOutFile);
                 return BOOL_TYPE;
             case OR:
                 printf("\tcompOR\t\n");
                 fprintf(assemblyOutFile, "\tcompOR\t\n");
+                fflush(assemblyOutFile);
                 return BOOL_TYPE;
             case POST_DEC:
                 printf("\tdec\t%s\n", p->opr.op[0]->id.name);
                 fprintf(assemblyOutFile, "\tdec\t%s\n", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
                 return type1;
             case POST_INC:
                 printf("\tinc\t%s\n", p->opr.op[0]->id.name);
                 fprintf(assemblyOutFile, "\tinc\t%s\n", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
                 return type1;
             }
         }

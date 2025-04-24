@@ -8,6 +8,9 @@
     extern void log_symbol_table();
     extern void log_errors(int line, const char *msg);
     extern void check_unused_variables();
+    extern void log_symbol_table();
+    extern void open_assembly_file();
+    extern FILE *assemblyOutFile;
 
 
     Node* create_operation(int oper, int nops,...);
@@ -67,7 +70,7 @@
 %nonassoc ELSE
 %nonassoc FUNC
 /* Non-terminal types */
-%type <nodePtr> program statement single_statement compound_statement expr assignment_statement function_call
+%type <nodePtr> program statement single_statement compound_statement expr assignment_statement function_call for_assignment
 %type <nodePtr>  params function_definition return_statement
 %type <nodePtr> for_statement while_statement do_while_statement if_statement
 %type <nodePtr> switch_statement switch_cases declaration default_statement
@@ -126,8 +129,13 @@ function_definition:
     ;
 
 for_statement:
-    FOR '(' for_init ';' multiple_expr ';' multiple_expr ')' statement  {$$=create_operation(FOR,4,$3,$5,$7,$9);}
+    FOR '(' for_init ';' multiple_expr ';' for_assignment ')' statement  {$$=create_operation(FOR,4,$3,$5,$7,$9);}
     ;
+
+for_assignment:
+     { $$ = create_operation(';', 2, NULL, NULL); }
+  | assignment_statement { $$ = $1; }
+  ;
 multiple_expr:
     expr ',' expr {$$=create_operation(',',2,$1,$3);}
     | expr {$$=$1;}
@@ -237,6 +245,7 @@ Node* create_operation(int oper, int nops,...) {
     size_t nodeSize;
     int i;
     
+    
     nodeSize = sizeof(Node) + sizeof(OperationNode) + (nops - 1) * sizeof(Node*);
     if ((p = (Node*)malloc(nodeSize)) == NULL)
         yyerror("out of memory");
@@ -252,7 +261,7 @@ Node* create_operation(int oper, int nops,...) {
 }
 
 // Create constant nodes
-Node* create_constant(int type ,int dataType,...) {
+/* Node* create_constant(int type ,int dataType,...) {
     va_list ap;
     Node *p;
     size_t nodeSize;
@@ -268,10 +277,42 @@ Node* create_constant(int type ,int dataType,...) {
     va_end(ap);
 
     return p;
-}
+} */
+Node* create_constant(int type, int dataType, ...) {
+    va_list ap;
+    Node *p;
+    size_t nodeSize;
 
+    nodeSize = sizeof(Node) + sizeof(ConstantNode);
+    if ((p = (Node*)malloc(nodeSize)) == NULL)
+        yyerror("out of memory");
+
+    p->type = CONSTANT;
+    p->con.dataType = dataType;
+    va_start(ap, dataType);
+    
+    switch(dataType) {
+        case INT_TYPE:
+            p->con.value.intVal = va_arg(ap, int);
+            break;
+        case FLOAT_TYPE:
+            p->con.value.floatVal = (float)va_arg(ap, double);
+            break;
+        case STRING_TYPE:
+        case CHAR_TYPE:
+            p->con.value.strVal = va_arg(ap, char*);
+            break;
+        case BOOL_TYPE:
+            p->con.value.boolVal = va_arg(ap, int);
+            break;
+        default:
+            memset(&p->con.value, 0, sizeof(ValueType));
+    }
+    va_end(ap);
+    return p;
+}
 // Create identifier nodes
-Node* create_identifier(char* i, int dataType, int qualifier) {
+/* Node* create_identifier(char* i, int dataType, int qualifier) {
     Node *p;
     size_t nodeSize;
     nodeSize = sizeof(Node) + sizeof(VariableNode);
@@ -280,6 +321,26 @@ Node* create_identifier(char* i, int dataType, int qualifier) {
 
     p->type = VARIABLE;
     p->id.name = strdup(i);
+    p->id.dataType = dataType;
+    p->id.qualifier = qualifier;
+    return p;
+} */
+Node* create_identifier(char* i, int dataType, int qualifier) {
+    Node *p;
+    size_t nodeSize;
+    nodeSize = sizeof(Node) + sizeof(VariableNode);
+    if ((p = (Node*)malloc(nodeSize)) == NULL)
+        {
+            printf("out of memory\n");
+            yyerror("out of memory");}
+    if(i == NULL)
+    {
+        
+        printf("data %d\n", dataType);
+        printf("qual %d\n", qualifier);
+    }
+    p->type = VARIABLE;
+    p->id.name =  strdup(i) ;  // Handle null case
     p->id.dataType = dataType;
     p->id.qualifier = qualifier;
     return p;
@@ -297,10 +358,41 @@ void free_node(Node *p) {
     
 void yyerror(const char *s) {
     fprintf(stderr, "Parser Error at line %d: %s\n", yylineno, s);
-    exit(1);
+    log_errors(yylineno, s);
+    log_symbol_table();
 }
 
 int main() {
-    yyparse();
+    printf("Starting compilation...\n");
+    
+    try {
+        open_assembly_file();  // Open this early to catch errors
+        
+        printf("Starting parsing...\n");
+        int parse_result = yyparse();
+        
+        if (parse_result == 0) {
+            printf("Parsing completed successfully\n");
+            
+            // Add flush to ensure output isn't buffered
+            fflush(stdout);
+            fflush(assemblyOutFile);
+            
+            printf("Generating symbol table...\n");
+            log_symbol_table();
+            
+            printf("Compilation completed successfully\n");
+        } else {
+            fprintf(stderr, "Parsing failed with errors\n");
+        }
+    } catch (const std::exception& e) {
+        fprintf(stderr, "Fatal error: %s\n", e.what());
+        return 1;
+    }
+    
+    if (assemblyOutFile) {
+        fclose(assemblyOutFile);
+    }
+    
     return 0;
 }

@@ -13,9 +13,9 @@ INT MAIN()
     {
         DO
         {
-            Y = Y * 2;
+            X = X * 2;
         }
-        WHILE(Y < 100);
+        WHILE(X < 100);
     }
 
     FOR(INT I = 0; I < 10; I = I + 1)

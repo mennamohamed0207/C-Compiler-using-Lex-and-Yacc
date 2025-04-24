@@ -1,7 +1,6 @@
 #ifndef COMPILER_H
 #define COMPILER_H
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -30,7 +29,6 @@ using namespace std;
 // #define FALSE 263     // Boolean false
 // #define BOOL 264      // Boolean type specifier
 
-
 // Data types
 
 // #define INT_TYPE 270
@@ -40,42 +38,52 @@ using namespace std;
 // #define VOID 266
 // #define CHAR 275
 
-
-
 #define SIZEOFNODE ((char *)&p->con - (char *)p)
 
-typedef enum { CONSTANT, VARIABLE, OPERATION } NodeType;
+typedef enum
+{
+    CONSTANT,
+    VARIABLE,
+    OPERATION
+} NodeType;
 
-struct ValueType {
+struct ValueType
+{
 
-    union {
+    union
+    {
         int intVal;
         float floatVal;
         bool boolVal;
-        char* strVal;
+        char *strVal;
         char charVal;
     };
 };
 
-typedef struct {
+typedef struct
+{
     ValueType value;
     int dataType;
 } ConstantNode;
-typedef struct {
-    char* name;
+typedef struct
+{
+    char *name;
     int dataType;
     int qualifier;
 } VariableNode;
 
-typedef struct {
+typedef struct
+{
     int symbol;
     int nops;
-    struct NodeTypeTag* op[1];
+    struct NodeTypeTag *op[1];
 } OperationNode;
 
-typedef struct NodeTypeTag {
+typedef struct NodeTypeTag
+{
     NodeType type;
-    union {
+    union
+    {
         ConstantNode con;
         VariableNode id;
         OperationNode opr;
@@ -83,7 +91,8 @@ typedef struct NodeTypeTag {
 } Node;
 
 // Symbol table structure
-struct SymbolTable {
+struct SymbolTable
+{
     std::string name;
     int type;
     int symbolType;
@@ -103,18 +112,18 @@ struct SymbolTable {
 };
 
 // Global symbol table
-extern vector<map<string, SymbolTable*> > symbol;
-extern vector<SymbolTable*> symbolTable;
+extern vector<map<string, SymbolTable *>> symbol;
+extern vector<SymbolTable *> symbolTable;
 extern int level;
 // Function declarations
-extern Node* create_constant(int type, int dataType, ...);
-extern Node* create_identifier(char* name, int dataType = -1, int qualifier = -1);
-extern Node* create_operation(int oper, int nops, ...);
-extern void free_node(Node* p);
-extern int execute_all(Node* p, int cont = -1, int brk = -1, int args = 0, ...);
-extern void yyerror(const char* emsg);
+extern Node *create_constant(int type, int dataType, ...);
+extern Node *create_identifier(char *name, int dataType = -1, int qualifier = -1);
+extern Node *create_operation(int oper, int nops, ...);
+extern void free_node(Node *p);
+extern int execute_all(Node *p, int cont = -1, int brk = -1, int args = 0, ...);
+extern void yyerror(const char *emsg);
 extern void check_unused_variables();
 extern void log_symbol_table();
-extern void log_errors(int line, const char* msg);
+extern void log_errors(int line, const char *msg);
 
 #endif

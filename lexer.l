@@ -109,12 +109,12 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 
 {COMMENT}                                       {printf("\nCommend: { %s }\n", yytext);/*ignore further*/}
 {DIGIT}+{LETTER}+                               {fprintf(stderr, "\nError at line %d: Invalid number '%s'\n", yylineno, yytext);}
-{DIGIT}+                                        {printf("\nInteger: %s\n", yytext); return INTEGER;}
-{DIGIT}+\.{DIGIT}+((e|E|e-|E-){DIGIT}+)?        {printf("\nFloat: %s\n", yytext); return FLOAT;}
-'.'                                      {printf("\nChar : %s\n", yytext);return CHARACTER;}
-\"([^"\\]|\\.)*\"                               { printf("\nString: %s\n", yytext); return STRING; }
-'([^'\\]|\\.)*'                                 { printf("\nString: %s\n", yytext); return STRING; }
-{ID}                                            {printf("\nIdentifier: %s\n", yytext); check_postfix=1; return IDENTIFIER;}
+{DIGIT}+                                        {printf("\nInteger: %s\n", yytext); yylval.intValue = atoi(yytext);  return INTEGER;}
+{DIGIT}+\.{DIGIT}+((e|E|e-|E-){DIGIT}+)?        {printf("\nFloat: %s\n", yytext); char * x = strdup(yytext);  yylval.floatValue = atof(x); return FLOAT;}
+'.'                                      {printf("\nChar : %s\n", yytext); return CHARACTER;}
+\"([^"\\]|\\.)*\"                               { printf("\nString: %s\n", yytext); yylval.stringValue = strdup(yytext); return STRING; }
+'([^'\\]|\\.)*'                                 { printf("\nString: %s\n", yytext); yylval.stringValue = strdup(yytext); return STRING; }
+{ID}                                            {printf("\nIdentifier: %s\n", yytext); check_postfix=1;  yylval.sIndex = strdup(yytext); return IDENTIFIER;}
 {WS}+                                           {/* Ignore whitespace*/ check_postfix=0;}
 .                                               {printf("\nUnknown character: %s\n", yytext); return *yytext;}
 
