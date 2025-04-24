@@ -1,3 +1,4 @@
+	proc	main
 	push int	10
 	pop int	 a
 	push int	20
@@ -21,3 +22,6 @@
 	pop char	 j
 	push string	"Hello, World!"
 	pop string	 i
+	ret	
+	push int	0
+	endproc	

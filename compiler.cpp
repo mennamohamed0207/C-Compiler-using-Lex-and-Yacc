@@ -203,6 +203,8 @@ Node *create_label_node(int label)
 }
 int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
 {
+    printf("write_to_assembly %d\n", p->opr.symbol);
+    fflush(stdout);
     va_list ap;
     int l1, l2, l3, type1, type2;
     Node *lblNode;
@@ -274,11 +276,12 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
         return symoblTableEntry->type;
 
     case OPERATION:
+        // printf("imppppppppppppppppppppppppppppppppportant%s\n", p->opr.symbol);
+        // fflush(stdout);
         switch (p->opr.symbol)
         {
         case DECLARATION:
         {
-            printf("www %s\n", p->opr.op[0]);
             SymbolTable *entry = declare_variable(p->opr.op[0], true);
             if (entry != NULL)
             { // Only write to assembly if declaration was successful
@@ -546,6 +549,8 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             remove_block_scope();
             break;
         case FUNCTION:
+            printf("thissssssssssssssssss %s\t\n", p->opr.op[0]->opr.op[0]->id.name);
+            fflush(stdout);
             open_assembly_file();
             add_block_scope();
             symoblTableEntry = declare_variable(p->opr.op[0]->opr.op[0], true);
@@ -557,11 +562,42 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
             {
                 write_to_assembly(p->opr.op[1]);
             }
+            printf("\thissssssssssssssssss %s\t\n", p->opr.op[3]);
             write_to_assembly(p->opr.op[2]);
             write_to_assembly(p->opr.op[3]);
             remove_block_scope();
             return symoblTableEntry->type;
             break;
+        // case FUNCTION:
+        //     open_assembly_file();
+        //     add_block_scope();
+        //     symoblTableEntry = declare_variable(p->opr.op[0]->opr.op[0], true);
+        //     if (!symoblTableEntry)
+        //     {
+        //         yyerror("Function declaration failed");
+        //         return 0;
+        //     }
+        //     symoblTableEntry->isFunction = true;
+        //     printf("\tproc\t%s\n", p->opr.op[0]->opr.op[0]->id.name);
+
+        //     // Process parameters
+        //     if (p->opr.op[1])
+        //     {
+        //         Node *args = p->opr.op[1];
+        //         while (args && args->type == OPERATION && args->opr.symbol == COMMA)
+        //         {
+        //             write_to_assembly(args->opr.op[0]);
+        //             args = args->opr.op[1];
+        //         }
+        //         if (args)
+        //             write_to_assembly(args);
+        //     }
+
+        //     // Process body
+        //     write_to_assembly(p->opr.op[2]);
+        //     write_to_assembly(p->opr.op[3]);
+        //     remove_block_scope();
+        //     return symoblTableEntry->type;
         case CALL:
             open_assembly_file();
             write_to_assembly(p->opr.op[1]);
@@ -602,9 +638,9 @@ int write_to_assembly(Node *p, int cont = -1, int brk = -1, int args = 0, ...)
                         get_data_type(type2));
                 yyerror(msg);
             }
+
             switch (p->opr.symbol)
             {
-                printf("www %s\n", p->opr.symbol);
             case '+':
                 printf("\tadd\t\n");
                 fprintf(assemblyOutFile, "\tadd\t\n");

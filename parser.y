@@ -71,7 +71,7 @@
 %nonassoc FUNC
 /* Non-terminal types */
 %type <nodePtr> program statement single_statement compound_statement expr assignment_statement function_call for_assignment
-%type <nodePtr>  params function_definition return_statement
+%type <nodePtr>  params function_definition return_statement statement_list
 %type <nodePtr> for_statement while_statement do_while_statement if_statement
 %type <nodePtr> switch_statement switch_cases declaration default_statement
 %type <nodePtr> multiple_expr for_init args
@@ -86,11 +86,16 @@ program:
 {$$=NULL;}
     | program statement  {write_to_assembly($2);}
     ;
-
+statement_list:
+    statement {$$=$1;}
+    | statement_list statement {$$=create_operation(';',2,$1,$2);}
+    ;
 statement:
-    single_statement ';'  {$$=$1;}
+    ';' {$$=create_operation(';',2,NULL,NULL);}
+    |single_statement ';'  {$$=$1;}
     | compound_statement {$$=$1;}
-    | '{' program '}' {$$=create_operation(BLOCK,1,NULL);}
+    | '{' statement_list '}' {$$=create_operation(BLOCK,1,$2);}
+
     ;
 
 single_statement:
@@ -123,9 +128,13 @@ params:
 
 return_statement:
     RETURN expr ';' {$$=create_operation(RETURN,1,$2);}
+    | RETURN ';' {$$=create_operation(RETURN,1,NULL);}
     ;
 function_definition:
-    type IDENTIFIER '(' args ')' '{' program return_statement '}' {$$=create_operation(FUNCTION,4,$2,$4,$7,$8);}
+    declaration '(' args ')' '{' statement_list return_statement '}'  {
+        $$ = create_operation(FUNCTION, 4, $1, $3, $6, $7);
+        // printf("Parsed function %s\n", $2);  // Debug
+    }
     ;
 
 for_statement:

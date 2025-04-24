@@ -1,2 +1,15 @@
 Error at line 12: syntax error
 Error at line 12: Unused variables:e, f, h, i, j, 
+Error at line 12: Unused variables:e, f, h, i, j, 
+Error at line 13: Unused variables:e, f, h, i, j, 
+Error at line 15: Unused variables:e, f, h, i, j, 
+Error at line 15: Semantic Error: variable 'f' already declared in this scope
+Error at line 19: Unused variables:e, g, h, i, j, 
+Error at line 4: syntax error
+Error at line 4: syntax error
+Error at line 4: syntax error
+Error at line 4: syntax error
+Error at line 4: syntax error
+Error at line 1: syntax error
+Error at line 1: syntax error
+Error at line 4: syntax error
