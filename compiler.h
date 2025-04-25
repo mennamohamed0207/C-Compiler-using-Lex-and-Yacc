@@ -118,7 +118,7 @@ extern vector<SymbolTable *> symbolTable;
 extern int level;
 // Function declarations
 extern Node *create_constant(int type, int dataType, ...);
-extern Node *create_identifier(char *name, int dataType = -1, int qualifier = -1);
+extern Node *create_identifier(char *name, int dataType = 0, int qualifier = 0);
 extern Node *create_operation(int oper, int nops, ...);
 extern void free_node(Node *p);
 extern int execute_all(Node *p, int cont = -1, int brk = -1, int args = 0, ...);

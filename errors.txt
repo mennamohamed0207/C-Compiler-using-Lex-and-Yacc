@@ -1,12 +1,15 @@
 Error at line 6: Semantic Error: variable 'a' not declared
-Error at line 6: Semantic Error: variable 'a' not declared
 Error at line 6: Semantic Error: variable 'b' not declared
-Error at line 6: Semantic ERROR: Type mismatch in assignment  and 'c' int
+Error at line 6: type mismatch in declaration and initialization
+Error at line 6: Semantic Error: variable 'c' must be initialized before use
+Error at line 6: Semantic Error: variable 'c' not declared
 Error at line 12: Semantic Error: variable 'x' not declared
 Error at line 12: Semantic Error: Type mismatch in operation  and 'x' int
+Error at line 23: type mismatch in declaration and initialization
 Error at line 6: Semantic Error: variable 'a' not declared
 Error at line 6: Semantic Error: variable 'b' not declared
-Error at line 6: Semantic ERROR: Type mismatch in assignment  and 'c' int
+Error at line 6: type mismatch in declaration and initialization
+Error at line 6: Semantic Error: variable 'c' must be initialized before use
+Error at line 6: Semantic Error: variable 'c' not declared
 Error at line 12: Semantic Error: variable 'x' not declared
 Error at line 12: Semantic Error: Type mismatch in operation  and 'x' int
-Error at line 17: syntax error

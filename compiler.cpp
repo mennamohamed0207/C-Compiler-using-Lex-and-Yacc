@@ -97,7 +97,7 @@ SymbolTable *get_function_variable(Node *p)
             return symbolTable[i];
         }
     }
-    
+
     return NULL;
 }
 SymbolTable *check_variable(Node *p, bool isRHS = false)
@@ -196,6 +196,17 @@ void log_symbol_table()
     fprintf(symbolTableFile, "----------------------------------------------------------------------------------------------\n");
 
     fclose(symbolTableFile);
+}
+const char *get_type_from_name(const char *name)
+{
+    for (int i = 0; i < symbolTable.size(); i++)
+    {
+        if (symbolTable[i]->name == name)
+        {
+            return get_data_type(symbolTable[i]->type);
+        }
+    }
+    return NULL;
 }
 
 void log_errors(int line, const char *msg)
@@ -304,16 +315,51 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         {
         case DECLARATION:
         {
-            SymbolTable *entry = declare_variable(p->opr.op[0], true);
-            if (entry != NULL)
-            { // Only write to assembly if declaration was successful
-                printf("\tpop %s\t%s\n", get_data_type(p->opr.op[0]->id.dataType), p->opr.op[0]->id.name);
-                open_assembly_file();
-                fprintf(assemblyOutFile, "\tpop %s\t%s\n", get_data_type(p->opr.op[0]->id.dataType), p->opr.op[0]->id.name);
-                fflush(assemblyOutFile);
+            printf("declaration %d\n", p->opr.nops);
+            fflush(stdout);
+            if (p->opr.nops == 1) // declaration without initialization
+            {
+                SymbolTable *entry = declare_variable(p->opr.op[0], true);
+                if (entry != NULL)
+                { // Only write to assembly if declaration was successful
+                    printf("\tpop %s\t%s\n", get_data_type(p->opr.op[0]->id.dataType), p->opr.op[0]->id.name);
+                    open_assembly_file();
+                    fprintf(assemblyOutFile, "\tpop %s\t%s\n", get_data_type(p->opr.op[0]->id.dataType), p->opr.op[0]->id.name);
+                    fflush(assemblyOutFile);
+                }
+                else
+                {
+                    printf("Semantic Error: variable '%s' already declared\n", p->opr.op[0]->id.name);
+                    yyerror("variable already declared");
+                    return 0;
+                }
+                return entry->type;
             }
+            else if (p->opr.nops == 2) // declaration with initialization
+            {
+                SymbolTable *entry = declare_variable(p->opr.op[0], true);
+                if (entry == NULL)
+                {
+                    printf("Semantic Error: variable '%s' already declared\n", p->opr.op[0]->id.name);
+                    yyerror("variable already declared");
+                    return 0;
+                }
+                type1 = write_to_assembly(p->opr.op[1], p);
+                if (type1 != entry->type)
+                {
+                    printf("Semantic Error: type mismatch in declaration and initialization\n");
+                    yyerror("type mismatch in declaration and initialization");
+                    return 0;
+                }
+                entry->isInitialized = true;
+                printf("\tpop %s\t%s\n", get_data_type(entry->type), p->opr.op[0]->id.name);
+                open_assembly_file();
+                fprintf(assemblyOutFile, "\tpop %s\t%s\n", get_data_type(entry->type), p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+                return entry->type;
+            }
+            break;
         }
-        break;
         case WHILE:
             open_assembly_file();
             add_block_scope();
@@ -508,31 +554,47 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             remove_block_scope();
             break;
         case '=':
+            printf("================================assignment %d\n", p->opr.nops);
+            fflush(stdout);
             open_assembly_file();
+
+            printf("==================== call the calll\n");
             type1 = write_to_assembly(p->opr.op[1], p);
-            if (p->opr.op[1]->type == OPERATION && p->opr.op[1]->opr.symbol == '=') // variable assignment
+            printf("====================returned from call\n");
+            fflush(stdout);
+            printf("====================type1 = %d\n", type1);
+            fflush(stdout);
+            printf("====================p->opr.op[0]->id.dataType = %s\n", get_type_from_name(p->opr.op[0]->id.name));
+            fflush(stdout);
+            if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
             {
-                printf("\tpush\t%s\t%s\n", get_data_type(p->opr.op[1]->opr.op[0]->id.dataType), p->opr.op[1]->opr.op[0]->id.name);
+                // printf("===================================p->opr.op[1]->id.name = %s\n", p->opr.op[1]->id.name);
+                // fflush(stdout);
+                // printf("\tpush\t%s\t%s\n", get_data_type(type1), p->opr.op[1]->id.name);
                 // check if it is constant
-                fprintf(assemblyOutFile, "\tpush\t%s\t%s\n", get_data_type(p->opr.op[1]->opr.op[0]->id.dataType), p->opr.op[1]->opr.op[0]->id.name);
-                fflush(assemblyOutFile);
+                if (p->opr.op[1]->type == CONSTANT)
+                {
+                    printf("====================p->opr.op[1]->id.name = %s\n", p->opr.op[1]->id.name);
+                    fflush(stdout);
+                    fprintf(assemblyOutFile, "\tpush\t%s\t%s\n", get_data_type(type1), p->opr.op[1]->id.name);
+                    fflush(assemblyOutFile);
+                }
+                else
+                {
+                    // Call
+                    printf("====================call the call\n");
+                    // printf("====================p->opr.op[1]->id.name = %s\n", p->opr.op[1]->id.name);
+                    fflush(stdout);
+                    fprintf(assemblyOutFile, "\tpush\t%s\n", "Call");
+                    fflush(assemblyOutFile);
+                }
             }
-            symoblTableEntry = declare_variable(p->opr.op[0], true);
-            if (type1 != symoblTableEntry->type)
-            {
-                char msg[1024];
-                sprintf(msg, "Semantic ERROR: Type mismatch in assignment %s and '%s' %s",
-                        get_data_type(type1),
-                        p->opr.op[0]->id.name,
-                        get_data_type(symoblTableEntry->type));
-                yyerror(msg);
-            }
-            symoblTableEntry->isInitialized = true;
+
             // check if const
-            printf("\tpop %s\t%s\t%s\n", get_data_type(symoblTableEntry->type), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
-            fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_data_type(symoblTableEntry->type), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+            printf("\tpop %s\t%s\t%s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+            fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
             fflush(assemblyOutFile);
-            return symoblTableEntry->type;
+            return type1;
         case NEGATIVE:
             open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0], p);
@@ -804,9 +866,12 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             printf("Calling function: %s\n", p->opr.op[0]->id.name);
             fprintf(assemblyOutFile, "\tcall\t%s\n", p->opr.op[0]->id.name);
             fflush(assemblyOutFile);
+            // return funcEntry->type;
+            printf("CALL DONE\n");
+            fflush(stdout);
             return funcEntry->type;
-            // break;
         }
+        break;
 
         case COMMA:
             open_assembly_file();

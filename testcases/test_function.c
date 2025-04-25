@@ -16,7 +16,7 @@ int main()
     int a = 5;
     int result=0;
     result = add(5, 3);
-    float value=0;
+    float value=0.0;
     value = calculate(4.0);
 
     return 0;

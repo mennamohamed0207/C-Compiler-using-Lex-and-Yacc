@@ -2018,14 +2018,14 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 195 "parser.y"
-    {(yyval.nodePtr)=create_operation('=',2,create_identifier((yyvsp[(2) - (4)].sIndex),(yyvsp[(1) - (4)].intValue)),(yyvsp[(4) - (4)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(DECLARATION,2,create_identifier((yyvsp[(2) - (4)].sIndex),(yyvsp[(1) - (4)].intValue),0),(yyvsp[(4) - (4)].nodePtr));;}
     break;
 
   case 54:
 
 /* Line 1455 of yacc.c  */
 #line 196 "parser.y"
-    {(yyval.nodePtr)=create_operation('=',2,create_identifier((yyvsp[(3) - (5)].sIndex),(yyvsp[(2) - (5)].intValue),1),(yyvsp[(5) - (5)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(DECLARATION,2,create_identifier((yyvsp[(3) - (5)].sIndex),(yyvsp[(2) - (5)].intValue),1),(yyvsp[(5) - (5)].nodePtr));;}
     break;
 
   case 55:

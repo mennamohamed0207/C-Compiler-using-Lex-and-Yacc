@@ -1,21 +1,30 @@
 	proc	add
 	add	
-	pop int	 c
 	ret	
-	push	c
 	endproc	
 	proc	calculate
 	push int	2
-	pop int	 y
+	pop int	y
 	ret	
 	push int	2
 	mul	
 	endproc	
 	proc	main
 	push int	5
-	pop int	 a
+	pop int	a
 	push int	0
-	pop int	 result
+	pop int	result
 	push int	3
 	push int	5
 	call	add
+	push	Call
+	pop int	 result
+	push float	0.000000
+	pop float	value
+	push float	4.000000
+	call	calculate
+	push	Call
+	pop float	 value
+	ret	
+	push int	0
+	endproc	
