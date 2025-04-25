@@ -88,18 +88,16 @@ const char *get_data_type(int type)
 }
 SymbolTable *get_function_variable(Node *p)
 {
-    for (int i = level; i >= 0; i--)
+    if (!p || p->type != VARIABLE)
+        return NULL;
+    for (int i = 0; i < symbolTable.size(); i++)
     {
-        if (symbol[i].find(p->id.name) != symbol[i].end())
+        if (symbolTable[i]->name == p->id.name)
         {
-            SymbolTable *entry = symbol[i][p->id.name];
-            if (entry->isFunction == true)
-            {
-                printf("www %s\n", entry->name);
-                return entry;
-            }
+            return symbolTable[i];
         }
     }
+    
     return NULL;
 }
 SymbolTable *check_variable(Node *p, bool isRHS = false)
@@ -138,23 +136,29 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
     }
     return NULL;
 }
-SymbolTable *declare_variable(Node *p, bool isRHS = false)
+SymbolTable *declare_variable(Node *p, bool isRHS = false, bool isParam = false)
 {
     if (p->type != VARIABLE)
         return NULL;
-    if (p->id.dataType == -1)
-    {
-        return check_variable(p, isRHS);
-    }
-    if (symbol[level].find(p->id.name) != symbol[level].end())
+
+    // For parameters, we need to allow declaration even if it exists in outer scope
+    if (!isParam && symbol[level].find(p->id.name) != symbol[level].end())
     {
         char errorMsg[1024];
         sprintf(errorMsg, "Semantic Error: variable '%s' already declared in this scope", p->id.name);
         yyerror(errorMsg);
         return NULL;
     }
-    symbol[level][p->id.name] = new SymbolTable(strdup(p->id.name), p->id.dataType, p->id.qualifier, level, timestep++, false);
+    symbol[level][p->id.name] = new SymbolTable(strdup(p->id.name), p->id.dataType,
+                                                p->id.qualifier, level, timestep++, false);
     symbolTable.push_back(symbol[level][p->id.name]);
+
+    // Mark parameters as initialized
+    if (isParam)
+    {
+        symbol[level][p->id.name]->isInitialized = true;
+    }
+
     return symbol[level][p->id.name];
 }
 
@@ -221,6 +225,7 @@ Node *create_label_node(int label)
 int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1, int args = 0, ...)
 {
     printf("write_to_assembly %d\n", p->opr.symbol);
+
     fflush(stdout);
     va_list ap;
     int l1, l2, l3, type1, type2;
@@ -623,25 +628,64 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         }
         break;
         case FUNCTION:
-            // printf("thissssssssssssssssss %s\t\n", p->opr.op[0]->opr.op[0]->id.name);
-            // fflush(stdout);
+        {
+            printf("=======================================================FUNCTION\n");
+            fflush(stdout);
             open_assembly_file();
             add_block_scope();
-            symoblTableEntry = declare_variable(p->opr.op[0]->opr.op[0], true);
-            symoblTableEntry->isFunction = true;
+
+            // Declare the function itself
+            SymbolTable *funcEntry = declare_variable(p->opr.op[0]->opr.op[0], true);
+            if (!funcEntry)
+            {
+                yyerror("Function declaration failed");
+                return 0;
+            }
+            funcEntry->isFunction = true;
+
             printf("\tproc\t%s\n", p->opr.op[0]->opr.op[0]->id.name);
             fprintf(assemblyOutFile, "\tproc\t%s\n", p->opr.op[0]->opr.op[0]->id.name);
-            fflush(assemblyOutFile);
+
+            // Process parameters
             if (p->opr.op[1])
             {
-                write_to_assembly(p->opr.op[1], p);
+                Node *paramList = p->opr.op[1];
+
+                // Process parameters in declaration order (reverse of calling convention)
+                vector<Node *> params;
+                while (paramList && paramList->type == OPERATION && paramList->opr.symbol == COMMA)
+                {
+                    params.push_back(paramList->opr.op[1]);
+                    paramList = paramList->opr.op[0];
+                }
+                if (paramList)
+                    params.push_back(paramList);
+
+                // Store parameter types in function entry
+                for (auto param : params)
+                {
+                    funcEntry->paramTypes.push_back(param->id.dataType);
+                }
+
+                // Process parameters in reverse order (to match calling convention)
+                for (int i = params.size() - 1; i >= 0; i--)
+                {
+                    SymbolTable *param = declare_variable(params[i], true, true);
+                    if (param)
+                    {
+                        printf("\tpop %s\t%s\n", get_data_type(param->type), param->name.c_str());
+                        fprintf(assemblyOutFile, "\tpop %s\t%s\n", get_data_type(param->type), param->name.c_str());
+                    }
+                }
             }
-            // printf("\thissssssssssssssssss %s\t\n", p->opr.op[3]);
+
+            // Process function body
             write_to_assembly(p->opr.op[2], p);
             write_to_assembly(p->opr.op[3], p);
+
             remove_block_scope();
-            return symoblTableEntry->type;
-            break;
+            return funcEntry->type;
+        }
         // case FUNCTION:
         //     open_assembly_file();
         //     add_block_scope();
@@ -673,13 +717,97 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         //     remove_block_scope();
         //     return symoblTableEntry->type;
         case CALL:
-            open_assembly_file();
-            write_to_assembly(p->opr.op[1]);
-            printf("\tcall\t%s\n", p->opr.op[0]->opr.op[0]->id.name);
-            fprintf(assemblyOutFile, "\tcall\t%s\n", p->opr.op[0]->opr.op[0]->id.name);
+        {
+            printf("============================CALL\n");
+            fflush(stdout);
+
+            // Print the function node
+            if (p->opr.op[0])
+                printf("Function Node OK\n");
+            else
+                printf("Function Node is NULL!\n");
+
+            // Get the function entry
+            SymbolTable *funcEntry = get_function_variable(p->opr.op[0]);
+            printf("After get_function_variable\n");
+            fflush(stdout);
+
+            if (funcEntry == NULL)
+            {
+                printf("Function not declared\n");
+                fflush(stdout);
+                char errorMsg[1024];
+                sprintf(errorMsg, "Semantic Error: function '%s' not declared",
+                        p->opr.op[0]->id.name);
+                yyerror(errorMsg);
+            }
+
+            printf("Function '%s' found in symbol table with type = %d\n",
+                   p->opr.op[0]->id.name, funcEntry->type);
+
+            // Process arguments
+            if (p->opr.op[1])
+            {
+                printf("Arguments detected\n");
+                Node *argList = p->opr.op[1];
+                int argCount = 0;
+
+                // First count the arguments
+                while (argList && argList->type == OPERATION && argList->opr.symbol == COMMA)
+                {
+                    argCount++;
+                    printf("Counting argument %d\n", argCount);
+                    argList = argList->opr.op[0];
+                }
+                if (argList)
+                    argCount++; // Last argument
+
+                printf("Total arguments: %d\n", argCount);
+
+                // Push arguments in reverse order
+                if (argCount > 0)
+                {
+                    Node *args[argCount];
+                    argList = p->opr.op[1];
+
+                    // Store arguments in array (in original order)
+                    for (int i = argCount - 1; i >= 0; i--)
+                    {
+                        if (argList->type == OPERATION && argList->opr.symbol == COMMA)
+                        {
+                            args[i] = argList->opr.op[1];
+                            printf("args[%d] = COMMA right operand\n", i);
+                            argList = argList->opr.op[0];
+                        }
+                        else
+                        {
+                            args[i] = argList;
+                            printf("args[%d] = last or single argument\n", i);
+                        }
+                    }
+                    printf("Pushing arguments in reverse order\n");
+                    fflush(stdout);
+
+                    // Push in reverse order
+                    for (int i = argCount - 1; i >= 0; i--)
+                    {
+                        printf("Writing to assembly arg[%d]\n", i);
+                        write_to_assembly(args[i], p);
+                    }
+                }
+            }
+            else
+            {
+                printf("No arguments provided.\n");
+            }
+
+            printf("Calling function: %s\n", p->opr.op[0]->id.name);
+            fprintf(assemblyOutFile, "\tcall\t%s\n", p->opr.op[0]->id.name);
             fflush(assemblyOutFile);
-            return 274;
-            break;
+            return funcEntry->type;
+            // break;
+        }
+
         case COMMA:
             open_assembly_file();
             write_to_assembly(p->opr.op[0]);

@@ -1,7 +1,7 @@
 Write-Host "Generating compiler..."
 flex lexer.l
 bison -d parser.y 
-g++ parser.tab.c lex.yy.c compiler.cpp -o mycompiler 2> error.txt
+g++ parser.tab.c lex.yy.c compiler.cpp -o mycompiler 2> error.txt 
 
 
 

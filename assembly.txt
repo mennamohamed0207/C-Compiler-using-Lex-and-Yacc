@@ -1,13 +1,10 @@
 	proc	add
-	pop int	a
-	pop int	b
 	add	
 	pop int	 c
 	ret	
 	push	c
 	endproc	
 	proc	calculate
-	pop float	x
 	push int	2
 	pop int	 y
 	ret	
@@ -17,6 +14,8 @@
 	proc	main
 	push int	5
 	pop int	 a
-	ret	
 	push int	0
-	endproc	
+	pop int	 result
+	push int	3
+	push int	5
+	call	add

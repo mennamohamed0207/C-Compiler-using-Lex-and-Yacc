@@ -2,6 +2,7 @@
     #include "compiler.h"  
 }
 %{
+
     #include <stdio.h>
     #include <stdlib.h>
     #include "compiler.h"
@@ -36,6 +37,7 @@
 }
 
 /* Tokens */
+
 %token <intValue> INTEGER
 %token <floatValue> FLOAT
 %token <stringValue> STRING CHARACTER
@@ -192,6 +194,7 @@ declaration:
     type IDENTIFIER {$$=create_operation(DECLARATION,1,create_identifier($2,$1,0));}
     | type IDENTIFIER '=' expr {$$=create_operation('=',2,create_identifier($2,$1),$4);}
     | CONST type IDENTIFIER '=' expr {$$=create_operation('=',2,create_identifier($3,$2,1),$5);}
+    /* | type IDENTIFIER '=' function_call  %prec FUNC {$$=create_operation('=',2,create_identifier($2,$1),$4);} */
     ;
 assignment_statement:
     IDENTIFIER '=' expr {$$=create_operation('=',2,create_identifier($1),$3);}

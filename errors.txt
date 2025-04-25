@@ -1,67 +1,12 @@
-Error at line 13: Semantic ERROR: Type mismatch in assignment bool and 'b' int
-Error at line 13: Semantic Error: Type mismatch in operation int and 'b' bool
-Error at line 13: Semantic ERROR: Type mismatch in assignment bool and 'c' int
+Error at line 6: Semantic Error: variable 'a' not declared
+Error at line 6: Semantic Error: variable 'a' not declared
+Error at line 6: Semantic Error: variable 'b' not declared
+Error at line 6: Semantic ERROR: Type mismatch in assignment  and 'c' int
+Error at line 12: Semantic Error: variable 'x' not declared
+Error at line 12: Semantic Error: Type mismatch in operation  and 'x' int
+Error at line 6: Semantic Error: variable 'a' not declared
+Error at line 6: Semantic Error: variable 'b' not declared
+Error at line 6: Semantic ERROR: Type mismatch in assignment  and 'c' int
+Error at line 12: Semantic Error: variable 'x' not declared
+Error at line 12: Semantic Error: Type mismatch in operation  and 'x' int
 Error at line 17: syntax error
-Error at line 13: syntax error
-Error at line 2: syntax error
-Error at line 5: syntax error
-Error at line 4: syntax error
-Error at line 4: syntax error
-Error at line 4: syntax error
-Error at line 4: syntax error
-Error at line 4: syntax error
-Error at line 4: syntax error
-Error at line 4: syntax error
-Error at line 4: syntax error
-Error at line 6: Semantic Error: variable 'a' must be initialized before use
-Error at line 6: Semantic Error: variable 'a' not declared
-Error at line 6: Semantic Error: variable 'b' must be initialized before use
-Error at line 6: Semantic Error: variable 'b' not declared
-Error at line 6: Semantic ERROR: Type mismatch in assignment  and 'c' int
-Error at line 11: Semantic Error: variable 'x' must be initialized before use
-Error at line 11: Semantic Error: variable 'x' not declared
-Error at line 11: Semantic Error: Type mismatch in operation  and 'x' int
-Error at line 15: syntax error
-Error at line 6: Semantic Error: variable 'a' must be initialized before use
-Error at line 6: Semantic Error: variable 'a' not declared
-Error at line 6: Semantic Error: variable 'b' must be initialized before use
-Error at line 6: Semantic Error: variable 'b' not declared
-Error at line 6: Semantic ERROR: Type mismatch in assignment  and 'c' int
-Error at line 11: Semantic Error: variable 'x' must be initialized before use
-Error at line 11: Semantic Error: variable 'x' not declared
-Error at line 11: Semantic Error: Type mismatch in operation  and 'x' int
-Error at line 15: syntax error
-Error at line 6: Semantic Error: variable 'a' must be initialized before use
-Error at line 6: Semantic Error: variable 'a' not declared
-Error at line 6: Semantic Error: variable 'b' must be initialized before use
-Error at line 6: Semantic Error: variable 'b' not declared
-Error at line 6: Semantic ERROR: Type mismatch in assignment  and 'c' int
-Error at line 11: Semantic Error: variable 'x' must be initialized before use
-Error at line 11: Semantic Error: variable 'x' not declared
-Error at line 11: Semantic Error: Type mismatch in operation  and 'x' int
-Error at line 15: syntax error
-Error at line 6: Semantic Error: variable 'a' must be initialized before use
-Error at line 6: Semantic Error: variable 'a' not declared
-Error at line 6: Semantic Error: variable 'b' must be initialized before use
-Error at line 6: Semantic Error: variable 'b' not declared
-Error at line 6: Semantic ERROR: Type mismatch in assignment  and 'c' int
-Error at line 11: Semantic Error: variable 'x' must be initialized before use
-Error at line 11: Semantic Error: variable 'x' not declared
-Error at line 11: Semantic Error: Type mismatch in operation  and 'x' int
-Error at line 16: syntax error
-Error at line 6: Semantic Error: variable 'a' must be initialized before use
-Error at line 6: Semantic Error: variable 'a' not declared
-Error at line 6: Semantic Error: variable 'b' must be initialized before use
-Error at line 6: Semantic Error: variable 'b' not declared
-Error at line 6: Semantic ERROR: Type mismatch in assignment  and 'c' int
-Error at line 11: Semantic Error: variable 'x' must be initialized before use
-Error at line 11: Semantic Error: variable 'x' not declared
-Error at line 11: Semantic Error: Type mismatch in operation  and 'x' int
-Error at line 6: Semantic Error: variable 'a' must be initialized before use
-Error at line 6: Semantic Error: variable 'a' not declared
-Error at line 6: Semantic Error: variable 'b' must be initialized before use
-Error at line 6: Semantic Error: variable 'b' not declared
-Error at line 6: Semantic ERROR: Type mismatch in assignment  and 'c' int
-Error at line 11: Semantic Error: variable 'x' must be initialized before use
-Error at line 11: Semantic Error: variable 'x' not declared
-Error at line 11: Semantic Error: Type mismatch in operation  and 'x' int
