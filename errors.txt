@@ -1,0 +1,9 @@
+Error at line 13: Semantic ERROR: Type mismatch in assignment bool and 'b' int
+Error at line 13: Semantic Error: Type mismatch in operation int and 'b' bool
+Error at line 13: Semantic ERROR: Type mismatch in assignment bool and 'c' int
+Error at line 17: syntax error
+Error at line 13: syntax error
+Error at line 2: syntax error
+Error at line 5: syntax error
+Error at line 4: syntax error
+Error at line 4: syntax error

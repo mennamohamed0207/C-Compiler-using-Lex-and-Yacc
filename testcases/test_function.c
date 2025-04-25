@@ -1,11 +1,11 @@
-// int add(int a, int b) 
-// {
-//     return 5;
-// }
+int add(int a, int b) 
+{
+    return 5;
+}
 
-// float calculate(float x) {
-//     return x * 2;
-// }
+float calculate(float x) {
+    return x * 2;
+}
 
 int main() {
     int a = 5;

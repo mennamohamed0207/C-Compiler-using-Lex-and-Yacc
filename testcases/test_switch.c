@@ -1,18 +1,19 @@
 int main() {
     int day = 3;
+    string dayy;
     
     switch(day) {
         case 1:
-            string dayy = "Monday";
+            dayy = "Monday";
             break;
         case 2:
-            string dayy = "Tuesday";
+            dayy = "Tuesday";
             break;
         case 3:
-            string dayy = "Wednesday";
+            dayy = "Wednesday";
             break;
         default:
-            string dayy = "Invalid day";
+            dayy = "Invalid day";
     }
     
     return 0;

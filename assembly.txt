@@ -1,26 +1,29 @@
 	proc	main
-	push int	5
-	pop int	 num
-L000:
-	push	num
-	push int	1
-	sub	
-	pop int	 num
-	push	num
-	push int	0
-	compGT	
-	jnz	L000
+	push int	3
+	pop int	 day
+	pop string	dayy
+	pop day	
 L001:
-	push int	0
-	pop int	 flag
-L002:
-	push string	"Hello"
-	pop string	 s
-	push	flag
+	push	day
 	push int	1
 	compEQ	
-	jnz	L002
+	jz	L003
+	push string	"Monday"
+	pop string	 dayy
+	jmp	L1111
 L003:
-	ret	
-	push int	0
-	endproc	
+	push	day
+	push int	2
+	compEQ	
+	jz	L005
+	push string	"Tuesday"
+	pop string	 dayy
+	jmp	L1111
+L005:
+	push	day
+	push int	3
+	compEQ	
+	jz	L007
+	push string	"Wednesday"
+	pop string	 dayy
+	jmp	L1111
