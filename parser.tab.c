@@ -1928,7 +1928,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 173 "parser.y"
-    {(yyval.nodePtr)=create_operation(SWITCH,2,create_identifier((yyvsp[(3) - (8)].sIndex)),(yyvsp[(6) - (8)].nodePtr),(yyvsp[(7) - (8)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(SWITCH,3,create_identifier((yyvsp[(3) - (8)].sIndex)),(yyvsp[(6) - (8)].nodePtr),(yyvsp[(7) - (8)].nodePtr));;}
     break;
 
   case 43:
@@ -1963,14 +1963,14 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 183 "parser.y"
-    {(yyval.nodePtr)=create_operation(CASE,4,create_constant(INTEGER,INT_TYPE,(yyvsp[(2) - (6)].intValue)),(yyvsp[(4) - (6)].nodePtr),create_operation(BREAK,0));;}
+    {(yyval.nodePtr)=create_operation(CASE,3,create_constant(INTEGER,INT_TYPE,(yyvsp[(2) - (6)].intValue)),(yyvsp[(4) - (6)].nodePtr),create_operation(BREAK,0));;}
     break;
 
   case 48:
 
 /* Line 1455 of yacc.c  */
 #line 184 "parser.y"
-    {(yyval.nodePtr)=create_operation(CASE,4,create_constant(STRING,STRING_TYPE,(yyvsp[(2) - (6)].stringValue)),(yyvsp[(4) - (6)].nodePtr),create_operation(BREAK,0));;}
+    {(yyval.nodePtr)=create_operation(CASE,3,create_constant(STRING,STRING_TYPE,(yyvsp[(2) - (6)].stringValue)),(yyvsp[(4) - (6)].nodePtr),create_operation(BREAK,0));;}
     break;
 
   case 49:

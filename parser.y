@@ -170,7 +170,7 @@ if_statement:
     ;
 switch_statement:
     SWITCH '(' IDENTIFIER ')' '{' switch_cases '}' {$$=create_operation(SWITCH,2,create_identifier($3),$6);}
-    | SWITCH '(' IDENTIFIER ')' '{' switch_cases  default_statement '}' {$$=create_operation(SWITCH,2,create_identifier($3),$6,$7);}
+    | SWITCH '(' IDENTIFIER ')' '{' switch_cases  default_statement '}' {$$=create_operation(SWITCH,3,create_identifier($3),$6,$7);}
     ;
 
 default_statement:
@@ -180,8 +180,8 @@ switch_cases:
     CASE INTEGER ':' statement BREAK ';' switch_cases {$$=create_operation(CASE,4,create_constant(INTEGER,INT_TYPE,$2),$4,create_operation(BREAK,0),$7);}
     | CASE STRING ':' statement BREAK ';' switch_cases {$$=create_operation(CASE,4,create_constant(STRING,STRING_TYPE,$2),$4,create_operation(BREAK,0),$7);}
     | CASE CHARACTER ':' statement BREAK ';' switch_cases {$$=create_operation(CASE,4,create_constant(CHARACTER,CHAR_TYPE,$2),$4,create_operation(BREAK,0),$7);}
-    | CASE INTEGER ':' statement BREAK ';' {$$=create_operation(CASE,4,create_constant(INTEGER,INT_TYPE,$2),$4,create_operation(BREAK,0));}
-    | CASE STRING ':' statement BREAK ';' {$$=create_operation(CASE,4,create_constant(STRING,STRING_TYPE,$2),$4,create_operation(BREAK,0));}
+    | CASE INTEGER ':' statement BREAK ';' {$$=create_operation(CASE,3,create_constant(INTEGER,INT_TYPE,$2),$4,create_operation(BREAK,0));}
+    | CASE STRING ':' statement BREAK ';' {$$=create_operation(CASE,3,create_constant(STRING,STRING_TYPE,$2),$4,create_operation(BREAK,0));}
     | CASE CHARACTER ':' statement BREAK ';' {$$=create_operation(CASE,3,create_constant(CHARACTER,CHAR_TYPE,$2),$4,create_operation(BREAK,0));}
     ;
 

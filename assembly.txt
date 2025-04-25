@@ -23,7 +23,15 @@ L005:
 	push	day
 	push int	3
 	compEQ	
-	jz	L007
+	jz	L999
 	push string	"Wednesday"
 	pop string	 dayy
 	jmp	L1111
+L999:
+	push string	"Invalid day"
+	pop string	 dayy
+	jmp	L1111
+L1111:
+	ret	
+	push int	0
+	endproc	

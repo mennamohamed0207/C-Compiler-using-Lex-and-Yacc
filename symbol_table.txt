@@ -1,1 +1,4 @@
 Name,	DataType,	Qualifier,	TimeStep,	Scope,	Initialized,	Used,	 Function
+main,		int, 		Variable, 		0, 		1, 		False, 		False, 		True 
+day,		int, 		Variable, 		1, 		1, 		True, 		False, 		False 
+dayy,		string, 		Variable, 		2, 		1, 		True, 		True, 		False 

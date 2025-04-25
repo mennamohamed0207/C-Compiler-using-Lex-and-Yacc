@@ -438,7 +438,9 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 fprintf(assemblyOutFile, "\tjmp\tL%03d\n", endLabel);
                 fflush(assemblyOutFile);
                 if (lastCase)
+                {
                     break;
+                }
                 else
                 {
                     n = n->opr.op[3];
