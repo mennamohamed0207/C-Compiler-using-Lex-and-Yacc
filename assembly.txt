@@ -1,38 +1,35 @@
-	proc	add
-	pop int	a
-	pop int	b
-	push	a
-	push	b
-	add	
-	pop int	c
-	ret	
-	push	c
-	endproc	
-	proc	calculate
-	pop float	x
-	push int	2
-	pop int	y
-	ret	
-	push	x
-	push float	2.000000
-	mul	
-	endproc	
 	proc	main
 	push int	5
-	pop int	a
-	push int	0
-	pop int	result
 	push int	3
+	push int	2
+	add	
+	mul	
+	pop int	a
+	push	a
+	push int	10
+	compGT	
+	push	a
+	push int	30
+	compLT	
+	compAND	
+	push	a
+	push int	2
+	mod	
+	push int	0
+	compEQ	
+	compOR	
+	push int	10
+	pop int	x
+	push	x
 	push int	5
-	call	add
+	mul	
 	push	Call
-	pop int	 result
-	push float	0.000000
-	pop float	value
-	push float	4.000000
-	call	calculate
+	pop int	 x
+	push	x
+	push int	2
+	add	
 	push	Call
-	pop float	 value
+	pop int	 x
 	ret	
 	push int	0
 	endproc	

@@ -110,6 +110,8 @@ struct SymbolTable
         symbolType = sty;
         scope = sc;
         timestamp = ts;
+        isFunction = func;
+        isParam = param;
     }
 };
 

@@ -170,7 +170,7 @@ SymbolTable *declare_variable(Node *p, bool isRHS = false, bool isParam = false)
                                                 p->id.qualifier, level, timestep++, false);
     symbolTable.push_back(symbol[level][p->id.name]);
     //print variable name
-    printf("=======================================================declare_variable %s\n", p->id.name);
+    // printf("=======================================================declare_variable %s\n", p->id.name);
     fflush(stdout);
 
     // Mark parameters as initialized
@@ -181,7 +181,7 @@ SymbolTable *declare_variable(Node *p, bool isRHS = false, bool isParam = false)
     //print the symbol table
     for (int i = 0; i < symbolTable.size(); i++)
     {
-        printf("=======================================================symbol table %s\n", symbolTable[i]->name.c_str());
+        // printf("=======================================================symbol table %s\n", symbolTable[i]->name.c_str());
         fflush(stdout);
     }
 
@@ -353,7 +353,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         {
         case DECLARATION:
         {
-            printf("==============================================declaration %d\n", p->opr.nops);
+            // printf("==============================================declaration %d\n", p->opr.nops);
             fflush(stdout);
             if (p->opr.nops == 1) // declaration without initialization
             {
@@ -592,37 +592,38 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             remove_block_scope();
             break;
         case '=':
-            printf("================================assignment %d\n", p->opr.nops);
-            fflush(stdout);
+           
             open_assembly_file();
 
-            printf("==================== call the calll\n");
             type1 = write_to_assembly(p->opr.op[1], p);
-            printf("====================returned from call\n");
-            fflush(stdout);
-            printf("====================type1 = %d\n", type1);
-            fflush(stdout);
-            printf("====================p->opr.op[0]->id.dataType = %s\n", get_type_from_name(p->opr.op[0]->id.name));
-            fflush(stdout);
+      
             if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
             {
-                // printf("===================================p->opr.op[1]->id.name = %s\n", p->opr.op[1]->id.name);
+                printf("===================================assignment ");
                 // fflush(stdout);
                 // printf("\tpush\t%s\t%s\n", get_data_type(type1), p->opr.op[1]->id.name);
                 // check if it is constant
                 if (p->opr.op[1]->type == CONSTANT)
                 {
-                    printf("====================p->opr.op[1]->id.name = %s\n", p->opr.op[1]->id.name);
+                    printf( "\tpush\t%s\t%d\n", get_data_type(type1), p->opr.op[1]->con.value);
                     fflush(stdout);
-                    fprintf(assemblyOutFile, "\tpush\t%s\t%s\n", get_data_type(type1), p->opr.op[1]->id.name);
+                    if(type1 == INT_TYPE)
+                    {
+                        fprintf(assemblyOutFile, "\tpush\t%s\t%d\n", get_data_type(type1), p->opr.op[1]->con.value);
+                    }
+                    else if(type1 == STRING_TYPE)
+                    {
+                        fprintf(assemblyOutFile, "\tpush\t%s\t%s\n", get_data_type(type1), p->opr.op[1]->con.value);
+                    }
+                    else if(type1 == FLOAT_TYPE)
+                    {
+                        fprintf(assemblyOutFile, "\tpush\t%s\t%f\n", get_data_type(type1), p->opr.op[1]->con.value);
+                    }
                     fflush(assemblyOutFile);
                 }
                 else
                 {
                     // Call
-                    printf("====================call the call\n");
-                    // printf("====================p->opr.op[1]->id.name = %s\n", p->opr.op[1]->id.name);
-                    fflush(stdout);
                     fprintf(assemblyOutFile, "\tpush\t%s\n", "Call");
                     fflush(assemblyOutFile);
                 }
@@ -731,6 +732,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         {
             printf("=======================================================FUNCTION\n");
             fflush(stdout);
+           
             open_assembly_file();
             add_block_scope();
 
@@ -763,10 +765,11 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 // Process parameters in reverse order (to match calling convention)
                 for (int i = params.size() - 1; i >= 0; i--)
                 {
-                    printf("=======================================================declare_variable a,b \n");
-                    fflush(stdout);
+                    // printf("=======================================================declare_variable a,b \n");
+                    // fflush(stdout);
                     SymbolTable *param = declare_parameter(params[i]); // isParam=true
-                    printf("=======================================================declare_variable a,b \n");
+                    // printf("=======================================================declare_variable a,b \n");
+                    // fflush(stdout);
                     if (param)
                     {
                         param->isInitialized = true; // Mark parameters as initialized
