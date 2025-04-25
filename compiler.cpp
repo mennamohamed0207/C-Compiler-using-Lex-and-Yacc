@@ -104,18 +104,25 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
 {
     if (p->type != VARIABLE)
         return NULL;
-
+    
+    // print symbol table
+    printf("Symbol table:\n");
     for (int i = 0; i < symbolTable.size(); i++)
     {
-        if (symbolTable[i]->name == p->id.name)
+        printf("%s\n", symbolTable[i]->name.c_str());
+    }
+
+    // Search from current scope outward
+    for (int i = level; i >= 0; i--)
+    {
+        if (symbol[i].find(p->id.name) != symbol[i].end())
         {
-            SymbolTable *entry = symbolTable[i];
+            SymbolTable *entry = symbol[i][p->id.name];
             if (!isRHS && entry->isParam)
             {
                 return entry;
             }
-
-            // Error as the variable is already declared
+             // Error as the variable is already declared
             if (isRHS && entry->type == CONSTANT)
             {
                 char errorMsg[1024];
@@ -137,11 +144,17 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
             symbol[i][p->id.name]->used = true;
             return symbol[i][p->id.name];
         }
+        
     }
+
+
+    
     return NULL;
 }
+
 SymbolTable *declare_variable(Node *p, bool isRHS = false, bool isParam = false)
 {
+    
     if (p->type != VARIABLE)
         return NULL;
 
@@ -156,11 +169,20 @@ SymbolTable *declare_variable(Node *p, bool isRHS = false, bool isParam = false)
     symbol[level][p->id.name] = new SymbolTable(strdup(p->id.name), p->id.dataType,
                                                 p->id.qualifier, level, timestep++, false);
     symbolTable.push_back(symbol[level][p->id.name]);
+    //print variable name
+    printf("=======================================================declare_variable %s\n", p->id.name);
+    fflush(stdout);
 
     // Mark parameters as initialized
     if (isParam)
     {
         symbol[level][p->id.name]->isInitialized = true;
+    }
+    //print the symbol table
+    for (int i = 0; i < symbolTable.size(); i++)
+    {
+        printf("=======================================================symbol table %s\n", symbolTable[i]->name.c_str());
+        fflush(stdout);
     }
 
     return symbol[level][p->id.name];
@@ -201,6 +223,16 @@ void log_symbol_table()
 
     fclose(symbolTableFile);
 }
+SymbolTable* declare_parameter(Node *p)
+{
+
+   SymbolTable *param = declare_variable(p->opr.op[0], true, true);
+    if (param) {
+        param->isInitialized = true;
+        param->isParam = true;
+    }
+    return param;
+}
 const char *get_type_from_name(const char *name)
 {
     for (int i = 0; i < symbolTable.size(); i++)
@@ -236,7 +268,9 @@ Node *create_label_node(int label)
     p->type = CONSTANT;
     p->con.value.intVal = label;
     return p;
+
 }
+
 int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1, int args = 0, ...)
 {
     printf("write_to_assembly %d\n", p->opr.symbol);
@@ -729,7 +763,10 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 // Process parameters in reverse order (to match calling convention)
                 for (int i = params.size() - 1; i >= 0; i--)
                 {
-                    SymbolTable *param = declare_variable(params[i], true, true); // isParam=true
+                    printf("=======================================================declare_variable a,b \n");
+                    fflush(stdout);
+                    SymbolTable *param = declare_parameter(params[i]); // isParam=true
+                    printf("=======================================================declare_variable a,b \n");
                     if (param)
                     {
                         param->isInitialized = true; // Mark parameters as initialized

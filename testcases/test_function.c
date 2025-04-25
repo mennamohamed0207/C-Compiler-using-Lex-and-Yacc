@@ -8,7 +8,7 @@ int add(int a, int b)
 float calculate(float x)
 {
     int y = 2;
-    return x * 2;
+    return x * 2.0;
 }
 
 int main()
