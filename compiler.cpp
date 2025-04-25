@@ -157,26 +157,43 @@ SymbolTable *declare_variable(Node *p, bool isRHS = false)
     symbolTable.push_back(symbol[level][p->id.name]);
     return symbol[level][p->id.name];
 }
+
 void log_symbol_table()
 {
-    printf("Loggin symbol table\n");
+    printf("Logging symbol table...\n");
     FILE *symbolTableFile = fopen("symbol_table.txt", "w");
     if (symbolTableFile == NULL)
     {
         printf("Error opening symbol table file: symbol_table.txt\n");
         return;
     }
-    fprintf(symbolTableFile, "Name,\tDataType,\tQualifier,\tTimeStep,\tScope,\tInitialized,\tUsed,\t Function\n");
-    fflush(symbolTableFile);
+
+    // Print a header with column names, aligned
+    fprintf(symbolTableFile, "----------------------------------------------------------------------------------------------\n");
+    fprintf(symbolTableFile, "| %-20s | %-10s | %-10s | %-8s | %-6s | %-11s | %-6s | %-9s |\n",
+            "Name", "DataType", "Qualifier", "TimeStep", "Scope", "Initialized", "Used", "Function");
+    fprintf(symbolTableFile, "----------------------------------------------------------------------------------------------\n");
+
+    // Print each symbol in a nicely aligned format
     for (int i = 0; i < symbolTable.size(); i++)
     {
         SymbolTable *st = symbolTable[i];
-        fprintf(symbolTableFile, "%s,\t\t%s, \t\t%s, \t\t%d, \t\t%d, \t\t%s, \t\t%s, \t\t%s \n",
-                st->name.c_str(), get_data_type(st->type), st->symbolType == 1 ? "Constant" : "Variable", st->timestamp, st->scope, st->isInitialized == true ? "True" : "False", st->used == true ? "True" : "False", st->isFunction == true ? "True" : "False");
-        fflush(symbolTableFile);
+        fprintf(symbolTableFile, "| %-20s | %-10s | %-10s | %-8d | %-6d | %-11s | %-6s | %-9s |\n",
+                st->name.c_str(),
+                get_data_type(st->type),
+                st->symbolType == 1 ? "Constant" : "Variable",
+                st->timestamp,
+                st->scope,
+                st->isInitialized ? "True" : "False",
+                st->used ? "True" : "False",
+                st->isFunction ? "True" : "False");
     }
+
+    fprintf(symbolTableFile, "----------------------------------------------------------------------------------------------\n");
+
     fclose(symbolTableFile);
 }
+
 void log_errors(int line, const char *msg)
 {
     FILE *errorFile = fopen("errors.txt", "a");
