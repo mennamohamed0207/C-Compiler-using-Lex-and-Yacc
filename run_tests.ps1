@@ -6,12 +6,10 @@ g++ parser.tab.c lex.yy.c compiler.cpp -o mycompiler 2> error.txt
 
 
 
-Write-Host "-----------------------------------Running test_switch.c-----------------------------------"
-Get-Content testcases\test_switch.c | .\mycompiler
 
 
-# Write-Host "`n-----------------------------------Running test_function.c-----------------------------------"
-# Get-Content testcases\test_function.c | .\mycompiler 
+Write-Host "`n-----------------------------------Running test_function.c-----------------------------------"
+Get-Content testcases\test_function.c | .\mycompiler 
 
 
 
@@ -26,6 +24,8 @@ Get-Content testcases\test_switch.c | .\mycompiler
 # Get-Content testcases\test_valid.c | .\compiler 
 # Write-Host "`n-----------------------------------Running test_inc_dec.c-----------------------------------"
 # Get-Content testcases\test_inc_dec.c | .\compiler 
+# Write-Host "-----------------------------------Running test_switch.c-----------------------------------"
+# Get-Content testcases\test_switch.c | .\mycompiler
 
 # Write-Host "`n-----------------------------------Running test_dowhile.c-----------------------------------"
 # Get-Content testcases\test_dowhile.c | .\mycompiler 

@@ -87,6 +87,7 @@ program:
     | program statement  {write_to_assembly($2);}
     ;
 statement_list:
+
     statement {$$=$1;}
     | statement_list statement {$$=create_operation(';',2,$1,$2);}
     ;
@@ -135,6 +136,8 @@ function_definition:
         $$ = create_operation(FUNCTION, 4, $1, $3, $6, $7);
         // printf("Parsed function %s\n", $2);  // Debug
     }
+    | declaration '(' args ')' '{'  return_statement '}'  {$$=create_operation(FUNCTION,3,$1,$3,$6);}
+    | declaration '(' args ')' '{'  '}'  {$$=create_operation(FUNCTION,2,$1,$3);}
     ;
 
 for_statement:
