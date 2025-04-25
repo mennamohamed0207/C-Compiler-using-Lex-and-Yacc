@@ -3,10 +3,4 @@
 ----------------------------------------------------------------------------------------------
 | add                  | int        | Variable   | 0        | 1      | False       | False  | True      |
 | c                    | int        | Variable   | 1        | 1      | False       | False  | False     |
-| calculate            | float      | Variable   | 2        | 1      | False       | False  | True      |
-| y                    | int        | Variable   | 3        | 1      | True        | False  | False     |
-| main                 | int        | Variable   | 4        | 1      | False       | False  | True      |
-| a                    | int        | Variable   | 5        | 1      | True        | False  | False     |
-| result               | int        | Variable   | 6        | 1      | True        | False  | False     |
-| value                | float      | Variable   | 7        | 1      | True        | False  | False     |
 ----------------------------------------------------------------------------------------------

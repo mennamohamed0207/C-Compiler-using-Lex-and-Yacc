@@ -8,8 +8,10 @@ g++ parser.tab.c lex.yy.c compiler.cpp -o mycompiler 2> error.txt
 
 
 
+# Write-Host "`n-----------------------------------Running test_function.c-----------------------------------"
+# Get-Content testcases\test_function.c | .\mycompiler 
 Write-Host "`n-----------------------------------Running test_function.c-----------------------------------"
-Get-Content testcases\test_function.c | .\mycompiler 
+Get-Content testcases\test_function_declare.c | .\mycompiler 
 
 
 

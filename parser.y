@@ -246,7 +246,7 @@ expr:
 
 
 args :
-    declaration ',' args {$$=create_operation(COMMA,2,$1,$3);}
+    args ','  declaration {$$=create_operation(COMMA,2,$1,$3);}
     | declaration {$$=$1;}
     | {$$=NULL;}
     ;

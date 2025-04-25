@@ -105,11 +105,15 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
     if (p->type != VARIABLE)
         return NULL;
 
-    for (int i = level; i >= 0; i--)
+    for (int i = 0; i < symbolTable.size(); i++)
     {
-        if (symbol[i].find(p->id.name) != symbol[i].end())
+        if (symbolTable[i]->name == p->id.name)
         {
-            SymbolTable *entry = symbol[i][p->id.name];
+            SymbolTable *entry = symbolTable[i];
+            if (!isRHS && entry->isParam)
+            {
+                return entry;
+            }
 
             // Error as the variable is already declared
             if (isRHS && entry->type == CONSTANT)
@@ -119,14 +123,14 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
                 yyerror(errorMsg);
                 return NULL;
             }
-            if (!isRHS && entry->isFunction == false && entry->isInitialized == false)
+            if (!isRHS && entry->isFunction == false && entry->isInitialized == false && entry->isParam == false)
             {
                 char errorMsg[1024];
                 sprintf(errorMsg, "Semantic Error: variable '%s' must be initialized before use", p->id.name);
                 yyerror(errorMsg);
                 return NULL;
             }
-            if (!isRHS && !entry->isInitialized)
+            if (!isRHS && !entry->isInitialized && !entry->isParam)
             {
                 yyerror("Variable used before initialization");
             }
@@ -315,7 +319,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         {
         case DECLARATION:
         {
-            printf("declaration %d\n", p->opr.nops);
+            printf("==============================================declaration %d\n", p->opr.nops);
             fflush(stdout);
             if (p->opr.nops == 1) // declaration without initialization
             {
@@ -712,8 +716,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             if (p->opr.op[1])
             {
                 Node *paramList = p->opr.op[1];
-
-                // Process parameters in declaration order (reverse of calling convention)
+                // Reverse the parameter list to process in declaration order
                 vector<Node *> params;
                 while (paramList && paramList->type == OPERATION && paramList->opr.symbol == COMMA)
                 {
@@ -723,20 +726,16 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 if (paramList)
                     params.push_back(paramList);
 
-                // Store parameter types in function entry
-                for (auto param : params)
-                {
-                    funcEntry->paramTypes.push_back(param->id.dataType);
-                }
-
                 // Process parameters in reverse order (to match calling convention)
                 for (int i = params.size() - 1; i >= 0; i--)
                 {
-                    SymbolTable *param = declare_variable(params[i], true, true);
+                    SymbolTable *param = declare_variable(params[i], true, true); // isParam=true
                     if (param)
                     {
-                        printf("\tpop %s\t%s\n", get_data_type(param->type), param->name.c_str());
-                        fprintf(assemblyOutFile, "\tpop %s\t%s\n", get_data_type(param->type), param->name.c_str());
+                        param->isInitialized = true; // Mark parameters as initialized
+                        fprintf(assemblyOutFile, "\tpop %s\t%s\n",
+                                get_data_type(param->type),
+                                param->name.c_str());
                     }
                 }
             }
@@ -875,6 +874,8 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
 
         case COMMA:
             open_assembly_file();
+            printf("====================COMMA\n");
+            // change to be parameter
             write_to_assembly(p->opr.op[0]);
             write_to_assembly(p->opr.op[1]);
             break;

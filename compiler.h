@@ -102,7 +102,8 @@ struct SymbolTable
     bool isInitialized;
     vector<int> paramTypes;
     bool isFunction;
-    SymbolTable(std::string nm, int ty, int sty, int sc, int ts, bool init, bool func = false)
+    bool isParam;
+    SymbolTable(std::string nm, int ty, int sty, int sc, int ts, bool init, bool func = false, bool param = false)
     {
         name = nm;
         type = ty;
