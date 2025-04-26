@@ -38,30 +38,21 @@ void check_unused_variables()
 {
     // Create an iterator for the symbol table
     string unused_variables = "";
-   for(int i=0;i<symbolTable.size();i++)
-   {
-    if(symbolTable[i]->used == false && symbolTable[i]->isFunction == false)
+    for (int i = 0; i < symbolTable.size(); i++)
     {
-        unused_variables += symbolTable[i]->name + ", ";
+        if (symbolTable[i]->used == false && symbolTable[i]->isFunction == false)
+        {
+            unused_variables += symbolTable[i]->name + ", ";
+        }
     }
-   }
-   if(unused_variables.length() > 0)
-   {
-    char errorMsg[1024];
-    sprintf(errorMsg, "Unused variables: %s", unused_variables.c_str());
-    yyerror(errorMsg);
-   }
+    if (unused_variables.length() > 0)
+    {
+        char errorMsg[1024];
+        sprintf(errorMsg, "Unused variables: %s", unused_variables.c_str());
+        yyerror(errorMsg);
+    }
 }
-/*
-type:
-    INT_TYPE
-    | FLOAT_TYPE
-    | CHAR_TYPE
-    | VOID
-    | BOOL_TYPE
-    | STRING_TYPE
-    ;
-*/
+
 const char *get_data_type(int type)
 {
     switch (type)
@@ -167,20 +158,11 @@ SymbolTable *declare_variable(Node *p, bool isRHS = false, bool isParam = false)
     symbol[level][p->id.name] = new SymbolTable(strdup(p->id.name), p->id.dataType,
                                                 p->id.qualifier, level, timestep++, false);
     symbolTable.push_back(symbol[level][p->id.name]);
-    // print variable name
-    //  printf("=======================================================declare_variable %s\n", p->id.name);
-    fflush(stdout);
 
     // Mark parameters as initialized
     if (isParam)
     {
         symbol[level][p->id.name]->isInitialized = true;
-    }
-    // print the symbol table
-    for (int i = 0; i < symbolTable.size(); i++)
-    {
-        // printf("=======================================================symbol table %s\n", symbolTable[i]->name.c_str());
-        fflush(stdout);
     }
 
     return symbol[level][p->id.name];
@@ -273,7 +255,6 @@ Node *create_label_node(int label)
 }
 bool is_constant(Node *p)
 {
-    printf("===========================p->id.name = %s\n", p->id.name);
     for (int i = 0; i < symbolTable.size(); i++)
     {
         SymbolTable *st = symbolTable[i];
@@ -364,14 +345,12 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         return symoblTableEntry->type;
 
     case OPERATION:
-        // printf("imppppppppppppppppppppppppppppppppportant%s\n", p->opr.symbol);
-        // fflush(stdout);
+
         switch (p->opr.symbol)
         {
         case DECLARATION:
         {
-            // printf("==============================================declaration %d\n", p->opr.nops);
-            fflush(stdout);
+
             if (p->opr.nops == 1) // declaration without initialization
             {
                 SymbolTable *entry = declare_variable(p->opr.op[0], true);
@@ -413,14 +392,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 fflush(assemblyOutFile);
                 return entry->type;
             }
-            // else if(p->opr.nops == 3) // declaration with initialization and constant
-            // {
-            //     SymbolTable *entry = declare_variable(p->opr.op[0], true);
-            //     if (entry == NULL)
-            //     {
-            //         printf("Semantic Error: variable '%s' already declared\n", p->opr.op[0]->id.name);
-            //     }
-            // }
+
             break;
         }
         case WHILE:
@@ -624,19 +596,15 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             // check if it is constant
             printf("===========================p->opr.op[0]->id.qualifier = %d\n", p->opr.op[0]->id.qualifier);
             bool isConstant = is_constant(p->opr.op[0]);
-            
+
             if (isConstant)
             {
-                printf("===================================assignment constant");
                 yyerror("Semantic ERROR: Assignment to constant", p->line_number);
-                // log_errors(line, "Assignment to constant");
             }
 
             if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
             {
-                printf("===================================assignment ");
-                // fflush(stdout);
-                // printf("\tpush\t%s\t%s\n", get_data_type(type1), p->opr.op[1]->id.name);
+
                 // check if it is constant
                 if (p->opr.op[1]->type == CONSTANT)
                 {
@@ -767,8 +735,6 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         break;
         case FUNCTION:
         {
-            printf("=======================================================FUNCTION\n");
-            fflush(stdout);
 
             open_assembly_file();
             add_block_scope();
@@ -824,40 +790,9 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             remove_block_scope();
             return funcEntry->type;
         }
-        // case FUNCTION:
-        //     open_assembly_file();
-        //     add_block_scope();
-        //     symoblTableEntry = declare_variable(p->opr.op[0]->opr.op[0], true);
-        //     if (!symoblTableEntry)
-        //     {
-        //         yyerror("Function declaration failed");
-        //         return 0;
-        //     }
-        //     symoblTableEntry->isFunction = true;
-        //     printf("\tproc\t%s\n", p->opr.op[0]->opr.op[0]->id.name);
 
-        //     // Process parameters
-        //     if (p->opr.op[1])
-        //     {
-        //         Node *args = p->opr.op[1];
-        //         while (args && args->type == OPERATION && args->opr.symbol == COMMA)
-        //         {
-        //             write_to_assembly(args->opr.op[0]);
-        //             args = args->opr.op[1];
-        //         }
-        //         if (args)
-        //             write_to_assembly(args);
-        //     }
-
-        //     // Process body
-        //     write_to_assembly(p->opr.op[2]);
-        //     write_to_assembly(p->opr.op[3]);
-        //     remove_block_scope();
-        //     return symoblTableEntry->type;
         case CALL:
         {
-            printf("============================CALL\n");
-            fflush(stdout);
 
             // Print the function node
             if (p->opr.op[0])
@@ -951,7 +886,6 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
 
         case COMMA:
             open_assembly_file();
-            printf("====================COMMA\n");
             // change to be parameter
             write_to_assembly(p->opr.op[0]);
             write_to_assembly(p->opr.op[1]);
