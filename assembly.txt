@@ -1,4 +1,5 @@
 	proc	main
+	pop int	y
 	push int	10
 	pop int	x
 	push int	20

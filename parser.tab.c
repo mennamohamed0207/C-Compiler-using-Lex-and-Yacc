@@ -82,14 +82,14 @@
     extern FILE *assemblyOutFile;
 
 
-    Node* create_operation(int oper, int nops,...);
-    Node* create_constant(int type ,int dataType);
-    Node* create_identifier(char* i, int dataType, int qualifier);
+    Node* create_operation(int oper, int line_number,int nops,...);
+    Node* create_constant(int type ,int line_number,int dataType);
+    Node* create_identifier(char* i, int line_number, int dataType, int qualifier);
     void free_node(Node *p);
 
     int write_to_assembly(Node *p, Node *parent=NULL, int cont = -1, int brk = -1, int args = 0, ...);
     extern int yylex();
-    void yyerror(const char *s);
+    void yyerror(const char *s, int line_number);
     extern int yylineno;
 
 
@@ -1686,14 +1686,14 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 94 "parser.y"
-    {(yyval.nodePtr)=create_operation(';',2,(yyvsp[(1) - (2)].nodePtr),(yyvsp[(2) - (2)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(';',yylineno,2,(yyvsp[(1) - (2)].nodePtr),(yyvsp[(2) - (2)].nodePtr));;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
 #line 97 "parser.y"
-    {(yyval.nodePtr)=create_operation(';',2,NULL,NULL);;}
+    {(yyval.nodePtr)=create_operation(';',yylineno,2,NULL,NULL);;}
     break;
 
   case 8:
@@ -1714,7 +1714,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 100 "parser.y"
-    {(yyval.nodePtr)=create_operation(BLOCK,1,(yyvsp[(2) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(BLOCK,yylineno,1,(yyvsp[(2) - (3)].nodePtr));;}
     break;
 
   case 11:
@@ -1742,14 +1742,14 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 108 "parser.y"
-    {(yyval.nodePtr)=create_operation(BREAK,1,NULL);;}
+    {(yyval.nodePtr)=create_operation(BREAK,yylineno,1,NULL);;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
 #line 109 "parser.y"
-    {(yyval.nodePtr)=create_operation(CONTINUE,1,NULL);;}
+    {(yyval.nodePtr)=create_operation(CONTINUE,yylineno,1,NULL);;}
     break;
 
   case 16:
@@ -1826,21 +1826,21 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 129 "parser.y"
-    {(yyval.nodePtr)=create_operation(COMMA,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(COMMA,yylineno,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 27:
 
 /* Line 1455 of yacc.c  */
 #line 133 "parser.y"
-    {(yyval.nodePtr)=create_operation(RETURN,1,(yyvsp[(2) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(RETURN,yylineno,1,(yyvsp[(2) - (3)].nodePtr));;}
     break;
 
   case 28:
 
 /* Line 1455 of yacc.c  */
 #line 134 "parser.y"
-    {(yyval.nodePtr)=create_operation(RETURN,1,NULL);;}
+    {(yyval.nodePtr)=create_operation(RETURN,yylineno,1,NULL);;}
     break;
 
   case 29:
@@ -1848,7 +1848,7 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 137 "parser.y"
     {
-        (yyval.nodePtr) = create_operation(FUNCTION, 4, (yyvsp[(1) - (8)].nodePtr), (yyvsp[(3) - (8)].nodePtr), (yyvsp[(6) - (8)].nodePtr), (yyvsp[(7) - (8)].nodePtr));
+        (yyval.nodePtr) = create_operation(FUNCTION, yylineno, 4, (yyvsp[(1) - (8)].nodePtr), (yyvsp[(3) - (8)].nodePtr), (yyvsp[(6) - (8)].nodePtr), (yyvsp[(7) - (8)].nodePtr));
         // printf("Parsed function %s\n", $2);  // Debug
     ;}
     break;
@@ -1857,28 +1857,28 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 141 "parser.y"
-    {(yyval.nodePtr)=create_operation(FUNCTION,3,(yyvsp[(1) - (7)].nodePtr),(yyvsp[(3) - (7)].nodePtr),(yyvsp[(6) - (7)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(FUNCTION,yylineno,3,(yyvsp[(1) - (7)].nodePtr),(yyvsp[(3) - (7)].nodePtr),(yyvsp[(6) - (7)].nodePtr));;}
     break;
 
   case 31:
 
 /* Line 1455 of yacc.c  */
 #line 142 "parser.y"
-    {(yyval.nodePtr)=create_operation(FUNCTION,2,(yyvsp[(1) - (6)].nodePtr),(yyvsp[(3) - (6)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(FUNCTION,yylineno,2,(yyvsp[(1) - (6)].nodePtr),(yyvsp[(3) - (6)].nodePtr));;}
     break;
 
   case 32:
 
 /* Line 1455 of yacc.c  */
 #line 146 "parser.y"
-    {(yyval.nodePtr)=create_operation(FOR,4,(yyvsp[(3) - (11)].nodePtr),(yyvsp[(5) - (11)].nodePtr),(yyvsp[(7) - (11)].nodePtr),(yyvsp[(10) - (11)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(FOR,yylineno,4,(yyvsp[(3) - (11)].nodePtr),(yyvsp[(5) - (11)].nodePtr),(yyvsp[(7) - (11)].nodePtr),(yyvsp[(10) - (11)].nodePtr));;}
     break;
 
   case 33:
 
 /* Line 1455 of yacc.c  */
 #line 150 "parser.y"
-    { (yyval.nodePtr) = create_operation(';', 2, NULL, NULL); ;}
+    { (yyval.nodePtr) = create_operation(';', yylineno, 2, NULL, NULL); ;}
     break;
 
   case 34:
@@ -1892,7 +1892,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 154 "parser.y"
-    {(yyval.nodePtr)=create_operation(';',2,NULL,NULL);;}
+    {(yyval.nodePtr)=create_operation(';',yylineno,2,NULL,NULL);;}
     break;
 
   case 36:
@@ -1906,7 +1906,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 158 "parser.y"
-    {(yyval.nodePtr)=create_operation(';',2,NULL,NULL);;}
+    {(yyval.nodePtr)=create_operation(';',yylineno,2,NULL,NULL);;}
     break;
 
   case 38:
@@ -1920,133 +1920,133 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 165 "parser.y"
-    {(yyval.nodePtr)=create_operation(WHILE,2,(yyvsp[(3) - (5)].nodePtr),(yyvsp[(5) - (5)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(WHILE,yylineno,2,(yyvsp[(3) - (5)].nodePtr),(yyvsp[(5) - (5)].nodePtr));;}
     break;
 
   case 40:
 
 /* Line 1455 of yacc.c  */
 #line 169 "parser.y"
-    {(yyval.nodePtr)=create_operation(DO,2,(yyvsp[(2) - (7)].nodePtr),(yyvsp[(5) - (7)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(DO,yylineno,2,(yyvsp[(2) - (7)].nodePtr),(yyvsp[(5) - (7)].nodePtr));;}
     break;
 
   case 41:
 
 /* Line 1455 of yacc.c  */
 #line 173 "parser.y"
-    {(yyval.nodePtr)=create_operation(IF,2,(yyvsp[(3) - (5)].nodePtr),(yyvsp[(5) - (5)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(IF,yylineno,2,(yyvsp[(3) - (5)].nodePtr),(yyvsp[(5) - (5)].nodePtr));;}
     break;
 
   case 42:
 
 /* Line 1455 of yacc.c  */
 #line 174 "parser.y"
-    {(yyval.nodePtr)=create_operation(IF,3,(yyvsp[(3) - (7)].nodePtr),(yyvsp[(5) - (7)].nodePtr),(yyvsp[(7) - (7)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(IF,yylineno,3,(yyvsp[(3) - (7)].nodePtr),(yyvsp[(5) - (7)].nodePtr),(yyvsp[(7) - (7)].nodePtr));;}
     break;
 
   case 43:
 
 /* Line 1455 of yacc.c  */
 #line 177 "parser.y"
-    {(yyval.nodePtr)=create_operation(SWITCH,2,create_identifier((yyvsp[(3) - (7)].sIndex)),(yyvsp[(6) - (7)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(SWITCH,yylineno,2,create_identifier((yyvsp[(3) - (7)].sIndex),yylineno),(yyvsp[(6) - (7)].nodePtr));;}
     break;
 
   case 44:
 
 /* Line 1455 of yacc.c  */
 #line 178 "parser.y"
-    {(yyval.nodePtr)=create_operation(SWITCH,3,create_identifier((yyvsp[(3) - (8)].sIndex)),(yyvsp[(6) - (8)].nodePtr),(yyvsp[(7) - (8)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(SWITCH,yylineno,3,create_identifier((yyvsp[(3) - (8)].sIndex),yylineno),(yyvsp[(6) - (8)].nodePtr),(yyvsp[(7) - (8)].nodePtr));;}
     break;
 
   case 45:
 
 /* Line 1455 of yacc.c  */
 #line 182 "parser.y"
-    {(yyval.nodePtr)=create_operation(DEFAULT,1,(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(DEFAULT,yylineno,1,(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 46:
 
 /* Line 1455 of yacc.c  */
 #line 185 "parser.y"
-    {(yyval.nodePtr)=create_operation(CASE,4,create_constant(INTEGER,INT_TYPE,(yyvsp[(2) - (7)].intValue)),(yyvsp[(4) - (7)].nodePtr),create_operation(BREAK,0),(yyvsp[(7) - (7)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(CASE,yylineno,4,create_constant(INTEGER,yylineno,INT_TYPE,(yyvsp[(2) - (7)].intValue)),(yyvsp[(4) - (7)].nodePtr),create_operation(BREAK,yylineno,0),(yyvsp[(7) - (7)].nodePtr));;}
     break;
 
   case 47:
 
 /* Line 1455 of yacc.c  */
 #line 186 "parser.y"
-    {(yyval.nodePtr)=create_operation(CASE,4,create_constant(STRING,STRING_TYPE,(yyvsp[(2) - (7)].stringValue)),(yyvsp[(4) - (7)].nodePtr),create_operation(BREAK,0),(yyvsp[(7) - (7)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(CASE,yylineno,4,create_constant(STRING,yylineno,STRING_TYPE,(yyvsp[(2) - (7)].stringValue)),(yyvsp[(4) - (7)].nodePtr),create_operation(BREAK,yylineno,0),(yyvsp[(7) - (7)].nodePtr));;}
     break;
 
   case 48:
 
 /* Line 1455 of yacc.c  */
 #line 187 "parser.y"
-    {(yyval.nodePtr)=create_operation(CASE,4,create_constant(CHARACTER,CHAR_TYPE,(yyvsp[(2) - (7)].stringValue)),(yyvsp[(4) - (7)].nodePtr),create_operation(BREAK,0),(yyvsp[(7) - (7)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(CASE,yylineno,4,create_constant(CHARACTER,yylineno,CHAR_TYPE,(yyvsp[(2) - (7)].stringValue)),(yyvsp[(4) - (7)].nodePtr),create_operation(BREAK,yylineno,0),(yyvsp[(7) - (7)].nodePtr));;}
     break;
 
   case 49:
 
 /* Line 1455 of yacc.c  */
 #line 188 "parser.y"
-    {(yyval.nodePtr)=create_operation(CASE,3,create_constant(INTEGER,INT_TYPE,(yyvsp[(2) - (6)].intValue)),(yyvsp[(4) - (6)].nodePtr),create_operation(BREAK,0));;}
+    {(yyval.nodePtr)=create_operation(CASE,yylineno,3,create_constant(INTEGER,yylineno,INT_TYPE,(yyvsp[(2) - (6)].intValue)),(yyvsp[(4) - (6)].nodePtr),create_operation(BREAK,yylineno,0));;}
     break;
 
   case 50:
 
 /* Line 1455 of yacc.c  */
 #line 189 "parser.y"
-    {(yyval.nodePtr)=create_operation(CASE,3,create_constant(STRING,STRING_TYPE,(yyvsp[(2) - (6)].stringValue)),(yyvsp[(4) - (6)].nodePtr),create_operation(BREAK,0));;}
+    {(yyval.nodePtr)=create_operation(CASE,yylineno,3,create_constant(STRING,yylineno,STRING_TYPE,(yyvsp[(2) - (6)].stringValue)),(yyvsp[(4) - (6)].nodePtr),create_operation(BREAK,yylineno,0));;}
     break;
 
   case 51:
 
 /* Line 1455 of yacc.c  */
 #line 190 "parser.y"
-    {(yyval.nodePtr)=create_operation(CASE,3,create_constant(CHARACTER,CHAR_TYPE,(yyvsp[(2) - (6)].stringValue)),(yyvsp[(4) - (6)].nodePtr),create_operation(BREAK,0));;}
+    {(yyval.nodePtr)=create_operation(CASE,yylineno,3,create_constant(CHARACTER,yylineno,CHAR_TYPE,(yyvsp[(2) - (6)].stringValue)),(yyvsp[(4) - (6)].nodePtr),create_operation(BREAK,yylineno,0));;}
     break;
 
   case 52:
 
 /* Line 1455 of yacc.c  */
 #line 194 "parser.y"
-    {(yyval.nodePtr)=create_operation(DECLARATION,1,create_identifier((yyvsp[(2) - (2)].sIndex),(yyvsp[(1) - (2)].intValue),0));;}
+    {(yyval.nodePtr)=create_operation(DECLARATION,yylineno,1,create_identifier((yyvsp[(2) - (2)].sIndex),yylineno,(yyvsp[(1) - (2)].intValue),0));;}
     break;
 
   case 53:
 
 /* Line 1455 of yacc.c  */
 #line 195 "parser.y"
-    {(yyval.nodePtr)=create_operation(DECLARATION,2,create_identifier((yyvsp[(2) - (4)].sIndex),(yyvsp[(1) - (4)].intValue),0),(yyvsp[(4) - (4)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(DECLARATION,yylineno,2,create_identifier((yyvsp[(2) - (4)].sIndex),yylineno,(yyvsp[(1) - (4)].intValue),0),(yyvsp[(4) - (4)].nodePtr));;}
     break;
 
   case 54:
 
 /* Line 1455 of yacc.c  */
 #line 196 "parser.y"
-    {(yyval.nodePtr)=create_operation(DECLARATION,2,create_identifier((yyvsp[(3) - (5)].sIndex),(yyvsp[(2) - (5)].intValue),1),(yyvsp[(5) - (5)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(DECLARATION,yylineno,2,create_identifier((yyvsp[(3) - (5)].sIndex),yylineno,(yyvsp[(2) - (5)].intValue),1),(yyvsp[(5) - (5)].nodePtr));;}
     break;
 
   case 55:
 
 /* Line 1455 of yacc.c  */
 #line 200 "parser.y"
-    {(yyval.nodePtr)=create_operation('=',2,create_identifier((yyvsp[(1) - (3)].sIndex)),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation('=',yylineno,2,create_identifier((yyvsp[(1) - (3)].sIndex),yylineno),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 56:
 
 /* Line 1455 of yacc.c  */
 #line 201 "parser.y"
-    {(yyval.nodePtr)=create_operation('=',2,create_identifier((yyvsp[(1) - (3)].sIndex)),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation('=',yylineno,2,create_identifier((yyvsp[(1) - (3)].sIndex),yylineno),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 57:
 
 /* Line 1455 of yacc.c  */
 #line 204 "parser.y"
-    {(yyval.nodePtr)=create_operation(CALL,2,create_identifier((yyvsp[(1) - (4)].sIndex)),(yyvsp[(3) - (4)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(CALL,yylineno,2,create_identifier((yyvsp[(1) - (4)].sIndex),yylineno),(yyvsp[(3) - (4)].nodePtr));;}
     break;
 
   case 58:
@@ -2095,182 +2095,182 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 216 "parser.y"
-    {(yyval.nodePtr)=create_operation(POST_INC,1,(yyvsp[(1) - (2)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(POST_INC,yylineno,1,(yyvsp[(1) - (2)].nodePtr));;}
     break;
 
   case 65:
 
 /* Line 1455 of yacc.c  */
 #line 217 "parser.y"
-    {(yyval.nodePtr)=create_operation(POST_DEC,1,(yyvsp[(1) - (2)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(POST_DEC,yylineno,1,(yyvsp[(1) - (2)].nodePtr));;}
     break;
 
   case 66:
 
 /* Line 1455 of yacc.c  */
 #line 218 "parser.y"
-    {(yyval.nodePtr)=create_operation(PRE_INC,1,(yyvsp[(2) - (2)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(PRE_INC,yylineno,1,(yyvsp[(2) - (2)].nodePtr));;}
     break;
 
   case 67:
 
 /* Line 1455 of yacc.c  */
 #line 219 "parser.y"
-    {(yyval.nodePtr)=create_operation(PRE_DEC,1,(yyvsp[(2) - (2)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(PRE_DEC,yylineno,1,(yyvsp[(2) - (2)].nodePtr));;}
     break;
 
   case 68:
 
 /* Line 1455 of yacc.c  */
 #line 220 "parser.y"
-    {(yyval.nodePtr)=create_operation('+',2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation('+',yylineno,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 69:
 
 /* Line 1455 of yacc.c  */
 #line 221 "parser.y"
-    {(yyval.nodePtr)=create_operation('-',2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation('-',yylineno,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 70:
 
 /* Line 1455 of yacc.c  */
 #line 222 "parser.y"
-    {(yyval.nodePtr)=create_operation('*',2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation('*',yylineno,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 71:
 
 /* Line 1455 of yacc.c  */
 #line 223 "parser.y"
-    {(yyval.nodePtr)=create_operation('/',2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation('/',yylineno,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 72:
 
 /* Line 1455 of yacc.c  */
 #line 224 "parser.y"
-    {(yyval.nodePtr)=create_operation(EQ,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(EQ,yylineno,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 73:
 
 /* Line 1455 of yacc.c  */
 #line 225 "parser.y"
-    {(yyval.nodePtr)=create_operation(NEQ,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(NEQ,yylineno,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 74:
 
 /* Line 1455 of yacc.c  */
 #line 226 "parser.y"
-    {(yyval.nodePtr)=create_operation('<',2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation('<',yylineno,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 75:
 
 /* Line 1455 of yacc.c  */
 #line 227 "parser.y"
-    {(yyval.nodePtr)=create_operation(MOD,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(MOD,yylineno,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 76:
 
 /* Line 1455 of yacc.c  */
 #line 228 "parser.y"
-    {(yyval.nodePtr)=create_operation('>',2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation('>',yylineno,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 77:
 
 /* Line 1455 of yacc.c  */
 #line 229 "parser.y"
-    {(yyval.nodePtr)=create_operation(LTE,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(LTE,yylineno,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 78:
 
 /* Line 1455 of yacc.c  */
 #line 230 "parser.y"
-    {(yyval.nodePtr)=create_operation(GTE,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(GTE,yylineno,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 79:
 
 /* Line 1455 of yacc.c  */
 #line 231 "parser.y"
-    {(yyval.nodePtr)=create_operation(AND,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(AND,yylineno,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 80:
 
 /* Line 1455 of yacc.c  */
 #line 232 "parser.y"
-    {(yyval.nodePtr)=create_operation(OR,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(OR,yylineno,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 81:
 
 /* Line 1455 of yacc.c  */
 #line 233 "parser.y"
-    {(yyval.nodePtr)=create_operation(NOT,1,(yyvsp[(2) - (2)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(NOT,yylineno,1,(yyvsp[(2) - (2)].nodePtr));;}
     break;
 
   case 82:
 
 /* Line 1455 of yacc.c  */
 #line 234 "parser.y"
-    {(yyval.nodePtr)=create_operation(NEGATIVE,1,(yyvsp[(2) - (2)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(NEGATIVE,yylineno,1,(yyvsp[(2) - (2)].nodePtr));;}
     break;
 
   case 83:
 
 /* Line 1455 of yacc.c  */
 #line 235 "parser.y"
-    {(yyval.nodePtr)=create_constant(INTEGER,INT_TYPE,(yyvsp[(1) - (1)].intValue));;}
+    {(yyval.nodePtr)=create_constant(INTEGER,yylineno,INT_TYPE,(yyvsp[(1) - (1)].intValue));;}
     break;
 
   case 84:
 
 /* Line 1455 of yacc.c  */
 #line 236 "parser.y"
-    {(yyval.nodePtr)=create_constant(FLOAT,FLOAT_TYPE,(yyvsp[(1) - (1)].floatValue));;}
+    {(yyval.nodePtr)=create_constant(FLOAT,yylineno,FLOAT_TYPE,(yyvsp[(1) - (1)].floatValue));;}
     break;
 
   case 85:
 
 /* Line 1455 of yacc.c  */
 #line 237 "parser.y"
-    {(yyval.nodePtr)=create_constant(BOOL,BOOL_TYPE,1);;}
+    {(yyval.nodePtr)=create_constant(BOOL,yylineno,BOOL_TYPE,1);;}
     break;
 
   case 86:
 
 /* Line 1455 of yacc.c  */
 #line 238 "parser.y"
-    {(yyval.nodePtr)=create_constant(BOOL,BOOL_TYPE,0);;}
+    {(yyval.nodePtr)=create_constant(BOOL,yylineno,BOOL_TYPE,0);;}
     break;
 
   case 87:
 
 /* Line 1455 of yacc.c  */
 #line 239 "parser.y"
-    {(yyval.nodePtr)=create_constant(STRING,STRING_TYPE,(yyvsp[(1) - (1)].stringValue));;}
+    {(yyval.nodePtr)=create_constant(STRING,yylineno,STRING_TYPE,(yyvsp[(1) - (1)].stringValue));;}
     break;
 
   case 88:
 
 /* Line 1455 of yacc.c  */
 #line 240 "parser.y"
-    {(yyval.nodePtr)=create_constant(CHARACTER,CHAR_TYPE,(yyvsp[(1) - (1)].stringValue));;}
+    {(yyval.nodePtr)=create_constant(CHARACTER,yylineno,CHAR_TYPE,(yyvsp[(1) - (1)].stringValue));;}
     break;
 
   case 89:
 
 /* Line 1455 of yacc.c  */
 #line 241 "parser.y"
-    {(yyval.nodePtr)=create_identifier((yyvsp[(1) - (1)].sIndex));;}
+    {(yyval.nodePtr)=create_identifier((yyvsp[(1) - (1)].sIndex),yylineno);;}
     break;
 
   case 90:
@@ -2284,7 +2284,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 249 "parser.y"
-    {(yyval.nodePtr)=create_operation(COMMA,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
+    {(yyval.nodePtr)=create_operation(COMMA,yylineno,2,(yyvsp[(1) - (3)].nodePtr),(yyvsp[(3) - (3)].nodePtr));;}
     break;
 
   case 92:
@@ -2520,7 +2520,7 @@ yyreturn:
 
 // Node construction functions
 // Create operation nodes
-Node* create_operation(int oper, int nops,...) {
+Node* create_operation(int oper, int line_number,int nops,...) {
     va_list ap;
     Node *p;
     size_t nodeSize;
@@ -2529,11 +2529,12 @@ Node* create_operation(int oper, int nops,...) {
     
     nodeSize = sizeof(Node) + sizeof(OperationNode) + (nops - 1) * sizeof(Node*);
     if ((p = (Node*)malloc(nodeSize)) == NULL)
-        yyerror("out of memory");
+        yyerror("out of memory", line_number);
 
     p->type = OPERATION;
     p->opr.symbol = oper;
     p->opr.nops = nops;
+    p->line_number = line_number;
     va_start(ap, nops);
     for (i = 0; i < nops; i++)
         p->opr.op[i] = va_arg(ap, Node*);
@@ -2543,17 +2544,18 @@ Node* create_operation(int oper, int nops,...) {
 
 // Create constant nodes
 
-Node* create_constant(int type, int dataType, ...) {
+Node* create_constant(int type, int line_number, int dataType, ...) {
     va_list ap;
     Node *p;
     size_t nodeSize;
 
     nodeSize = sizeof(Node) + sizeof(ConstantNode);
     if ((p = (Node*)malloc(nodeSize)) == NULL)
-        yyerror("out of memory");
+        yyerror("out of memory", line_number);
 
     p->type = CONSTANT;
     p->con.dataType = dataType;
+    p->line_number = line_number;
     va_start(ap, dataType);
     
     switch(dataType) {
@@ -2577,14 +2579,14 @@ Node* create_constant(int type, int dataType, ...) {
     return p;
 }
 // Create identifier nodes
-Node* create_identifier(char* i, int dataType, int qualifier) {
+Node* create_identifier(char* i, int line_number, int dataType, int qualifier) {
     Node *p;
     size_t nodeSize;
     nodeSize = sizeof(Node) + sizeof(VariableNode);
     if ((p = (Node*)malloc(nodeSize)) == NULL)
         {
             printf("out of memory\n");
-            yyerror("out of memory");}
+            yyerror("out of memory",line_number);}
     if(i == NULL)
     {
 
@@ -2592,6 +2594,7 @@ Node* create_identifier(char* i, int dataType, int qualifier) {
         printf("qual %d\n", qualifier);
     }
     p->type = VARIABLE;
+    p->line_number = line_number;
     p->id.name =  strdup(i) ;  // Handle null case
     p->id.dataType = dataType;
     p->id.qualifier = qualifier;
@@ -2609,9 +2612,8 @@ void free_node(Node *p) {
     free(p);
 }
     
-void yyerror(const char *s) {
-    fprintf(stderr, "Parser Error at line %d: %s\n", yylineno, s);
-    log_errors(yylineno, s);
+void yyerror(const char *s, int line_number) {
+    log_errors(line_number, s);
     log_symbol_table();
 }
 

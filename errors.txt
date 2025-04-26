@@ -1,2 +1,6 @@
 Error at line 14: Semantic ERROR: Assignment to constant
 Error at line 14: Semantic ERROR: Assignment to constant
+Error at line 8: Semantic ERROR: Assignment to constant
+Error at line 8: Semantic ERROR: Assignment to constant
+Error at line 8: Semantic ERROR: Assignment to constant
+Error at line 8: Semantic ERROR: Assignment to constant

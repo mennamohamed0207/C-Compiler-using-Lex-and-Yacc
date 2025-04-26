@@ -127,19 +127,19 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
             {
                 char errorMsg[1024];
                 sprintf(errorMsg, "Semantic Error: can't assign values to constant variable '%s'", p->id.name);
-                yyerror(errorMsg);
+                yyerror(errorMsg, p->line_number);
                 return NULL;
             }
             if (!isRHS && entry->isFunction == false && entry->isInitialized == false && entry->isParam == false)
             {
                 char errorMsg[1024];
                 sprintf(errorMsg, "Semantic Error: variable '%s' must be initialized before use", p->id.name);
-                yyerror(errorMsg);
+                yyerror(errorMsg, p->line_number);
                 return NULL;
             }
             if (!isRHS && !entry->isInitialized && !entry->isParam)
             {
-                yyerror("Variable used before initialization");
+                yyerror("Variable used before initialization", p->line_number);
             }
             symbol[i][p->id.name]->used = true;
             return symbol[i][p->id.name];
@@ -160,7 +160,7 @@ SymbolTable *declare_variable(Node *p, bool isRHS = false, bool isParam = false)
     {
         char errorMsg[1024];
         sprintf(errorMsg, "Semantic Error: variable '%s' already declared in this scope", p->id.name);
-        yyerror(errorMsg);
+        yyerror(errorMsg, p->line_number);
         return NULL;
     }
     symbol[level][p->id.name] = new SymbolTable(strdup(p->id.name), p->id.dataType,
@@ -251,7 +251,10 @@ void log_errors(int line, const char *msg)
         fprintf(stderr, "Error opening error file: errors.txt\n");
         exit(1);
     }
-    fprintf(errorFile, "Error at line %d: %s\n", line, msg);
+    if (line != 0)
+        fprintf(errorFile, "Error at line %d: %s\n", line, msg);
+    else
+        fprintf(errorFile, "Error: %s\n", msg);
 }
 
 Node *create_label_node(int label)
@@ -351,7 +354,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         {
             char errorMsg[1024];
             sprintf(errorMsg, "Semantic Error: variable '%s' not declared", p->id.name);
-            yyerror(errorMsg);
+            yyerror(errorMsg, p->line_number);
             return 0;
         }
         printf("\tpush\t%s\n", p->id.name);
@@ -381,7 +384,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 else
                 {
                     printf("Semantic Error: variable '%s' already declared\n", p->opr.op[0]->id.name);
-                    yyerror("variable already declared");
+                    yyerror("variable already declared", p->line_number);
                     return 0;
                 }
                 return entry->type;
@@ -392,14 +395,14 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 if (entry == NULL)
                 {
                     printf("Semantic Error: variable '%s' already declared\n", p->opr.op[0]->id.name);
-                    yyerror("variable already declared");
+                    yyerror("variable already declared", p->line_number);
                     return 0;
                 }
                 type1 = write_to_assembly(p->opr.op[1], p);
                 if (type1 != entry->type)
                 {
                     printf("Semantic Error: type mismatch in declaration and initialization\n");
-                    yyerror("type mismatch in declaration and initialization");
+                    yyerror("type mismatch in declaration and initialization", p->line_number);
                     return 0;
                 }
                 entry->isInitialized = true;
@@ -429,7 +432,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             if (type1 != BOOL_TYPE)
             {
                 printf("Semantic Error: while condition must be a boolean expression\n");
-                yyerror("while condition must be a boolean expression");
+                yyerror("while condition must be a boolean expression", p->line_number);
             }
             printf("\tjz\tL%03d\n", l2 = label++); // if false
             fprintf(assemblyOutFile, "\tjz\tL%03d\n", l2);
@@ -453,7 +456,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             if (type1 != BOOL_TYPE)
             {
                 printf("Semantic Error: if condition must be a boolean expression\n");
-                yyerror("if condition must be a boolean expression");
+                yyerror("if condition must be a boolean expression", p->line_number);
             }
             if (p->opr.nops > 2)
             {
@@ -485,7 +488,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             if (type1 != BOOL_TYPE)
             {
                 printf("Semantic Error: for condition must be a boolean expression\n");
-                yyerror("for condition must be a boolean expression");
+                yyerror("for condition must be a boolean expression", p->line_number);
             }
             printf("\tjz\tL%03d\n", l2 = label++);
             fprintf(assemblyOutFile, "\tjz\tL%03d\n", l2);
@@ -516,7 +519,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             if (switch_var->type != VARIABLE)
             {
                 printf("Semantic Error: switch variable must be a variable\n");
-                yyerror("switch variable must be a variable");
+                yyerror("switch variable must be a variable", p->line_number);
             }
             printf("\tpop %s\t\n", switch_var->id.name);
             fprintf(assemblyOutFile, "\tpop %s\t\n", switch_var->id.name);
@@ -599,7 +602,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             if (type1 != BOOL_TYPE)
             {
                 printf("Semantic Error: do while condition must be a boolean expression\n");
-                yyerror("do while condition must be a boolean expression");
+                yyerror("do while condition must be a boolean expression", p->line_number);
             }
 
             printf("\tjnz\tL%03d\n", l1); // if true repeat
@@ -620,10 +623,11 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             // check if it is constant
             printf("===========================p->opr.op[0]->id.qualifier = %d\n", p->opr.op[0]->id.qualifier);
             bool isConstant = is_constant(p->opr.op[0]);
+            
             if (isConstant)
             {
                 printf("===================================assignment constant");
-                yyerror("Semantic ERROR: Assignment to constant");
+                yyerror("Semantic ERROR: Assignment to constant", p->line_number);
                 // log_errors(line, "Assignment to constant");
             }
 
@@ -712,7 +716,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             open_assembly_file();
             if (brk == -1)
             {
-                yyerror("Semantic ERROR: No loop to Break from");
+                yyerror("Semantic ERROR: No loop to Break from", p->line_number);
                 break;
             }
             printf("\tjmp\tL%03d\n", brk);
@@ -723,7 +727,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             open_assembly_file();
             if (cont == -1)
             {
-                yyerror("Semantic ERROR: No loop to Continue from");
+                yyerror("Semantic ERROR: No loop to Continue from", p->line_number);
                 break;
             }
             printf("\tjmp\tL%03d\n", cont);
@@ -772,7 +776,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             SymbolTable *funcEntry = declare_variable(p->opr.op[0]->opr.op[0], true);
             if (!funcEntry)
             {
-                yyerror("Function declaration failed");
+                yyerror("Function declaration failed", p->line_number);
                 return 0;
             }
             funcEntry->isFunction = true;
@@ -872,7 +876,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 char errorMsg[1024];
                 sprintf(errorMsg, "Semantic Error: function '%s' not declared",
                         p->opr.op[0]->id.name);
-                yyerror(errorMsg);
+                yyerror(errorMsg, p->line_number);
             }
 
             printf("Function '%s' found in symbol table with type = %d\n",
@@ -978,7 +982,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                         get_data_type(type1),
                         p->opr.op[0]->id.name,
                         get_data_type(type2));
-                yyerror(msg);
+                yyerror(msg, p->line_number);
             }
 
             switch (p->opr.symbol)

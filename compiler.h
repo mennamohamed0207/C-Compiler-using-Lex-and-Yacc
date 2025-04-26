@@ -82,6 +82,7 @@ typedef struct
 typedef struct NodeTypeTag
 {
     NodeType type;
+    int line_number;
     union
     {
         ConstantNode con;
@@ -120,12 +121,12 @@ extern vector<map<string, SymbolTable *>> symbol;
 extern vector<SymbolTable *> symbolTable;
 extern int level;
 // Function declarations
-extern Node *create_constant(int type, int dataType, ...);
-extern Node *create_identifier(char *name, int dataType = 0, int qualifier = 0);
-extern Node *create_operation(int oper, int nops, ...);
+extern Node *create_constant(int type, int line_number, int dataType, ...);
+extern Node *create_identifier(char *name, int line_number, int dataType = 0, int qualifier = 0);
+extern Node *create_operation(int oper, int line_number, int nops, ...);
 extern void free_node(Node *p);
 extern int execute_all(Node *p, int cont = -1, int brk = -1, int args = 0, ...);
-extern void yyerror(const char *emsg);
+extern void yyerror(const char *emsg=NULL, int line_number = 0);
 extern void check_unused_variables();
 extern void log_symbol_table();
 extern void log_errors(int line, const char *msg);
