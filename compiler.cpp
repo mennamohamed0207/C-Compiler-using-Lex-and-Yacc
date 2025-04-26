@@ -112,6 +112,8 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
             SymbolTable *entry = symbol[i][p->id.name];
             if (!isRHS && entry->isParam)
             {
+                printf("=======================================variable %s\n", p->id.name); 
+                symbol[i][p->id.name]->used = true;
                 return entry;
             }
             // Error as the variable is already declared
@@ -133,6 +135,8 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
             {
                 yyerror("Variable used before initialization", p->line_number);
             }
+            printf("=======================================variable %s\n", p->id.name);
+
             symbol[i][p->id.name]->used = true;
             return symbol[i][p->id.name];
         }
@@ -347,6 +351,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         }
         break;
     case VARIABLE:
+        // printf("=======================================variable %s\n", p->id.name);
         symoblTableEntry = check_variable(p);
         if (!symoblTableEntry)
         {
