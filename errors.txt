@@ -4,3 +4,7 @@ Error at line 8: Semantic ERROR: Assignment to constant
 Error at line 8: Semantic ERROR: Assignment to constant
 Error at line 8: Semantic ERROR: Assignment to constant
 Error at line 8: Semantic ERROR: Assignment to constant
+Error at line 8: Semantic ERROR: Assignment to constant
+Error: Unused variables: main, y, x, 
+Error at line 8: Semantic ERROR: Assignment to constant
+Error: Unused variables: y, x, 

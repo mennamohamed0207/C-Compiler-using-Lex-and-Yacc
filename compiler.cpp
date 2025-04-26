@@ -37,19 +37,20 @@ void remove_block_scope()
 void check_unused_variables()
 {
     // Create an iterator for the symbol table
-    std::map<std::string, SymbolTable *>::iterator it;
-    std::string unused_variables = "";
-    for (it = symbol[level].begin(); it != symbol[level].end(); it++)
+    string unused_variables = "";
+   for(int i=0;i<symbolTable.size();i++)
+   {
+    if(symbolTable[i]->used == false && symbolTable[i]->isFunction == false)
     {
-        if (it->second->used == false)
-        {
-            unused_variables += it->second->name + ", ";
-        }
+        unused_variables += symbolTable[i]->name + ", ";
     }
-    if (unused_variables.length() > 0)
-    {
-        yyerror(("Unused variables:" + unused_variables).c_str());
-    }
+   }
+   if(unused_variables.length() > 0)
+   {
+    char errorMsg[1024];
+    sprintf(errorMsg, "Unused variables: %s", unused_variables.c_str());
+    yyerror(errorMsg);
+   }
 }
 /*
 type:
