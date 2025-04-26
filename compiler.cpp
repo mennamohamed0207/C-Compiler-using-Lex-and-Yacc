@@ -104,7 +104,7 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
 {
     if (p->type != VARIABLE)
         return NULL;
-    
+
     // print symbol table
     printf("Symbol table:\n");
     for (int i = 0; i < symbolTable.size(); i++)
@@ -122,7 +122,7 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
             {
                 return entry;
             }
-             // Error as the variable is already declared
+            // Error as the variable is already declared
             if (isRHS && entry->type == CONSTANT)
             {
                 char errorMsg[1024];
@@ -144,17 +144,14 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
             symbol[i][p->id.name]->used = true;
             return symbol[i][p->id.name];
         }
-        
     }
 
-
-    
     return NULL;
 }
 
 SymbolTable *declare_variable(Node *p, bool isRHS = false, bool isParam = false)
 {
-    
+
     if (p->type != VARIABLE)
         return NULL;
 
@@ -169,8 +166,8 @@ SymbolTable *declare_variable(Node *p, bool isRHS = false, bool isParam = false)
     symbol[level][p->id.name] = new SymbolTable(strdup(p->id.name), p->id.dataType,
                                                 p->id.qualifier, level, timestep++, false);
     symbolTable.push_back(symbol[level][p->id.name]);
-    //print variable name
-    // printf("=======================================================declare_variable %s\n", p->id.name);
+    // print variable name
+    //  printf("=======================================================declare_variable %s\n", p->id.name);
     fflush(stdout);
 
     // Mark parameters as initialized
@@ -178,7 +175,7 @@ SymbolTable *declare_variable(Node *p, bool isRHS = false, bool isParam = false)
     {
         symbol[level][p->id.name]->isInitialized = true;
     }
-    //print the symbol table
+    // print the symbol table
     for (int i = 0; i < symbolTable.size(); i++)
     {
         // printf("=======================================================symbol table %s\n", symbolTable[i]->name.c_str());
@@ -223,11 +220,12 @@ void log_symbol_table()
 
     fclose(symbolTableFile);
 }
-SymbolTable* declare_parameter(Node *p)
+SymbolTable *declare_parameter(Node *p)
 {
 
-   SymbolTable *param = declare_variable(p->opr.op[0], true, true);
-    if (param) {
+    SymbolTable *param = declare_variable(p->opr.op[0], true, true);
+    if (param)
+    {
         param->isInitialized = true;
         param->isParam = true;
     }
@@ -268,7 +266,22 @@ Node *create_label_node(int label)
     p->type = CONSTANT;
     p->con.value.intVal = label;
     return p;
-
+}
+bool is_constant(Node *p)
+{
+    printf("===========================p->id.name = %s\n", p->id.name);
+    for (int i = 0; i < symbolTable.size(); i++)
+    {
+        SymbolTable *st = symbolTable[i];
+        if (st->name == p->id.name)
+        {
+            if (st->symbolType == 1)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1, int args = 0, ...)
@@ -396,6 +409,14 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 fflush(assemblyOutFile);
                 return entry->type;
             }
+            // else if(p->opr.nops == 3) // declaration with initialization and constant
+            // {
+            //     SymbolTable *entry = declare_variable(p->opr.op[0], true);
+            //     if (entry == NULL)
+            //     {
+            //         printf("Semantic Error: variable '%s' already declared\n", p->opr.op[0]->id.name);
+            //     }
+            // }
             break;
         }
         case WHILE:
@@ -592,11 +613,20 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             remove_block_scope();
             break;
         case '=':
-           
+        {
             open_assembly_file();
 
             type1 = write_to_assembly(p->opr.op[1], p);
-      
+            // check if it is constant
+            printf("===========================p->opr.op[0]->id.qualifier = %d\n", p->opr.op[0]->id.qualifier);
+            bool isConstant = is_constant(p->opr.op[0]);
+            if (isConstant)
+            {
+                printf("===================================assignment constant");
+                yyerror("Semantic ERROR: Assignment to constant");
+                // log_errors(line, "Assignment to constant");
+            }
+
             if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
             {
                 printf("===================================assignment ");
@@ -605,17 +635,17 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 // check if it is constant
                 if (p->opr.op[1]->type == CONSTANT)
                 {
-                    printf( "\tpush\t%s\t%d\n", get_data_type(type1), p->opr.op[1]->con.value);
+                    printf("\tpush\t%s\t%d\n", get_data_type(type1), p->opr.op[1]->con.value);
                     fflush(stdout);
-                    if(type1 == INT_TYPE)
+                    if (type1 == INT_TYPE)
                     {
                         fprintf(assemblyOutFile, "\tpush\t%s\t%d\n", get_data_type(type1), p->opr.op[1]->con.value);
                     }
-                    else if(type1 == STRING_TYPE)
+                    else if (type1 == STRING_TYPE)
                     {
                         fprintf(assemblyOutFile, "\tpush\t%s\t%s\n", get_data_type(type1), p->opr.op[1]->con.value);
                     }
-                    else if(type1 == FLOAT_TYPE)
+                    else if (type1 == FLOAT_TYPE)
                     {
                         fprintf(assemblyOutFile, "\tpush\t%s\t%f\n", get_data_type(type1), p->opr.op[1]->con.value);
                     }
@@ -634,6 +664,8 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
             fflush(assemblyOutFile);
             return type1;
+        }
+        break;
         case NEGATIVE:
             open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0], p);
@@ -732,7 +764,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         {
             printf("=======================================================FUNCTION\n");
             fflush(stdout);
-           
+
             open_assembly_file();
             add_block_scope();
 

@@ -38,8 +38,8 @@ g++ parser.tab.c lex.yy.c compiler.cpp -o mycompiler 2> error.txt
 
 
 
-# Write-Host "`n-----------------------------------Running test_expression.c-----------------------------------"
-# Get-Content testcases\test_expr.c | .\mycompiler 
+Write-Host "`n-----------------------------------Running test_expression.c-----------------------------------"
+Get-Content testcases\test_expr.c | .\mycompiler 
 
 # Write-Host "`n-----------------------------------Running test_error.c-----------------------------------"
 # Get-Content testcases\test_error.c | .\mycompiler 

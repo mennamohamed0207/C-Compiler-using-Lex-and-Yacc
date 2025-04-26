@@ -1,34 +1,8 @@
 	proc	main
-	push int	5
-	push int	3
-	push int	2
-	add	
-	mul	
-	pop int	a
-	push	a
-	push int	10
-	compGT	
-	push	a
-	push int	30
-	compLT	
-	compAND	
-	push	a
-	push int	2
-	mod	
-	push int	0
-	compEQ	
-	compOR	
 	push int	10
 	pop int	x
-	push	x
-	push int	5
-	mul	
-	push	Call
-	pop int	 x
-	push	x
-	push int	2
-	add	
-	push	Call
+	push int	20
+	push	int	20
 	pop int	 x
 	ret	
 	push int	0

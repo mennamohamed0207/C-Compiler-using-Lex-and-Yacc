@@ -1,5 +1,2 @@
-Error at line 13: type mismatch in declaration and initialization
-Error at line 13: Semantic Error: variable 'b' must be initialized before use
-Error at line 13: Semantic Error: variable 'b' not declared
-Error at line 13: Semantic Error: Type mismatch in operation  and 'b' bool
-Error at line 13: type mismatch in declaration and initialization
+Error at line 14: Semantic ERROR: Assignment to constant
+Error at line 14: Semantic ERROR: Assignment to constant
