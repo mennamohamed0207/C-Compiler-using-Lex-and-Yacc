@@ -40,14 +40,18 @@ void check_unused_variables()
     string unused_variables = "";
     for (int i = 0; i < symbolTable.size(); i++)
     {
-        if (symbolTable[i]->used == false && symbolTable[i]->isFunction == false)
+        SymbolTable *st = symbolTable[i];
+
+        if (st->used == false && st->isFunction == false)
         {
-            unused_variables += symbolTable[i]->name + ", ";
+            printf("=======================================checking variable===========\n");
+            printf(st->name.c_str());
+            unused_variables += st->name + ", ";
         }
     }
     if (unused_variables.length() > 0)
     {
-        char errorMsg[1024];
+        char errorMsg[2048];
         sprintf(errorMsg, "Unused variables: %s", unused_variables.c_str());
         yyerror(errorMsg);
     }
@@ -112,7 +116,7 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
             SymbolTable *entry = symbol[i][p->id.name];
             if (!isRHS && entry->isParam)
             {
-                printf("=======================================variable %s\n", p->id.name); 
+                printf("=======================================variable %s\n", p->id.name);
                 symbol[i][p->id.name]->used = true;
                 return entry;
             }
@@ -145,7 +149,7 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
     return NULL;
 }
 
-SymbolTable *declare_variable(Node *p, bool isRHS = false, bool isParam = false)
+SymbolTable *declare_variable(Node *p, bool isRHS = false, bool isParam = false,bool isIntialized=false)
 {
 
     if (p->type != VARIABLE)
@@ -160,7 +164,7 @@ SymbolTable *declare_variable(Node *p, bool isRHS = false, bool isParam = false)
         return NULL;
     }
     symbol[level][p->id.name] = new SymbolTable(strdup(p->id.name), p->id.dataType,
-                                                p->id.qualifier, level, timestep++, false);
+                                                p->id.qualifier, level, timestep++, isIntialized);
     symbolTable.push_back(symbol[level][p->id.name]);
 
     // Mark parameters as initialized
@@ -210,7 +214,7 @@ void log_symbol_table()
 SymbolTable *declare_parameter(Node *p)
 {
 
-    SymbolTable *param = declare_variable(p->opr.op[0], true, true);
+    SymbolTable *param = declare_variable(p->opr.op[0], true, true,true);
     if (param)
     {
         param->isInitialized = true;
@@ -275,11 +279,11 @@ bool is_constant(Node *p)
 
 void mark_used(Node *p)
 {
-    if(p->type == VARIABLE)
+    if (p->type == VARIABLE)
     {
-        for(int i=0;i<symbolTable.size();i++)
+        for (int i = 0; i < symbolTable.size(); i++)
         {
-            if(symbolTable[i]->name == p->id.name)
+            if (symbolTable[i]->name == p->id.name)
             {
                 symbolTable[i]->used = true;
                 break;
@@ -287,7 +291,6 @@ void mark_used(Node *p)
         }
     }
 }
-
 
 int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1, int args = 0, ...)
 {
@@ -374,7 +377,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
 
             if (p->opr.nops == 1) // declaration without initialization
             {
-                SymbolTable *entry = declare_variable(p->opr.op[0], true);
+                SymbolTable *entry = declare_variable(p->opr.op[0], true,false,false);
                 if (entry != NULL)
                 { // Only write to assembly if declaration was successful
                     printf("\tpop %s\t%s\n", get_data_type(p->opr.op[0]->id.dataType), p->opr.op[0]->id.name);
@@ -392,7 +395,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             }
             else if (p->opr.nops == 2) // declaration with initialization
             {
-                SymbolTable *entry = declare_variable(p->opr.op[0], true);
+                SymbolTable *entry = declare_variable(p->opr.op[0], true,false,true);
                 if (entry == NULL)
                 {
                     printf("Semantic Error: variable '%s' already declared\n", p->opr.op[0]->id.name);
@@ -623,7 +626,6 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 yyerror("Semantic ERROR: Assignment to constant", p->line_number);
             }
 
-
             if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
             {
                 mark_used(p->opr.op[0]);
@@ -761,7 +763,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             add_block_scope();
 
             // Declare the function itself
-            SymbolTable *funcEntry = declare_variable(p->opr.op[0]->opr.op[0], true);
+            SymbolTable *funcEntry = declare_variable(p->opr.op[0]->opr.op[0], true,false,true);
             if (!funcEntry)
             {
                 yyerror("Function declaration failed", p->line_number);

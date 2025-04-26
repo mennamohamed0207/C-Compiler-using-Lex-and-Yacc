@@ -14,7 +14,7 @@ int main()
 
     // Test multiple increments in expressions
     int e = x++ + ++y; // e should be 7 + 9 = 16, x becomes 8, y becomes 9
-    int f = --z + z--; // f should be 14 + 14 = 28, z becomes 13
+    int f = --z + z--; 
 
     return 0;
 }

@@ -113,6 +113,8 @@ struct SymbolTable
         timestamp = ts;
         isFunction = func;
         isParam = param;
+        used = false;
+        isInitialized = init;
     }
 };
 
