@@ -2,6 +2,5 @@
 | Name                 | DataType   | Qualifier  | TimeStep | Scope  | Initialized | Used   | Function  |
 ----------------------------------------------------------------------------------------------
 | main                 | int        | Variable   | 0        | 1      | False       | False  | True      |
-| y                    | int        | Variable   | 1        | 1      | False       | False  | False     |
-| x                    | int        | Constant   | 2        | 1      | True        | False  | False     |
+| x                    | int        | Variable   | 1        | 1      | True        | True   | False     |
 ----------------------------------------------------------------------------------------------

@@ -1,9 +1,7 @@
 	proc	main
-	pop int	y
 	push int	10
 	pop int	x
 	push int	20
-	push	int	20
 	pop int	 x
 	ret	
 	push int	0

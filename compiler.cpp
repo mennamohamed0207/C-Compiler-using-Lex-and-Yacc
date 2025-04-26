@@ -269,6 +269,22 @@ bool is_constant(Node *p)
     return false;
 }
 
+void mark_used(Node *p)
+{
+    if(p->type == VARIABLE)
+    {
+        for(int i=0;i<symbolTable.size();i++)
+        {
+            if(symbolTable[i]->name == p->id.name)
+            {
+                symbolTable[i]->used = true;
+                break;
+            }
+        }
+    }
+}
+
+
 int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1, int args = 0, ...)
 {
     printf("write_to_assembly %d\n", p->opr.symbol);
@@ -602,27 +618,28 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 yyerror("Semantic ERROR: Assignment to constant", p->line_number);
             }
 
+
             if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
             {
-
+                mark_used(p->opr.op[0]);
                 // check if it is constant
                 if (p->opr.op[1]->type == CONSTANT)
                 {
-                    printf("\tpush\t%s\t%d\n", get_data_type(type1), p->opr.op[1]->con.value);
-                    fflush(stdout);
-                    if (type1 == INT_TYPE)
-                    {
-                        fprintf(assemblyOutFile, "\tpush\t%s\t%d\n", get_data_type(type1), p->opr.op[1]->con.value);
-                    }
-                    else if (type1 == STRING_TYPE)
-                    {
-                        fprintf(assemblyOutFile, "\tpush\t%s\t%s\n", get_data_type(type1), p->opr.op[1]->con.value);
-                    }
-                    else if (type1 == FLOAT_TYPE)
-                    {
-                        fprintf(assemblyOutFile, "\tpush\t%s\t%f\n", get_data_type(type1), p->opr.op[1]->con.value);
-                    }
-                    fflush(assemblyOutFile);
+                    // printf("\tpush\t%s\t%d\n", get_data_type(type1), p->opr.op[1]->con.value);
+                    // fflush(stdout);
+                    // if (type1 == INT_TYPE)
+                    // {
+                    //     fprintf(assemblyOutFile, "\tpush\t%s\t%d\n", get_data_type(type1), p->opr.op[1]->con.value);
+                    // }
+                    // else if (type1 == STRING_TYPE)
+                    // {
+                    //     fprintf(assemblyOutFile, "\tpush\t%s\t%s\n", get_data_type(type1), p->opr.op[1]->con.value);
+                    // }
+                    // else if (type1 == FLOAT_TYPE)
+                    // {
+                    //     fprintf(assemblyOutFile, "\tpush\t%s\t%f\n", get_data_type(type1), p->opr.op[1]->con.value);
+                    // }
+                    // fflush(assemblyOutFile);
                 }
                 else
                 {
@@ -632,7 +649,6 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 }
             }
 
-            // check if const
             printf("\tpop %s\t%s\t%s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
             fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
             fflush(assemblyOutFile);
