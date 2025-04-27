@@ -1,19 +1,26 @@
-int main() {
+int main()
+{
     int a = 10;
-    
+
     // Simple if-else
-    if (a > 5) {
-        int y=5;
-    } else {
-        int x=10;
+    if (a > 5)
+    {
+        int y = 5;
     }
+    else
+    {
+        int x = 10;
+    }
+    menna = 5;
 
     // Nested if
-    if (a > 0) {
-        if (a < 20) {
-            int r=15;
+    if (a > 0)
+    {
+        if (a < 20)
+        {
+            int r = 15;
         }
     }
-    
+
     return 0;
 }

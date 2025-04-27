@@ -1,38 +1,22 @@
 	proc	main
-	push int	0
-	pop int	i
-L000:
-	push	i
+	push int	10
+	pop int	a
+	push	a
 	push int	5
-	compLT	
-	jz	L001
-	push int	10
+	compGT	
+	push int	5
 	pop int	y
-L002:
-	push	i
-	push int	1
-	add	
-	push	Call
-	pop int	 i
-	jmp	L000
-L001:
-	push int	0
+	push int	10
 	pop int	x
-L003:
-	push	x
-	push int	10
+	push int	5
+	push	a
+	push int	0
+	compGT	
+	push	a
+	push int	20
 	compLT	
-	jz	L004
-	push int	10
-	pop int	z
-L005:
-	push	x
-	push int	1
-	add	
-	push	Call
-	pop int	 x
-	jmp	L003
-L004:
+	push int	15
+	pop int	r
 	ret	
 	push int	0
 	endproc	

@@ -29,10 +29,10 @@ g++ parser.tab.c lex.yy.c compiler.cpp -o mycompiler 2> error.txt
 # Get-Content testcases\test_inc_dec.c | .\mycompiler 
 # Write-Host "`n-----------------------------------Running test_dowhile.c-----------------------------------"
 # Get-Content testcases\test_dowhile.c | .\mycompiler 
-# Write-Host "`n-----------------------------------Running test_if.c-----------------------------------"
-# Get-Content testcases\test_if.c | .\mycompiler 
-Write-Host "`n-----------------------------------Running test_for.c-----------------------------------"
-Get-Content testcases\test_for.c | .\mycompiler 
+Write-Host "`n-----------------------------------Running test_if.c-----------------------------------"
+Get-Content testcases\test_if.c | .\mycompiler 
+# Write-Host "`n-----------------------------------Running test_for.c-----------------------------------"
+# Get-Content testcases\test_for.c | .\mycompiler 
 
 
 
