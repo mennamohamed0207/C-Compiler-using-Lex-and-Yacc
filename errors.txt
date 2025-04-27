@@ -1,1 +1,4 @@
-Error: Unused variables: y, 
+Error: syntax error
+Error at line 4: Syntax error near , 
+Error: syntax error
+Error at line 4: Syntax error near , 

@@ -130,7 +130,7 @@ extern void free_node(Node *p);
 extern int execute_all(Node *p, int cont = -1, int brk = -1, int args = 0, ...);
 extern void yyerror(const char *emsg=NULL, int line_number = 0);
 extern void check_unused_variables();
-extern void log_symbol_table();
-extern void log_errors(int line, const char *msg);
+extern void log_symbol_table(const char* filename);
+extern void log_errors(int line, const char *msg,const char * filename);
 
 #endif

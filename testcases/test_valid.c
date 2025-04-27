@@ -1,8 +1,7 @@
 int main()
 {
     int X = 10;
-
-    IF(X == 5)
+    if(X == 5)
     {
         WHILE(X > 0)
         {

@@ -16,11 +16,11 @@ int level = 0;
 FILE *assemblyOutFile = NULL;
 extern int line;
 
-void open_assembly_file()
+void open_assembly_file(const char* filename="assembly.txt")
 {
     if (assemblyOutFile == NULL)
     {
-        assemblyOutFile = fopen("assembly.txt", "w");
+        assemblyOutFile = fopen(filename, "w");
     }
 }
 
@@ -103,7 +103,7 @@ SymbolTable *get_function_variable(Node *p)
 
     return NULL;
 }
-SymbolTable *check_variable(Node *p, bool isRHS = false)
+SymbolTable *check_variable(Node *p, bool isRHS = true)
 {
     if (p->type != VARIABLE)
         return NULL;
@@ -136,17 +136,17 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
                 yyerror(errorMsg, p->line_number);
                 return NULL;
             }
-            if (!isRHS && entry->isFunction == false && entry->isInitialized == false && entry->isParam == false)
+            if (isRHS && entry->isFunction == false && entry->isInitialized == false && entry->isParam == false)
             {
                 char errorMsg[1024];
                 sprintf(errorMsg, "Semantic Error: variable '%s' must be initialized before use", p->id.name);
                 yyerror(errorMsg, p->line_number);
                 return NULL;
             }
-            if (!isRHS && !entry->isInitialized && !entry->isParam)
-            {
-                yyerror("Variable used before initialization", p->line_number);
-            }
+            // if (!isRHS && !entry->isInitialized && !entry->isParam)
+            // {
+            //     yyerror("Variable used before initialization", p->line_number);
+            // }
             printf("=======================================variable %s\n", p->id.name);
 
             symbol[i][p->id.name]->used = true;
@@ -191,10 +191,10 @@ SymbolTable *declare_variable(Node *p, bool isRHS = false, bool isParam = false,
     return symbol[level][p->id.name];
 }
 
-void log_symbol_table()
+void log_symbol_table(const char * filename="s.txt")
 {
     printf("Logging symbol table...\n");
-    FILE *symbolTableFile = fopen("symbol_table.txt", "w");
+    FILE *symbolTableFile = fopen(filename, "w");
     if (symbolTableFile == NULL)
     {
         printf("Error opening symbol table file: symbol_table.txt\n");
@@ -251,9 +251,9 @@ const char *get_type_from_name(const char *name)
     return NULL;
 }
 
-void log_errors(int line, const char *msg)
+void log_errors(int line, const char *msg,const char* filename="e.txt")
 {
-    FILE *errorFile = fopen("errors.txt", "a");
+    FILE *errorFile = fopen(filename, "a");
     if (!errorFile)
     {
         fprintf(stderr, "Error opening error file: errors.txt\n");
@@ -470,24 +470,36 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             {
                 // else if
                 printf("\tjz\tL%03d\n", l1 = label++);
+                fprintf(assemblyOutFile,"\tjz\tL%03d\n", l1 = label++);
+                fflush(assemblyOutFile);
                 add_block_scope();
 
                 write_to_assembly(p->opr.op[1], p, cont, brk);
                 remove_block_scope();
                 printf("\tjmp\tL%03d\n", l2 = label++);
+                fprintf(assemblyOutFile,"\tjmp\tL%03d\n", l2 = label++);
+                fflush(assemblyOutFile);
                 printf("L%03d:\n", l1);
+                fprintf(assemblyOutFile,"L%03d:\n", l1);
+                fflush(assemblyOutFile);
                 add_block_scope();
                 write_to_assembly(p->opr.op[2], p, cont, brk);
                 printf("L%03d:\n", l2);
+                fprintf(assemblyOutFile,"L%03d:\n", l2);
+                fflush(assemblyOutFile);
                 remove_block_scope();
             }
             else
             {
                 // else
                 printf("\tjz\tL%03d\n", l1 = label++);
+                fprintf(assemblyOutFile,"\tjz\tL%03d\n", l1 = label++);
+                fflush(assemblyOutFile);
                 add_block_scope();
                 write_to_assembly(p->opr.op[1], p, cont, brk);
                 printf("L%03d:\n", l1);
+                fprintf(assemblyOutFile,"L%03d:\n", l1);
+                fflush(assemblyOutFile);
                 remove_block_scope();
             }
             break;
@@ -509,12 +521,13 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             printf("\tjz\tL%03d\n", l2 = label++);
             fprintf(assemblyOutFile, "\tjz\tL%03d\n", l2);
             fflush(assemblyOutFile);
-
-            write_to_assembly(p->opr.op[3], p, l3 = label++, l2); // body
+            if(p->opr.op[3] !=NULL)
+            {write_to_assembly(p->opr.op[3], p, l3 = label++, l2); // body
 
             printf("L%03d:\n", l3); // continue if true
             fprintf(assemblyOutFile, "L%03d:\n", l3);
             fflush(assemblyOutFile);
+            }
 
             write_to_assembly(p->opr.op[2], p); // next iter inc/dec
             printf("\tjmp\tL%03d\n", l1);
@@ -651,7 +664,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             {
                 yyerror("Semantic ERROR: Assignment to constant", p->line_number);
             }
-            if (check_variable(p->opr.op[0]) != NULL)
+            if (check_variable(p->opr.op[0],false) != NULL)
             {
 
                 if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment

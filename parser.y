@@ -6,11 +6,10 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include "compiler.h"
-    extern void log_symbol_table();
-    extern void log_errors(int line, const char *msg);
+    extern void log_symbol_table(const char* filename);
+    extern void log_errors(int line, const char *msg,const char* filename);
     extern void check_unused_variables();
-    extern void log_symbol_table();
-    extern void open_assembly_file();
+    extern void open_assembly_file(const char* filename="x.txt");
     extern FILE *assemblyOutFile;
 
 
@@ -21,7 +20,7 @@
 
     int write_to_assembly(Node *p, Node *parent=NULL, int cont = -1, int brk = -1, int args = 0, ...);
     extern int yylex();
-    void yyerror(const char *s, int line_number);
+    extern void yyerror(const char *s, int line_number);
     extern int yylineno;
 
 %}
@@ -89,26 +88,25 @@ program:
     | program statement  {write_to_assembly($2);}
     ;
 statement_list:
-
     statement {$$=$1;}
     | statement_list statement {$$=create_operation(';',yylineno,2,$1,$2);}
     ;
 statement:
     ';' {$$=create_operation(';',yylineno,2,NULL,NULL);}
-    |single_statement ';'  {$$=$1;}
+    |single_statement  { $$=$1;}
     | compound_statement {$$=$1;}
     | '{' statement_list '}' {$$=create_operation(BLOCK,yylineno,1,$2);}
 
     ;
 
 single_statement:
-    declaration {$$=$1;}
-    | expr {$$=$1;}
+    declaration ';' {$$=$1;}
+    | expr ';' {$$=$1;}
     | return_statement {$$=$1;}
     | BREAK ';' {$$=create_operation(BREAK,yylineno,1,NULL);}
     | CONTINUE ';' {$$=create_operation(CONTINUE,yylineno,1,NULL);}
-    | assignment_statement {$$=$1;}
-    | function_call {$$=$1;}
+    | assignment_statement ';'{$$=$1;}
+    | function_call ';' {$$=$1;}
     ;
 
 compound_statement:
@@ -144,6 +142,8 @@ function_definition:
 
 for_statement:
     FOR '(' for_init ';' multiple_expr ';' for_assignment ')' '{' statement_list '}'  {$$=create_operation(FOR,yylineno,4,$3,$5,$7,$10);}
+    |FOR '(' for_init ';' multiple_expr ';' for_assignment ')' '{'  '}'  {$$=create_operation(FOR,yylineno,4,$3,$5,$7,NULL);}
+ 
     ;
 
 for_assignment:
@@ -351,11 +351,12 @@ void free_node(Node *p) {
 }
     
 void yyerror(const char *s, int line_number) {
-    log_errors(line_number, s);
-    log_symbol_table();
+    log_errors(line_number, s,"errors.txt");
+    log_symbol_table("symbol_table.txt");
+    open_assembly_file("assembly.txt");
     /* exit(0); */
 }
-
+/* 
 int main() {
     printf("Starting compilation...\n");
     
@@ -377,7 +378,8 @@ int main() {
             
             printf("Compilation completed successfully\n");
         } else {
-            fprintf(stderr, "Parsing failed with errors\n");
+
+            fprintf(stderr, "Syntax Error at line %d\n",yylineno);
         }
     } catch (const std::exception& e) {
         fprintf(stderr, "Fatal error: %s\n", e.what());
@@ -388,5 +390,52 @@ int main() {
         fclose(assemblyOutFile);
     }
     
+    return 0;
+} */
+int main() {
+    // Add these extern declarations
+    extern char* yytext;    // Current token text (from lexer)
+
+    printf("Starting compilation...\n");
+    
+    try {
+        printf("Attempting to open assembly output file...\n");
+        open_assembly_file();  // Open this early to catch errors
+        printf("Assembly file opened successfully\n");
+        
+        printf("Starting parsing... (lexer/parser initialization)\n");
+        int parse_result = yyparse();
+        
+        if (parse_result == 0) {
+            printf("Parsing completed successfully\n");
+            
+            // Add flush to ensure output isn't buffered
+            printf("Flushing output buffers...\n");
+            fflush(stdout);
+            fflush(assemblyOutFile);
+            
+            printf("Generating symbol table...\n");
+            log_symbol_table("s.txt");
+            
+            printf("Compilation completed successfully\n");
+        } else {
+   
+            char msg[1024];
+            sprintf(msg,"Syntax error near %s ",yytext);
+            yyerror(msg,yylineno);
+
+        }
+    } catch (const std::exception& e) {
+        fprintf(stderr, "Fatal error: %s\n", e.what());
+        fprintf(stderr, "Error occurred at line %d\n", yylineno);
+        return 1;
+    }
+    
+    if (assemblyOutFile) {
+        printf("Closing assembly output file...\n");
+        fclose(assemblyOutFile);
+    }
+    
+    printf("Exiting with return code 0\n");
     return 0;
 }

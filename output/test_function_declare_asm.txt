@@ -1,0 +1,10 @@
+	proc	add
+	pop int	a
+	pop int	b
+	push	a
+	push	b
+	add	
+	pop int	c
+	ret	
+	push	c
+	endproc	

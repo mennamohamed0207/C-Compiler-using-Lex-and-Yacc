@@ -13,9 +13,9 @@ float calculate(float x)
 
 int main()
 {
-    int a = 5;
+    int arc = 5;
     int result=0;
-    result = add(a, 3);
+    result = add(arc, 3);
     float value=0.0;
     value = calculate(4.0);
 

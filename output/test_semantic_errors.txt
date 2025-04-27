@@ -1,0 +1,5 @@
+Error at line 4: Semantic ERROR: Assignment to constant
+Error at line 7: Semantic Error: variable 'y' already declared in this scope
+Error at line 11: type mismatch in declaration and initialization
+Error at line 17: Semantic Error: variable 'a' must be initialized before use
+Error: Unused variables: y, a, g, 

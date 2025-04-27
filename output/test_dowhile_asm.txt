@@ -1,0 +1,27 @@
+	proc	main
+	push int	5
+	pop int	num
+L000:
+	push	num
+	push int	1
+	subtract	
+	push	Call
+	pop int	 num
+	push	num
+	push int	0
+	compGT	
+	jnz	L000
+L001:
+	push int	0
+	pop int	flag
+L002:
+	push string	"Hello"
+	pop string	s
+	push	flag
+	push int	1
+	compEQ	
+	jnz	L002
+L003:
+	ret	
+	push int	0
+	endproc	
