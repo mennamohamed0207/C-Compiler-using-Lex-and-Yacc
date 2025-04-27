@@ -23,16 +23,6 @@ void open_assembly_file()
         assemblyOutFile = fopen("assembly.txt", "w");
     }
 }
-// void add_block_scope()
-// {
-//     symbol.push_back(map<string, SymbolTable *>());
-//     level++;
-// }
-// void remove_block_scope()
-// {
-//     symbol.pop_back();
-//     level--;
-// }
 
 void add_block_scope()
 {
@@ -253,6 +243,8 @@ const char *get_type_from_name(const char *name)
     {
         if (symbolTable[i]->name == name)
         {
+            printf("=================================================variable name%s\n", name);
+            printf("================================================variable type%s\n", get_data_type(symbolTable[i]->type));
             return get_data_type(symbolTable[i]->type);
         }
     }
@@ -273,19 +265,6 @@ void log_errors(int line, const char *msg)
         fprintf(errorFile, "Error: %s\n", msg);
 }
 
-Node *create_label_node(int label)
-{
-    Node *p;
-    size_t nodeSize;
-
-    nodeSize = SIZEOFNODE + sizeof(ConstantNode);
-    if ((p = (Node *)malloc(nodeSize)) == NULL)
-        yyerror("out of memory");
-
-    p->type = CONSTANT;
-    p->con.value.intVal = label;
-    return p;
-}
 bool is_constant(Node *p)
 {
     for (int i = 0; i < symbolTable.size(); i++)
@@ -383,9 +362,9 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         symoblTableEntry = check_variable(p);
         if (!symoblTableEntry)
         {
-            char errorMsg[1024];
-            sprintf(errorMsg, "Semantic Error: variable '%s' not declared", p->id.name);
-            yyerror(errorMsg, p->line_number);
+            // char errorMsg[1024];
+            // sprintf(errorMsg, "Semantic Error: variable '%s' not declared", p->id.name);
+            // yyerror(errorMsg, p->line_number);
             return 0;
         }
         printf("\tpush\t%s\n", p->id.name);
@@ -412,8 +391,8 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 }
                 else
                 {
-                    printf("Semantic Error: variable '%s' already declared\n", p->opr.op[0]->id.name);
-                    yyerror("variable already declared", p->line_number);
+                    // printf("Semantic Error: variable '%s' already declared\n", p->opr.op[0]->id.name);
+                    // yyerror("variable already declared", p->line_number);
                     return 0;
                 }
                 return entry->type;
@@ -423,11 +402,15 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 SymbolTable *entry = declare_variable(p->opr.op[0], true, false, true);
                 if (entry == NULL)
                 {
-                    printf("Semantic Error: variable '%s' already declared\n", p->opr.op[0]->id.name);
-                    yyerror("variable already declared", p->line_number);
+                    printf("Semantic Error: variable '%s' already declared at line %d\n", p->opr.op[0]->id.name, p->line_number);
+                    // yyerror("variable already declared", p->line_number);
                     return 0;
                 }
                 type1 = write_to_assembly(p->opr.op[1], p);
+                if (type1 == 0)
+                    break;
+                printf("variable %s , type %d", entry->name, entry->type);
+                printf("=====================type%d\n", type1);
                 if (type1 != entry->type)
                 {
                     printf("Semantic Error: type mismatch in declaration and initialization\n");
@@ -447,10 +430,12 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         case WHILE:
             open_assembly_file();
             add_block_scope();
-            printf("L%03d:\n", l1 = label++); // start
-            fprintf(assemblyOutFile, "L%03d:\n", l1);
+            printf("L%04d:\n", l1 = label++);
+            fprintf(assemblyOutFile, "L%04d:\n", l1);
             fflush(assemblyOutFile);
             type1 = write_to_assembly(p->opr.op[0], p);
+            if (type1 == 0)
+                break;
             if (type1 != BOOL_TYPE)
             {
                 printf("Semantic Error: while condition must be a boolean expression\n");
@@ -474,6 +459,8 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         case IF:
             open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0], p);
+            if (type1 == 0)
+                break;
             if (type1 != BOOL_TYPE)
             {
                 printf("Semantic Error: if condition must be a boolean expression\n");
@@ -512,6 +499,8 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             fprintf(assemblyOutFile, "L%03d:\n", l1);
             fflush(assemblyOutFile);
             type1 = write_to_assembly(p->opr.op[1], p);
+            if (type1 == 0)
+                break;
             if (type1 != BOOL_TYPE)
             {
                 printf("Semantic Error: for condition must be a boolean expression\n");
@@ -626,6 +615,8 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             fflush(assemblyOutFile);
             write_to_assembly(p->opr.op[0], p, l1, l2 = label++);
             type1 = write_to_assembly(p->opr.op[1], p);
+            if (type1 == 0)
+                break;
             if (type1 != BOOL_TYPE)
             {
                 printf("Semantic Error: do while condition must be a boolean expression\n");
@@ -647,6 +638,11 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             open_assembly_file();
 
             type1 = write_to_assembly(p->opr.op[1], p);
+            if (type1 == 0)
+            {
+                break;
+            }
+            printf("===============================type of constant %s\n", get_data_type(type1));
             // check if it is constant
             printf("===========================p->opr.op[0]->id.qualifier = %d\n", p->opr.op[0]->id.qualifier);
             bool isConstant = is_constant(p->opr.op[0]);
@@ -673,6 +669,12 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                         fflush(assemblyOutFile);
                     }
                 }
+                else
+                {
+                    printf("Semantic Error: type mismatch \n");
+                    yyerror("type mismatch in declaration and initialization", p->line_number);
+                    return 0;
+                }
 
                 printf("\tpop %s\t%s\t%s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
                 fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
@@ -684,6 +686,9 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         case NEGATIVE:
             open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0], p);
+            if (type1 == 0)
+                break;
+
             printf("\tneg\t\n");
             fprintf(assemblyOutFile, "\tneg\t\n");
             fflush(assemblyOutFile);
@@ -691,6 +696,9 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         case NOT:
             open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0], p);
+            if (type1 == 0)
+                break;
+
             printf("\tnot\t\n");
             fprintf(assemblyOutFile, "\tnot\t\n");
             fflush(assemblyOutFile);
@@ -698,6 +706,9 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         case POST_DEC:
             open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0], p);
+            if (type1 == 0)
+                break;
+
             printf("\tdec\t%s\n", p->opr.op[0]->id.name);
             fprintf(assemblyOutFile, "\tdec\t%s\n", p->opr.op[0]->id.name);
             fflush(assemblyOutFile);
@@ -705,6 +716,9 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         case POST_INC:
             open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0], p);
+            if (type1 == 0)
+                break;
+
             printf("\tinc\t%s\n", p->opr.op[0]->id.name);
             fprintf(assemblyOutFile, "\tinc\t%s\n", p->opr.op[0]->id.name);
             fflush(assemblyOutFile);
@@ -712,6 +726,9 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         case PRE_DEC:
             open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0], p);
+            if (type1 == 0)
+                break;
+
             printf("\tdec\t%s\n", p->opr.op[0]->id.name);
             fprintf(assemblyOutFile, "\tdec\t%s\n", p->opr.op[0]->id.name);
             fflush(assemblyOutFile);
@@ -719,6 +736,9 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
         case PRE_INC:
             open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0], p);
+            if (type1 == 0)
+                break;
+
             printf("\tinc\t%s\n", p->opr.op[0]->id.name);
             fprintf(assemblyOutFile, "\tinc\t%s\n", p->opr.op[0]->id.name);
             fflush(assemblyOutFile);
@@ -952,6 +972,8 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0], p, cont, brk);
             type2 = write_to_assembly(p->opr.op[1], p, cont, brk);
+            if (type1 == 0 || type2 == 0)
+                break;
             if (type1 != type2)
             {
                 char msg[1024];
@@ -970,18 +992,18 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 fflush(assemblyOutFile);
                 return type1;
             case '-':
-                printf("\tsub\t\n");
-                fprintf(assemblyOutFile, "\tsub\t\n");
+                printf("\tsubtract\t\n");
+                fprintf(assemblyOutFile, "\tsubtract\t\n");
                 fflush(assemblyOutFile);
                 return type1;
             case '*':
-                printf("\tmul\t\n");
-                fprintf(assemblyOutFile, "\tmul\t\n");
+                printf("\tmultiply\t\n");
+                fprintf(assemblyOutFile, "\tmultiply\t\n");
                 fflush(assemblyOutFile);
                 return type1;
             case '/':
-                printf("\tdiv\t\n");
-                fprintf(assemblyOutFile, "\tdiv\t\n");
+                printf("\tdivide\t\n");
+                fprintf(assemblyOutFile, "\tdivide\t\n");
                 fflush(assemblyOutFile);
             case MOD:
                 printf("\tmod\t\n");
@@ -989,8 +1011,8 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 fflush(assemblyOutFile);
                 return type1;
             case '<':
-                printf("\tcompLT\t\n");
-                fprintf(assemblyOutFile, "\tcompLT\t\n");
+                printf("\tcompareLessThan\t\n");
+                fprintf(assemblyOutFile, "\tcompareLessThan\t\n");
                 fflush(assemblyOutFile);
                 return BOOL_TYPE;
             case '>':

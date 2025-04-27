@@ -353,6 +353,7 @@ void free_node(Node *p) {
 void yyerror(const char *s, int line_number) {
     log_errors(line_number, s);
     log_symbol_table();
+    /* exit(0); */
 }
 
 int main() {

@@ -13,12 +13,7 @@ int main()
     else
     {
         int y = a - b;
-        int x = c - a;
+        int x = c - d;
     }
-
-    char f;
-    bool h = true;
-    char j = 'a';
-    string i = "Hello, World!";
     return 0;
 }

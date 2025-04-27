@@ -6,19 +6,14 @@ g++ parser.tab.c lex.yy.c compiler.cpp -o mycompiler 2> error.txt
 
 
 
-
-
-# Write-Host "`n-----------------------------------Running test_function.c-----------------------------------"
-# Get-Content testcases\test_function.c | .\mycompiler 
+Write-Host "`n-----------------------------------Running test_function.c-----------------------------------"
+Get-Content testcases\test_function.c | .\mycompiler 
 # Write-Host "`n-----------------------------------Running test_function.c-----------------------------------"
 # Get-Content testcases\test_function_declare.c | .\mycompiler 
 
 
 
 
-########Shaghalllllllllllll
-# Write-Host "`n-----------------------------------Running test_types.c-----------------------------------"
-# Get-Content testcases\test_types.c | .\mycompiler
 # Write-Host "`n-----------------------------------Running test_while.c-----------------------------------"
 # Get-Content testcases\test_while.c | .\mycompiler 
 # Write-Host "`n-----------------------------------Running test_valid.c-----------------------------------"
@@ -29,8 +24,8 @@ g++ parser.tab.c lex.yy.c compiler.cpp -o mycompiler 2> error.txt
 # Get-Content testcases\test_inc_dec.c | .\mycompiler 
 # Write-Host "`n-----------------------------------Running test_dowhile.c-----------------------------------"
 # Get-Content testcases\test_dowhile.c | .\mycompiler 
-Write-Host "`n-----------------------------------Running test_if.c-----------------------------------"
-Get-Content testcases\test_if.c | .\mycompiler 
+# Write-Host "`n-----------------------------------Running test_if.c-----------------------------------"
+# Get-Content testcases\test_if.c | .\mycompiler 
 # Write-Host "`n-----------------------------------Running test_for.c-----------------------------------"
 # Get-Content testcases\test_for.c | .\mycompiler 
 
@@ -43,3 +38,15 @@ Get-Content testcases\test_if.c | .\mycompiler
 
 # Write-Host "`n-----------------------------------Running test_error.c-----------------------------------"
 # Get-Content testcases\test_error.c | .\mycompiler 
+
+
+########Shaghalllllllllllll
+
+# Write-Host "`n-----------------------------------Running test_function.c-----------------------------------"
+# Get-Content testcases\test_scopes.c | .\mycompiler 
+# Write-Host "`n-----------------------------------Running test_types.c-----------------------------------"
+# Get-Content testcases\test_semantic_errors.c | .\mycompiler
+
+# Write-Host "`n-----------------------------------Running test_types.c-----------------------------------"
+# Get-Content testcases\test_types.c | .\mycompiler
+
