@@ -11,7 +11,7 @@ int main()
     {
         int x = 10;
     }
-    menna = 5;
+
 
     // Nested if
     if (a > 0)

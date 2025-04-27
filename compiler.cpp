@@ -23,15 +23,32 @@ void open_assembly_file()
         assemblyOutFile = fopen("assembly.txt", "w");
     }
 }
+// void add_block_scope()
+// {
+//     symbol.push_back(map<string, SymbolTable *>());
+//     level++;
+// }
+// void remove_block_scope()
+// {
+//     symbol.pop_back();
+//     level--;
+// }
+
 void add_block_scope()
 {
+    // Push a new symbol table onto the stack
     symbol.push_back(map<string, SymbolTable *>());
     level++;
 }
+
 void remove_block_scope()
 {
-    symbol.pop_back();
-    level--;
+    // Pop the current symbol table from the stack
+    if (!symbol.empty())
+    {
+        symbol.pop_back();
+        level--;
+    }
 }
 
 void check_unused_variables()
@@ -145,7 +162,6 @@ SymbolTable *check_variable(Node *p, bool isRHS = false)
             symbol[i][p->id.name]->used = true;
             return symbol[i][p->id.name];
         }
-        
     }
     if (!found)
     {
@@ -457,7 +473,6 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             break;
         case IF:
             open_assembly_file();
-            add_block_scope();
             type1 = write_to_assembly(p->opr.op[0], p);
             if (type1 != BOOL_TYPE)
             {
@@ -468,20 +483,26 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             {
                 // else if
                 printf("\tjz\tL%03d\n", l1 = label++);
+                add_block_scope();
+
                 write_to_assembly(p->opr.op[1], p, cont, brk);
+                remove_block_scope();
                 printf("\tjmp\tL%03d\n", l2 = label++);
                 printf("L%03d:\n", l1);
+                add_block_scope();
                 write_to_assembly(p->opr.op[2], p, cont, brk);
                 printf("L%03d:\n", l2);
+                remove_block_scope();
             }
             else
             {
                 // else
                 printf("\tjz\tL%03d\n", l1 = label++);
+                add_block_scope();
                 write_to_assembly(p->opr.op[1], p, cont, brk);
                 printf("L%03d:\n", l1);
+                remove_block_scope();
             }
-            remove_block_scope();
             break;
         case FOR:
             open_assembly_file();

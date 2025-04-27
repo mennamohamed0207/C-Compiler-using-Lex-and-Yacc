@@ -5,5 +5,6 @@
 | a                    | int        | Variable   | 1        | 1      | True        | True   | False     |
 | y                    | int        | Variable   | 2        | 2      | True        | False  | False     |
 | x                    | int        | Variable   | 3        | 2      | True        | False  | False     |
-| r                    | int        | Variable   | 4        | 3      | True        | False  | False     |
+| menna                | int        | Variable   | 4        | 2      | True        | False  | False     |
+| r                    | int        | Variable   | 5        | 3      | True        | False  | False     |
 ----------------------------------------------------------------------------------------------

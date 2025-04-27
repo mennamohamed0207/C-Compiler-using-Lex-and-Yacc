@@ -1,6 +1,0 @@
-Error at line 14: Semantic Error: variable 'menna' not declared within scope 
-Error: Unused variables: y, x, r, 
-Error at line 15: Semantic Error: variable 'menna' not declared within scope 
-Error: Unused variables: x, r, 
-Error at line 14: Semantic Error: variable 'menna' not declared within scope 
-Error: Unused variables: y, x, r, 

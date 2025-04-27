@@ -9,6 +9,7 @@
 	push int	10
 	pop int	x
 	push int	5
+	pop int	menna
 	push	a
 	push int	0
 	compGT	

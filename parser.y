@@ -149,6 +149,10 @@ for_statement:
 for_assignment:
      { $$ = create_operation(';', yylineno, 2, NULL, NULL); }
   | assignment_statement { $$ = $1; }
+   |expr POST_INC {$$=create_operation(POST_INC,yylineno,1,$1);}
+    | expr POST_DEC {$$=create_operation(POST_DEC,yylineno,1,$1);}
+    | PRE_INC expr {$$=create_operation(PRE_INC,yylineno,1,$2);}
+    | PRE_DEC expr {$$=create_operation(PRE_DEC,yylineno,1,$2);}
   ;
 multiple_expr:
     {$$=create_operation(';',yylineno,2,NULL,NULL);}
