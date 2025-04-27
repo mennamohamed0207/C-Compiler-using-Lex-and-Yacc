@@ -16,6 +16,8 @@ int main()
     int b=10;
     g=a+b;
 
+    a=5;
+
 
     return 0;
 

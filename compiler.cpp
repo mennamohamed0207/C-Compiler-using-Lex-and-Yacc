@@ -550,6 +550,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 printf("Semantic Error: switch variable must be a variable\n");
                 yyerror("switch variable must be a variable", p->line_number);
             }
+            mark_used(p->opr.op[0]);
             printf("\tpop %s\t\n", switch_var->id.name);
             fprintf(assemblyOutFile, "\tpop %s\t\n", switch_var->id.name);
             fflush(assemblyOutFile);
@@ -678,8 +679,14 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                     else
                     {
                         // Call
-                        fprintf(assemblyOutFile, "\tpush\t%s\n", "Call");
-                        fflush(assemblyOutFile);
+                        if(p->opr.op[1]->opr.symbol==CALL)
+                        {
+
+                        // printf("=================================================p->opr.op[1]->opr.symbol = %d\n",p->opr.op[1]->opr.symbol);
+                        printf("=================================================p->opr.op[1]->opr.symbol = %d\n",p->opr.op[1]->opr.symbol);
+                            fprintf(assemblyOutFile, "\tpush\t%s\n", "Call");
+                            fflush(assemblyOutFile);
+                        }
                     }
                 }
                 else
@@ -728,33 +735,33 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             return type1;
         case POST_INC:
             open_assembly_file();
+
             type1 = write_to_assembly(p->opr.op[0], p);
             if (type1 == 0)
                 break;
-
             printf("\tinc\t%s\n", p->opr.op[0]->id.name);
             fprintf(assemblyOutFile, "\tinc\t%s\n", p->opr.op[0]->id.name);
             fflush(assemblyOutFile);
             return type1;
         case PRE_DEC:
             open_assembly_file();
-            type1 = write_to_assembly(p->opr.op[0], p);
-            if (type1 == 0)
-                break;
-
             printf("\tdec\t%s\n", p->opr.op[0]->id.name);
             fprintf(assemblyOutFile, "\tdec\t%s\n", p->opr.op[0]->id.name);
             fflush(assemblyOutFile);
-            return type1;
-        case PRE_INC:
-            open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0], p);
             if (type1 == 0)
                 break;
 
+            return type1;
+        case PRE_INC:
+            open_assembly_file();
             printf("\tinc\t%s\n", p->opr.op[0]->id.name);
             fprintf(assemblyOutFile, "\tinc\t%s\n", p->opr.op[0]->id.name);
             fflush(assemblyOutFile);
+            type1 = write_to_assembly(p->opr.op[0], p);
+            if (type1 == 0)
+                break;
+
             return type1;
         case BREAK:
             open_assembly_file();
@@ -966,13 +973,13 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             write_to_assembly(p->opr.op[1]);
             break;
         case RETURN:
-            printf("\tret\t\n");
-            fprintf(assemblyOutFile, "\tret\t\n");
-            fflush(assemblyOutFile);
             if (p->opr.op[0])
             {
                 write_to_assembly(p->opr.op[0]);
             }
+            printf("\tret\t\n");
+            fprintf(assemblyOutFile, "\tret\t\n");
+            fflush(assemblyOutFile);
             printf("\tendproc\t\n");
             fprintf(assemblyOutFile, "\tendproc\t\n");
             fflush(assemblyOutFile);

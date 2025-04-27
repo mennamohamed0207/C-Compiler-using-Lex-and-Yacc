@@ -1,0 +1,42 @@
+	proc	main
+	push int	10
+	pop int	a
+	push int	20
+	pop int	b
+	push int	10
+	pop int	 a
+	push int	30
+	pop int	c
+	push	a
+	push	b
+	compareLessThan	
+	jz	L001
+	push	a
+	push	b
+	add	
+	pop int	d
+	push	c
+	push	d
+	add	
+	pop int	e
+	jmp	L003
+L001:
+	push	a
+	push	b
+	subtract	
+	pop int	y
+	push	c
+	push	a
+	subtract	
+	pop int	x
+L003:
+	pop char	f
+	push bool	1
+	pop bool	h
+	push char	a
+	pop char	j
+	push string	"Hello, World!"
+	pop string	i
+	push int	0
+	ret	
+	endproc	

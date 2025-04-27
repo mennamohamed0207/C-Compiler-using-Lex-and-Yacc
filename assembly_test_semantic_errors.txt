@@ -1,0 +1,20 @@
+	proc	main
+	push int	10
+	pop int	x
+	push int	20
+	pop int	 x
+	push int	10
+	pop int	y
+	push int	5
+	pop int	z
+	push float	5.000000
+	pop int	a
+	pop int	g
+	push int	10
+	pop int	b
+	push	b
+	push int	5
+	pop int	 a
+	push int	0
+	ret	
+	endproc	

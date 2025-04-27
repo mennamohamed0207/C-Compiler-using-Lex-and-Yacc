@@ -1,0 +1,34 @@
+	proc	main
+	push int	5
+	pop int	x
+	push int	10
+	pop int	y
+	push int	15
+	pop int	z
+	push	x
+	inc	x
+	pop int	a
+	push	y
+	dec	y
+	pop int	b
+	inc	x
+	push	x
+	pop int	c
+	dec	y
+	push	y
+	pop int	d
+	push	x
+	inc	x
+	inc	y
+	push	y
+	add	
+	pop int	e
+	dec	z
+	push	z
+	push	z
+	dec	z
+	add	
+	pop int	f
+	push int	0
+	ret	
+	endproc	

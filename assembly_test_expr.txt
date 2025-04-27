@@ -1,0 +1,8 @@
+	proc	main
+	push int	10
+	pop int	x
+	push int	20
+	pop int	 x
+	push int	0
+	ret	
+	endproc	

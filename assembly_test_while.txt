@@ -1,0 +1,47 @@
+	proc	main
+	push int	5
+	pop int	counter
+L0000:
+	push	counter
+	push int	0
+	compGT	
+	jz	L001
+	push int	10
+	pop int	x
+	push	counter
+	push int	1
+	subtract	
+	pop int	 counter
+	jmp	L000
+L001:
+	push int	2
+	pop int	i
+L0002:
+	push	i
+	push int	0
+	compGT	
+	jz	L003
+	push int	3
+	pop int	j
+L0004:
+	push	j
+	push int	0
+	compGT	
+	jz	L005
+	push int	10
+	pop int	y
+	push	j
+	push int	1
+	subtract	
+	pop int	 j
+	jmp	L004
+L005:
+	push	i
+	push int	1
+	subtract	
+	pop int	 i
+	jmp	L002
+L003:
+	push int	0
+	ret	
+	endproc	

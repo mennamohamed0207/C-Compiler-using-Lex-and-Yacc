@@ -1,4 +1,88 @@
+Error: ===============================================test_for=========================
+
+Error: Unused variables: y, z, 
+Error: ===============================================test_expr=========================
+
+Error: ===============================================test_error=========================
+
 Error: syntax error
-Error at line 4: Syntax error near , 
+Error at line 4: Syntax error near ,
+Error: ===============================================test_if=========================
+
+Error: Unused variables: y, x, r, 
+Error: ===============================================test_dowhile=========================
+
+Error: Unused variables: s, 
+Error: ===============================================test_scopes=========================
+
+Error at line 16: Semantic Error: variable 'd' not declared within scope 
+Error: Unused variables: e, y, x, 
+Error: ===============================================test_semantic_errors=========================
+
+Error at line 4: Semantic ERROR: Assignment to constant
+Error at line 7: Semantic Error: variable 'y' already declared in this scope
+Error at line 11: type mismatch in declaration and initialization
+Error at line 17: Semantic Error: variable 'a' must be initialized before use
+Error: Unused variables: y, g, 
+Error: ===============================================test_types=========================
+
+Error: Unused variables: e, y, x, f, h, j, i, 
+Error: ===============================================test_valid=========================
+
+Error: ===============================================test_function_declare=========================
+
+Error: ===============================================test_while=========================
+
+Error: Unused variables: x, y, 
+Error: ===============================================test_function=========================
+
+Error: Unused variables: y, 
+Error: ===============================================test_switch=========================
+
+Error: ===============================================test_inc_dec=========================
+
+Error: Unused variables: a, b, c, d, e, f, 
+Error: ===============================================test_for=========================
+
+Error: Unused variables: y, z, 
+Error: ===============================================test_expr=========================
+
+Error: ===============================================test_error=========================
+
 Error: syntax error
-Error at line 4: Syntax error near , 
+Error at line 4: Syntax error near ,
+Error: ===============================================test_if=========================
+
+Error: Unused variables: y, x, r, 
+Error: ===============================================test_dowhile=========================
+
+Error: Unused variables: s, 
+Error: ===============================================test_scopes=========================
+
+Error at line 16: Semantic Error: variable 'd' not declared within scope 
+Error: Unused variables: e, y, x, 
+Error: ===============================================test_semantic_errors=========================
+
+Error at line 4: Semantic ERROR: Assignment to constant
+Error at line 7: Semantic Error: variable 'y' already declared in this scope
+Error at line 11: type mismatch in declaration and initialization
+Error at line 17: Semantic Error: variable 'a' must be initialized before use
+Error: Unused variables: y, g, 
+Error: ===============================================test_types=========================
+
+Error: Unused variables: e, y, x, f, h, j, i, 
+Error: ===============================================test_valid=========================
+
+Error: ===============================================test_function_declare=========================
+
+Error: ===============================================test_while=========================
+
+Error: Unused variables: x, y, 
+Error: ===============================================test_function=========================
+
+Error: Unused variables: y, 
+Error: ===============================================test_switch=========================
+
+Error: ===============================================test_inc_dec=========================
+
+Error: Unused variables: a, b, c, d, e, f, 

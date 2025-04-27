@@ -1,0 +1,37 @@
+	proc	main
+	push int	3
+	pop int	day
+	pop string	dayy
+	pop day	
+L001:
+	push	day
+	push int	1
+	compEQ	
+	jz	L003
+	push string	"Monday"
+	pop string	 dayy
+	jmp	L1111
+L003:
+	push	day
+	push int	2
+	compEQ	
+	jz	L005
+	push string	"Tuesday"
+	pop string	 dayy
+	jmp	L1111
+L005:
+	push	day
+	push int	3
+	compEQ	
+	jz	L999
+	push string	"Wednesday"
+	pop string	 dayy
+	jmp	L1111
+L999:
+	push string	"Invalid day"
+	pop string	 dayy
+	jmp	L1111
+L1111:
+	push int	0
+	ret	
+	endproc	

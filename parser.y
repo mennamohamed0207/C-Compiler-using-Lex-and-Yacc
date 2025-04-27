@@ -20,7 +20,7 @@
 
     int write_to_assembly(Node *p, Node *parent=NULL, int cont = -1, int brk = -1, int args = 0, ...);
     extern int yylex();
-    extern void yyerror(const char *s, int line_number);
+    extern void yyerror(const char *emsg, int line_number,const char* filename);
     extern int yylineno;
 
 %}
@@ -350,10 +350,10 @@ void free_node(Node *p) {
     free(p);
 }
     
-void yyerror(const char *s, int line_number) {
-    log_errors(line_number, s,"errors.txt");
+ void yyerror(const char *emsg, int line_number ,const char* filename)
+ {
+    log_errors(line_number, emsg,filename);
     log_symbol_table("symbol_table.txt");
-    open_assembly_file("assembly.txt");
     /* exit(0); */
 }
 /* 
@@ -392,7 +392,7 @@ int main() {
     
     return 0;
 } */
-int main() {
+/* int main() {
     // Add these extern declarations
     extern char* yytext;    // Current token text (from lexer)
 
@@ -436,6 +436,69 @@ int main() {
         fclose(assemblyOutFile);
     }
     
+    printf("Exiting with return code 0\n");
+    return 0;
+} */
+
+int main(int argc, char *argv[]) {
+    extern char* yytext;
+    char error_filename[256];
+    char symbol_table_filename[256];
+    char assembly_filename[256];
+
+    if (argc < 2) {
+        printf("Usage: %s <script_name>\n", argv[0]);
+        return 1;
+    }
+
+    const char *script_name = argv[1];
+    // Global filenames for output
+
+    // Set filenames based on script name
+    snprintf(error_filename, sizeof(error_filename), "errors_%s.txt", script_name);
+    snprintf(symbol_table_filename, sizeof(symbol_table_filename), "symbol_table_%s.txt", script_name);
+    snprintf(assembly_filename, sizeof(assembly_filename), "assembly_%s.txt", script_name);
+
+    printf("Starting compilation for script: %s\n", script_name);
+    char msg[1024];
+    sprintf(msg,"===============================================%s=========================\n",script_name);
+    yyerror(msg);
+
+    try {
+        printf("Attempting to open assembly output file...\n");
+        open_assembly_file(assembly_filename);
+        printf("Assembly file opened successfully\n");
+
+        printf("Starting parsing... (lexer/parser initialization)\n");
+        int parse_result = yyparse();
+
+        if (parse_result == 0) {
+            printf("Parsing completed successfully\n");
+
+            printf("Flushing output buffers...\n");
+            fflush(stdout);
+            fflush(assemblyOutFile);
+
+            printf("Generating symbol table...\n");
+            log_symbol_table(symbol_table_filename);
+            
+            printf("Compilation completed successfully\n");
+        } else {
+            char msg[1024];
+            sprintf(msg, "Syntax error near %s", yytext);
+            yyerror(msg, yylineno); // Simple call, no filenames passed
+        }
+    } catch (const std::exception& e) {
+        fprintf(stderr, "Fatal error: %s\n", e.what());
+        fprintf(stderr, "Error occurred at line %d\n", yylineno);
+        return 1;
+    }
+
+    if (assemblyOutFile) {
+        printf("Closing assembly output file...\n");
+        fclose(assemblyOutFile);
+    }
+
     printf("Exiting with return code 0\n");
     return 0;
 }

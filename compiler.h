@@ -128,7 +128,7 @@ extern Node *create_identifier(char *name, int line_number, int dataType = 0, in
 extern Node *create_operation(int oper, int line_number, int nops, ...);
 extern void free_node(Node *p);
 extern int execute_all(Node *p, int cont = -1, int brk = -1, int args = 0, ...);
-extern void yyerror(const char *emsg=NULL, int line_number = 0);
+ extern void yyerror(const char *emsg=NULL, int line_number = 0,const char* filename="errors.txt");
 extern void check_unused_variables();
 extern void log_symbol_table(const char* filename);
 extern void log_errors(int line, const char *msg,const char * filename);

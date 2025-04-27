@@ -1,53 +1,33 @@
+# Step 1: Generate the compiler
 Write-Host "Generating compiler..."
 flex lexer.l
 bison -d parser.y 
 g++ parser.tab.c lex.yy.c compiler.cpp -o mycompiler 2> error.txt 
 
-# Write-Host "`n-----------------------------------Running test_for.c-----------------------------------"
-# Get-Content testcases\test_for.c | .\mycompiler 
+# Step 2: Define your test files
+$testFiles = @(
+    "test_for.c",
+    "test_expr.c",
+    "test_error.c",
+    "test_if.c",
+    "test_dowhile.c",
+    "test_scopes.c",
+    "test_semantic_errors.c",
+    "test_types.c",
+    "test_valid.c",
+    "test_function_declare.c",
+    "test_while.c",
+    "test_function.c",
+    "test_switch.c",
+    "test_inc_dec.c"
+)
 
+# Step 3: Run each test
+foreach ($testFile in $testFiles) {
+    $testName = [System.IO.Path]::GetFileNameWithoutExtension($testFile)
 
+    Write-Host "`n-----------------------------------Running $testFile-----------------------------------"
 
-
-
-# Write-Host "`n-----------------------------------Running test_expression.c-----------------------------------"
-# Get-Content testcases\test_expr.c | .\mycompiler 
-
-Write-Host "`n-----------------------------------Running test_error.c-----------------------------------"
-Get-Content testcases\test_error.c | .\mycompiler 
-
-
-########Shaghalllllllllllll
-
-# Write-Host "`n-----------------------------------Running test_if.c-----------------------------------"
-# Get-Content testcases\test_if.c | .\mycompiler 
-
-# Write-Host "`n-----------------------------------Running test_dowhile.c-----------------------------------"
-# Get-Content testcases\test_dowhile.c | .\mycompiler 
-# Write-Host "`n-----------------------------------Running test_function.c-----------------------------------"
-# Get-Content testcases\test_scopes.c | .\mycompiler 
-# Write-Host "`n-----------------------------------Running test_types.c-----------------------------------"
-# Get-Content testcases\test_semantic_errors.c | .\mycompiler
-
-# Write-Host "`n-----------------------------------Running test_types.c-----------------------------------"
-# Get-Content testcases\test_types.c | .\mycompiler
-
-
-
-
-# Write-Host "`n-----------------------------------Running test_valid.c-----------------------------------"
-# Get-Content testcases\test_valid.c | .\mycompiler 
-
-# Write-Host "`n-----------------------------------Running test_function.c-----------------------------------"
-# Get-Content testcases\test_function_declare.c | .\mycompiler 
-
-
-# Write-Host "`n-----------------------------------Running test_while.c-----------------------------------"
-# Get-Content testcases\test_while.c | .\mycompiler 
-# Write-Host "`n-----------------------------------Running test_function.c-----------------------------------"
-# Get-Content testcases\test_function.c | .\mycompiler 
-# Write-Host "-----------------------------------Running test_switch.c-----------------------------------"
-# Get-Content testcases\test_switch.c | .\mycompiler
-
-# Write-Host "`n-----------------------------------Running test_inc_dec.c-----------------------------------"
-# Get-Content testcases\test_inc_dec.c | .\mycompiler 
+    # Pipe the content and pass the test name to the compiler
+    Get-Content "testcases\$testFile" | ./mycompiler.exe $testName
+}

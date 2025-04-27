@@ -1,0 +1,36 @@
+	proc	main
+	push int	0
+	pop int	i
+L000:
+	push	i
+	push int	5
+	compareLessThan	
+	jz	L001
+	push int	10
+	pop int	y
+L002:
+	push	i
+	push int	1
+	add	
+	pop int	 i
+	jmp	L000
+L001:
+	push int	0
+	pop int	x
+L003:
+	push	x
+	push int	10
+	compareLessThan	
+	jz	L004
+	push int	10
+	pop int	z
+L005:
+	push	x
+	push int	1
+	add	
+	pop int	 x
+	jmp	L003
+L004:
+	push int	0
+	ret	
+	endproc	
