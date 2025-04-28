@@ -62,16 +62,21 @@
 %left EQ NEQ
 %left '<' '>' LTE GTE
 %left '+' '-'
+%left PLUS_ASSIGN SUB_ASSIGN
+%left MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN
 %left '*' '/' MOD
 %left POST_INC POST_DEC
-%left OR_LOG
-%left XOR_LOG
-%left AND_LOG
+%left OR_LOG BITWISE_OR_ASSIGN
+%left XOR_LOG BITWISE_XOR_ASSIGN
+%left AND_LOG BITWISE_AND_ASSIGN
 %left NOT_LOG
 %left SHIFTL_LOG SHIFTR_LOG
+%left SHIFTL_ASSIGN  SHIFTR_ASSIGN
 %right PRE_INC PRE_DEC
 %right NOT
 %nonassoc NEGATIVE
+
+
 
 %nonassoc LOWER_THAN_ELSE  /* For dangling-else resolution */
 %nonassoc ELSE
@@ -136,14 +141,15 @@ params:
 return_statement:
     RETURN expr ';' {$$=create_operation(RETURN,yylineno,1,$2);}
     | RETURN ';' {$$=create_operation(RETURN,yylineno,1,NULL);}
+    | RETURN function_call  {$$=create_operation(RETURN,yylineno,1,$2);}
     ;
 function_definition:
-    declaration '(' args ')' '{' statement_list return_statement '}'  {
-        $$ = create_operation(FUNCTION, yylineno, 4, $1, $3, $6, $7);
+    declaration '(' args ')' '{' statement_list '}'  {
+        $$ = create_operation(FUNCTION, yylineno, 4, $1, $3, $6, NULL);
         // printf("Parsed function %s\n", $2);  // Debug
     }
-    | declaration '(' args ')' '{'  return_statement '}'  {$$=create_operation(FUNCTION,yylineno,3,$1,$3,$6);}
-    | declaration '(' args ')' '{'  '}'  {$$=create_operation(FUNCTION,yylineno,2,$1,$3);}
+    /* | declaration '(' args ')' '{'  return_statement '}'  {$$=create_operation(FUNCTION,yylineno,4,$1,NULL,$6);} */
+    | declaration '(' args ')' '{'  '}'  {$$=create_operation(FUNCTION,yylineno,4,$1,$3,NULL,NULL);}
     ;
 
 for_statement:
@@ -209,6 +215,29 @@ declaration:
 assignment_statement:
     IDENTIFIER '=' expr {$$=create_operation('=',yylineno,2,create_identifier($1,yylineno),$3);}
     | IDENTIFIER '=' function_call %prec FUNC {$$=create_operation('=',yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER PLUS_ASSIGN function_call %prec FUNC {$$=create_operation(PLUS_ASSIGN,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER SUB_ASSIGN function_call %prec FUNC {$$=create_operation(SUB_ASSIGN,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER MUL_ASSIGN function_call %prec FUNC {$$=create_operation(MUL_ASSIGN,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER DIV_ASSIGN function_call %prec FUNC {$$=create_operation(DIV_ASSIGN,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER MOD_ASSIGN function_call %prec FUNC {$$=create_operation(MOD_ASSIGN,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER PLUS_ASSIGN expr %prec FUNC {$$=create_operation(PLUS_ASSIGN,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER SUB_ASSIGN expr %prec FUNC {$$=create_operation(SUB_ASSIGN,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER MUL_ASSIGN expr %prec FUNC {$$=create_operation(MUL_ASSIGN,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER DIV_ASSIGN expr %prec FUNC {$$=create_operation(DIV_ASSIGN,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER MOD_ASSIGN expr %prec FUNC {$$=create_operation(MOD_ASSIGN,yylineno,2,create_identifier($1,yylineno),$3);}
+
+    | IDENTIFIER BITWISE_AND_ASSIGN function_call %prec FUNC {$$=create_operation(BITWISE_AND_ASSIGN,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER BITWISE_OR_ASSIGN function_call %prec FUNC {$$=create_operation( BITWISE_OR_ASSIGN ,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER BITWISE_XOR_ASSIGN function_call %prec FUNC {$$=create_operation(BITWISE_XOR_ASSIGN,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER SHIFTL_ASSIGN      function_call %prec FUNC {$$=create_operation(SHIFTL_ASSIGN      ,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER SHIFTR_ASSIGN      function_call %prec FUNC {$$=create_operation(SHIFTR_ASSIGN      ,yylineno,2,create_identifier($1,yylineno),$3);}
+
+    | IDENTIFIER BITWISE_AND_ASSIGN expr %prec FUNC {$$=create_operation(BITWISE_AND_ASSIGN,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER BITWISE_OR_ASSIGN expr %prec FUNC {$$=create_operation( BITWISE_OR_ASSIGN ,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER BITWISE_XOR_ASSIGN expr %prec FUNC {$$=create_operation(BITWISE_XOR_ASSIGN,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER SHIFTL_ASSIGN      expr %prec FUNC {$$=create_operation(SHIFTL_ASSIGN      ,yylineno,2,create_identifier($1,yylineno),$3);}
+    | IDENTIFIER SHIFTR_ASSIGN      expr %prec FUNC {$$=create_operation(SHIFTR_ASSIGN      ,yylineno,2,create_identifier($1,yylineno),$3);}
+
     ;
 function_call:
     IDENTIFIER '(' params ')' {$$=create_operation(CALL,yylineno,2,create_identifier($1,yylineno),$3);}
@@ -227,6 +256,7 @@ expr:
     | expr POST_DEC {$$=create_operation(POST_DEC,yylineno,1,$1);}
     | PRE_INC expr {$$=create_operation(PRE_INC,yylineno,1,$2);}
     | PRE_DEC expr {$$=create_operation(PRE_DEC,yylineno,1,$2);}
+    | NOT_LOG expr {$$=create_operation(NOT_LOG,yylineno,1,$2);}
     | expr '+' expr {$$=create_operation('+',yylineno,2,$1,$3);}
     | expr '-' expr {$$=create_operation('-',yylineno,2,$1,$3);}
     | expr '*' expr {$$=create_operation('*',yylineno,2,$1,$3);}
@@ -239,6 +269,14 @@ expr:
     | expr LTE expr {$$=create_operation(LTE,yylineno,2,$1,$3);}
     | expr GTE expr {$$=create_operation(GTE,yylineno,2,$1,$3);}
     | expr AND expr {$$=create_operation(AND,yylineno,2,$1,$3);}
+
+    
+    | expr OR_LOG expr {$$=create_operation(OR_LOG,yylineno,2,$1,$3);}
+    | expr AND_LOG expr {$$=create_operation(AND_LOG,yylineno,2,$1,$3);}
+    | expr XOR_LOG expr {$$=create_operation(XOR_LOG,yylineno,2,$1,$3);}
+    | expr SHIFTR_LOG expr {$$=create_operation(SHIFTR_LOG,yylineno,2,$1,$3);}
+    | expr SHIFTL_LOG expr {$$=create_operation(SHIFTR_LOG,yylineno,2,$1,$3);}
+
     | expr OR expr {$$=create_operation(OR,yylineno,2,$1,$3);}
     | NOT expr {$$=create_operation(NOT,yylineno,1,$2);}
     | '-' expr %prec NEGATIVE {$$=create_operation(NEGATIVE,yylineno,1,$2);}

@@ -1,0 +1,59 @@
+int add ()
+{
+}
+
+
+int main() {
+    int ia = 12;
+    int ib = 5;
+    float fa = 7.5;
+    float fb = 2.5;
+    bool ba = true;
+    bool bb = false;
+    char ca = 65;
+    char cb = 3;
+    string sa = "foo";
+    string sb = "bar";
+
+    int  r0  = ia + ib;
+    int  r1  = ia - ia;
+    int  r2  = ia * ib;
+    int  r3  = ia / (ib + 1);
+    int  r4  = ia % ib;
+
+    float rf0 = fa + fb;
+    float rf1 = fa - fb;
+    float rf2 = fa * fa;
+    float rf3 = fa / fb;
+
+    ia += ib;
+    ia -= ia;
+    ia *= ia;
+    ia /= ib;
+    ia %= ib;
+
+    fa += fb;
+    fa -= fb;
+    fa *= fa;
+    fa /= fb;
+
+    int ua = 1;
+    int ub = 2;
+    int u0 = ua & ia;
+    int u1 = ua | ib;
+    int u2 = ua ^ ib;
+    int u3 = ua << ia;
+    int u4 = ua >> ib;
+
+    ua |= ib;
+    ua ^= ib;
+    ua <<= ia;
+    ua >>= ib;
+
+    ia &= ub;
+    ia |= ia;
+    ia ^= ib;
+
+    sa += sb;
+    return 0;
+}

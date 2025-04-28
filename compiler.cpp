@@ -16,7 +16,7 @@ int level = 0;
 FILE *assemblyOutFile = NULL;
 extern int line;
 
-void open_assembly_file(const char* filename="assembly.txt")
+void open_assembly_file(const char *filename = "assembly.txt")
 {
     if (assemblyOutFile == NULL)
     {
@@ -191,7 +191,7 @@ SymbolTable *declare_variable(Node *p, bool isRHS = false, bool isParam = false,
     return symbol[level][p->id.name];
 }
 
-void log_symbol_table(const char * filename="s.txt")
+void log_symbol_table(const char *filename = "s.txt")
 {
     printf("Logging symbol table...\n");
     FILE *symbolTableFile = fopen(filename, "w");
@@ -241,17 +241,20 @@ const char *get_type_from_name(const char *name)
 {
     for (int i = 0; i < symbolTable.size(); i++)
     {
-        if (symbolTable[i]->name == name)
+        // if (symbolTable[i]->scope < level)
         {
-            printf("=================================================variable name%s\n", name);
-            printf("================================================variable type%s\n", get_data_type(symbolTable[i]->type));
-            return get_data_type(symbolTable[i]->type);
+            if (symbolTable[i]->name == name)
+            {
+                printf("=================================================variable name%s\n", name);
+                printf("================================================variable type%s\n", get_data_type(symbolTable[i]->type));
+                return get_data_type(symbolTable[i]->type);
+            }
         }
     }
     return NULL;
 }
 
-void log_errors(int line, const char *msg,const char* filename="e.txt")
+void log_errors(int line, const char *msg, const char *filename = "e.txt")
 {
     FILE *errorFile = fopen(filename, "a");
     if (!errorFile)
@@ -287,10 +290,13 @@ void mark_used(Node *p)
     {
         for (int i = 0; i < symbolTable.size(); i++)
         {
-            if (symbolTable[i]->name == p->id.name)
+            // if (symbolTable[i]->scope < level)
             {
-                symbolTable[i]->used = true;
-                break;
+                if (symbolTable[i]->name == p->id.name)
+                {
+                    symbolTable[i]->used = true;
+                    break;
+                }
             }
         }
     }
@@ -470,22 +476,22 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             {
                 // else if
                 printf("\tjz\tL%03d\n", l1 = label++);
-                fprintf(assemblyOutFile,"\tjz\tL%03d\n", l1 = label++);
+                fprintf(assemblyOutFile, "\tjz\tL%03d\n", l1 = label++);
                 fflush(assemblyOutFile);
                 add_block_scope();
 
                 write_to_assembly(p->opr.op[1], p, cont, brk);
                 remove_block_scope();
                 printf("\tjmp\tL%03d\n", l2 = label++);
-                fprintf(assemblyOutFile,"\tjmp\tL%03d\n", l2 = label++);
+                fprintf(assemblyOutFile, "\tjmp\tL%03d\n", l2 = label++);
                 fflush(assemblyOutFile);
                 printf("L%03d:\n", l1);
-                fprintf(assemblyOutFile,"L%03d:\n", l1);
+                fprintf(assemblyOutFile, "L%03d:\n", l1);
                 fflush(assemblyOutFile);
                 add_block_scope();
                 write_to_assembly(p->opr.op[2], p, cont, brk);
                 printf("L%03d:\n", l2);
-                fprintf(assemblyOutFile,"L%03d:\n", l2);
+                fprintf(assemblyOutFile, "L%03d:\n", l2);
                 fflush(assemblyOutFile);
                 remove_block_scope();
             }
@@ -493,12 +499,12 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             {
                 // else
                 printf("\tjz\tL%03d\n", l1 = label++);
-                fprintf(assemblyOutFile,"\tjz\tL%03d\n", l1 = label++);
+                fprintf(assemblyOutFile, "\tjz\tL%03d\n", l1 = label++);
                 fflush(assemblyOutFile);
                 add_block_scope();
                 write_to_assembly(p->opr.op[1], p, cont, brk);
                 printf("L%03d:\n", l1);
-                fprintf(assemblyOutFile,"L%03d:\n", l1);
+                fprintf(assemblyOutFile, "L%03d:\n", l1);
                 fflush(assemblyOutFile);
                 remove_block_scope();
             }
@@ -521,12 +527,13 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             printf("\tjz\tL%03d\n", l2 = label++);
             fprintf(assemblyOutFile, "\tjz\tL%03d\n", l2);
             fflush(assemblyOutFile);
-            if(p->opr.op[3] !=NULL)
-            {write_to_assembly(p->opr.op[3], p, l3 = label++, l2); // body
+            if (p->opr.op[3] != NULL)
+            {
+                write_to_assembly(p->opr.op[3], p, l3 = label++, l2); // body
 
-            printf("L%03d:\n", l3); // continue if true
-            fprintf(assemblyOutFile, "L%03d:\n", l3);
-            fflush(assemblyOutFile);
+                printf("L%03d:\n", l3); // continue if true
+                fprintf(assemblyOutFile, "L%03d:\n", l3);
+                fflush(assemblyOutFile);
             }
 
             write_to_assembly(p->opr.op[2], p); // next iter inc/dec
@@ -665,7 +672,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             {
                 yyerror("Semantic ERROR: Assignment to constant", p->line_number);
             }
-            if (check_variable(p->opr.op[0],false) != NULL)
+            if (check_variable(p->opr.op[0], false) != NULL)
             {
 
                 if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
@@ -679,11 +686,11 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                     else
                     {
                         // Call
-                        if(p->opr.op[1]->opr.symbol==CALL)
+                        if (p->opr.op[1]->opr.symbol == CALL)
                         {
 
-                        // printf("=================================================p->opr.op[1]->opr.symbol = %d\n",p->opr.op[1]->opr.symbol);
-                        printf("=================================================p->opr.op[1]->opr.symbol = %d\n",p->opr.op[1]->opr.symbol);
+                            // printf("=================================================p->opr.op[1]->opr.symbol = %d\n",p->opr.op[1]->opr.symbol);
+                            printf("=================================================p->opr.op[1]->opr.symbol = %d\n", p->opr.op[1]->opr.symbol);
                             fprintf(assemblyOutFile, "\tpush\t%s\n", "Call");
                             fflush(assemblyOutFile);
                         }
@@ -703,6 +710,659 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             }
         }
         break;
+        case PLUS_ASSIGN:
+        {
+            open_assembly_file();
+
+            type1 = write_to_assembly(p->opr.op[1], p);
+            if (type1 == 0)
+            {
+                break;
+            }
+            printf("===============================type of constant %s\n", get_data_type(type1));
+            // check if it is constant
+            printf("===========================p->opr.op[0]->id.qualifier = %d\n", p->opr.op[0]->id.qualifier);
+            bool isConstant = is_constant(p->opr.op[0]);
+
+            if (isConstant)
+            {
+                yyerror("Semantic ERROR: Assignment to constant", p->line_number);
+            }
+            if (check_variable(p->opr.op[0], false) != NULL)
+            {
+
+                if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
+                {
+                    mark_used(p->opr.op[0]);
+                    // check if it is constant
+                    if (p->opr.op[1]->type == CONSTANT)
+                    {
+                        //
+                    }
+                    else
+                    {
+                        // Call
+                        if (p->opr.op[1]->opr.symbol == CALL)
+                        {
+
+                            // printf("=================================================p->opr.op[1]->opr.symbol = %d\n",p->opr.op[1]->opr.symbol);
+                            printf("=================================================p->opr.op[1]->opr.symbol = %d\n", p->opr.op[1]->opr.symbol);
+                            fprintf(assemblyOutFile, "\tpush\t%s\n", "Call");
+                            fflush(assemblyOutFile);
+                        }
+                    }
+                }
+                else
+                {
+                    printf("Semantic Error: type mismatch \n");
+                    yyerror("type mismatch in declaration and initialization", p->line_number);
+                    return 0;
+                }
+                // push x
+                printf("\tpush\t%s\n", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpush\t%s\n", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+
+                // add
+                printf("\tadd\t\n");
+                fprintf(assemblyOutFile, "\tadd\t\n");
+                fflush(assemblyOutFile);
+
+                printf("\tpop %s\t%s\t%s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+                return type1;
+            }
+        }
+        break;
+        case SUB_ASSIGN:
+        {
+            open_assembly_file();
+
+            type1 = write_to_assembly(p->opr.op[1], p);
+            if (type1 == 0)
+            {
+                break;
+            }
+            printf("===============================type of constant %s\n", get_data_type(type1));
+            // check if it is constant
+            printf("===========================p->opr.op[0]->id.qualifier = %d\n", p->opr.op[0]->id.qualifier);
+            bool isConstant = is_constant(p->opr.op[0]);
+
+            if (isConstant)
+            {
+                yyerror("Semantic ERROR: Assignment to constant", p->line_number);
+            }
+            if (check_variable(p->opr.op[0], false) != NULL)
+            {
+
+                if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
+                {
+                    mark_used(p->opr.op[0]);
+                    // check if it is constant
+                    if (p->opr.op[1]->type == CONSTANT)
+                    {
+                        //
+                    }
+                    else
+                    {
+                        // Call
+                        if (p->opr.op[1]->opr.symbol == CALL)
+                        {
+
+                            // printf("=================================================p->opr.op[1]->opr.symbol = %d\n",p->opr.op[1]->opr.symbol);
+                            printf("=================================================p->opr.op[1]->opr.symbol = %d\n", p->opr.op[1]->opr.symbol);
+                            fprintf(assemblyOutFile, "\tpush\t%s\n", "Call");
+                            fflush(assemblyOutFile);
+                        }
+                    }
+                }
+                else
+                {
+                    printf("Semantic Error: type mismatch \n");
+                    yyerror("type mismatch in declaration and initialization", p->line_number);
+                    return 0;
+                }
+                // push x
+                printf("\tpush\t%s\n", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpush\t%s\n", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+
+                // add
+                printf("\tsubtract\t\n");
+                fprintf(assemblyOutFile, "\tsubtract\t\n");
+                fflush(assemblyOutFile);
+
+                printf("\tpop %s\t%s\t%s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+                return type1;
+            }
+        }
+        break;
+        case MUL_ASSIGN:
+        {
+            open_assembly_file();
+
+            type1 = write_to_assembly(p->opr.op[1], p);
+            if (type1 == 0)
+            {
+                break;
+            }
+            printf("===============================type of constant %s\n", get_data_type(type1));
+            // check if it is constant
+            printf("===========================p->opr.op[0]->id.qualifier = %d\n", p->opr.op[0]->id.qualifier);
+            bool isConstant = is_constant(p->opr.op[0]);
+
+            if (isConstant)
+            {
+                yyerror("Semantic ERROR: Assignment to constant", p->line_number);
+            }
+            if (check_variable(p->opr.op[0], false) != NULL)
+            {
+
+                if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
+                {
+                    mark_used(p->opr.op[0]);
+                    // check if it is constant
+                    if (p->opr.op[1]->type == CONSTANT)
+                    {
+                        //
+                    }
+                    else
+                    {
+                        // Call
+                        if (p->opr.op[1]->opr.symbol == CALL)
+                        {
+
+                            // printf("=================================================p->opr.op[1]->opr.symbol = %d\n",p->opr.op[1]->opr.symbol);
+                            printf("=================================================p->opr.op[1]->opr.symbol = %d\n", p->opr.op[1]->opr.symbol);
+                            fprintf(assemblyOutFile, "\tpush\t%s\n", "Call");
+                            fflush(assemblyOutFile);
+                        }
+                    }
+                }
+                else
+                {
+                    printf("Semantic Error: type mismatch \n");
+                    yyerror("type mismatch in declaration and initialization", p->line_number);
+                    return 0;
+                }
+                // push x
+                printf("\tpush\t%s\n", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpush\t%s\n", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+
+                // add
+                printf("\tmultiply\t\n");
+                fprintf(assemblyOutFile, "\tmultiply\t\n");
+                fflush(assemblyOutFile);
+
+                printf("\tpop %s\t%s\t%s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+                return type1;
+            }
+        }
+        break;
+        case DIV_ASSIGN:
+        {
+            open_assembly_file();
+
+            type1 = write_to_assembly(p->opr.op[1], p);
+            if (type1 == 0)
+            {
+                break;
+            }
+            printf("===============================type of constant %s\n", get_data_type(type1));
+            // check if it is constant
+            printf("===========================p->opr.op[0]->id.qualifier = %d\n", p->opr.op[0]->id.qualifier);
+            bool isConstant = is_constant(p->opr.op[0]);
+
+            if (isConstant)
+            {
+                yyerror("Semantic ERROR: Assignment to constant", p->line_number);
+            }
+            if (check_variable(p->opr.op[0], false) != NULL)
+            {
+
+                if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
+                {
+                    mark_used(p->opr.op[0]);
+                    // check if it is constant
+                    if (p->opr.op[1]->type == CONSTANT)
+                    {
+                        //
+                    }
+                    else
+                    {
+                        // Call
+                        if (p->opr.op[1]->opr.symbol == CALL)
+                        {
+
+                            // printf("=================================================p->opr.op[1]->opr.symbol = %d\n",p->opr.op[1]->opr.symbol);
+                            printf("=================================================p->opr.op[1]->opr.symbol = %d\n", p->opr.op[1]->opr.symbol);
+                            fprintf(assemblyOutFile, "\tpush\t%s\n", "Call");
+                            fflush(assemblyOutFile);
+                        }
+                    }
+                }
+                else
+                {
+                    printf("Semantic Error: type mismatch \n");
+                    yyerror("type mismatch in declaration and initialization", p->line_number);
+                    return 0;
+                }
+                // push x
+                printf("\tpush\t%s\n", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpush\t%s\n", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+
+                // add
+                printf("\tdivide\t\n");
+                fprintf(assemblyOutFile, "\tdivide\t\n");
+                fflush(assemblyOutFile);
+
+                printf("\tpop %s\t%s\t%s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+                return type1;
+            }
+        }
+        break;
+        case MOD_ASSIGN:
+        {
+            open_assembly_file();
+
+            type1 = write_to_assembly(p->opr.op[1], p);
+            if (type1 == 0)
+            {
+                break;
+            }
+            printf("===============================type of constant %s\n", get_data_type(type1));
+            // check if it is constant
+            printf("===========================p->opr.op[0]->id.qualifier = %d\n", p->opr.op[0]->id.qualifier);
+            bool isConstant = is_constant(p->opr.op[0]);
+
+            if (isConstant)
+            {
+                yyerror("Semantic ERROR: Assignment to constant", p->line_number);
+            }
+            if (check_variable(p->opr.op[0], false) != NULL)
+            {
+
+                if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
+                {
+                    mark_used(p->opr.op[0]);
+                    // check if it is constant
+                    if (p->opr.op[1]->type == CONSTANT)
+                    {
+                        //
+                    }
+                    else
+                    {
+                        // Call
+                        if (p->opr.op[1]->opr.symbol == CALL)
+                        {
+
+                            // printf("=================================================p->opr.op[1]->opr.symbol = %d\n",p->opr.op[1]->opr.symbol);
+                            printf("=================================================p->opr.op[1]->opr.symbol = %d\n", p->opr.op[1]->opr.symbol);
+                            fprintf(assemblyOutFile, "\tpush\t%s\n", "Call");
+                            fflush(assemblyOutFile);
+                        }
+                    }
+                }
+                else
+                {
+                    printf("Semantic Error: type mismatch \n");
+                    yyerror("type mismatch in declaration and initialization", p->line_number);
+                    return 0;
+                }
+                // push x
+                printf("\tpush\t%s\n", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpush\t%s\n", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+
+                // add
+                printf("\tmod\t\n");
+                fprintf(assemblyOutFile, "\tmod\t\n");
+                fflush(assemblyOutFile);
+
+                printf("\tpop %s\t%s\t%s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+                return type1;
+            }
+        }
+
+        break;
+
+        case BITWISE_AND_ASSIGN:
+        {
+            open_assembly_file();
+
+            type1 = write_to_assembly(p->opr.op[1], p);
+            if (type1 == 0)
+            {
+                break;
+            }
+            printf("===============================type of constant %s\n", get_data_type(type1));
+            // check if it is constant
+            printf("===========================p->opr.op[0]->id.qualifier = %d\n", p->opr.op[0]->id.qualifier);
+            bool isConstant = is_constant(p->opr.op[0]);
+
+            if (isConstant)
+            {
+                yyerror("Semantic ERROR: Assignment to constant", p->line_number);
+            }
+            if (check_variable(p->opr.op[0], false) != NULL)
+            {
+
+                if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
+                {
+                    mark_used(p->opr.op[0]);
+                    // check if it is constant
+                    if (p->opr.op[1]->type == CONSTANT)
+                    {
+                        //
+                    }
+                    else
+                    {
+                        // Call
+                        if (p->opr.op[1]->opr.symbol == CALL)
+                        {
+
+                            // printf("=================================================p->opr.op[1]->opr.symbol = %d\n",p->opr.op[1]->opr.symbol);
+                            printf("=================================================p->opr.op[1]->opr.symbol = %d\n", p->opr.op[1]->opr.symbol);
+                            fprintf(assemblyOutFile, "\tpush\t%s\n", "Call");
+                            fflush(assemblyOutFile);
+                        }
+                    }
+                }
+                else
+                {
+                    printf("Semantic Error: type mismatch \n");
+                    yyerror("type mismatch in declaration and initialization", p->line_number);
+                    return 0;
+                }
+                // push x
+                printf("\tpush\t%s\n", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpush\t%s\n", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+
+                // add
+                printf("\tandBitwise\t\n");
+                fprintf(assemblyOutFile, "\tandBitwise\t\n");
+                fflush(assemblyOutFile);
+
+                printf("\tpop %s\t%s\t%s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+                return type1;
+            }
+        }
+        break;
+        case BITWISE_OR_ASSIGN:
+        {
+            open_assembly_file();
+
+            type1 = write_to_assembly(p->opr.op[1], p);
+            if (type1 == 0)
+            {
+                break;
+            }
+            printf("===============================type of constant %s\n", get_data_type(type1));
+            // check if it is constant
+            printf("===========================p->opr.op[0]->id.qualifier = %d\n", p->opr.op[0]->id.qualifier);
+            bool isConstant = is_constant(p->opr.op[0]);
+
+            if (isConstant)
+            {
+                yyerror("Semantic ERROR: Assignment to constant", p->line_number);
+            }
+            if (check_variable(p->opr.op[0], false) != NULL)
+            {
+
+                if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
+                {
+                    mark_used(p->opr.op[0]);
+                    // check if it is constant
+                    if (p->opr.op[1]->type == CONSTANT)
+                    {
+                        //
+                    }
+                    else
+                    {
+                        // Call
+                        if (p->opr.op[1]->opr.symbol == CALL)
+                        {
+
+                            // printf("=================================================p->opr.op[1]->opr.symbol = %d\n",p->opr.op[1]->opr.symbol);
+                            printf("=================================================p->opr.op[1]->opr.symbol = %d\n", p->opr.op[1]->opr.symbol);
+                            fprintf(assemblyOutFile, "\tpush\t%s\n", "Call");
+                            fflush(assemblyOutFile);
+                        }
+                    }
+                }
+                else
+                {
+                    printf("Semantic Error: type mismatch \n");
+                    yyerror("type mismatch in declaration and initialization", p->line_number);
+                    return 0;
+                }
+                // push x
+                printf("\tpush\t%s\n", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpush\t%s\n", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+
+                // add
+                printf("\torBitwise\t\n");
+                fprintf(assemblyOutFile, "\torBitwise\t\n");
+                fflush(assemblyOutFile);
+
+                printf("\tpop %s\t%s\t%s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+                return type1;
+            }
+        }
+        break;
+        case BITWISE_XOR_ASSIGN:
+        {
+            open_assembly_file();
+
+            type1 = write_to_assembly(p->opr.op[1], p);
+            if (type1 == 0)
+            {
+                break;
+            }
+            printf("===============================type of constant %s\n", get_data_type(type1));
+            // check if it is constant
+            printf("===========================p->opr.op[0]->id.qualifier = %d\n", p->opr.op[0]->id.qualifier);
+            bool isConstant = is_constant(p->opr.op[0]);
+
+            if (isConstant)
+            {
+                yyerror("Semantic ERROR: Assignment to constant", p->line_number);
+            }
+            if (check_variable(p->opr.op[0], false) != NULL)
+            {
+
+                if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
+                {
+                    mark_used(p->opr.op[0]);
+                    // check if it is constant
+                    if (p->opr.op[1]->type == CONSTANT)
+                    {
+                        //
+                    }
+                    else
+                    {
+                        // Call
+                        if (p->opr.op[1]->opr.symbol == CALL)
+                        {
+
+                            // printf("=================================================p->opr.op[1]->opr.symbol = %d\n",p->opr.op[1]->opr.symbol);
+                            printf("=================================================p->opr.op[1]->opr.symbol = %d\n", p->opr.op[1]->opr.symbol);
+                            fprintf(assemblyOutFile, "\tpush\t%s\n", "Call");
+                            fflush(assemblyOutFile);
+                        }
+                    }
+                }
+                else
+                {
+                    printf("Semantic Error: type mismatch \n");
+                    yyerror("type mismatch in declaration and initialization", p->line_number);
+                    return 0;
+                }
+                // push x
+                printf("\tpush\t%s\n", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpush\t%s\n", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+
+                // add
+                printf("\txorBitwise\n");
+                fprintf(assemblyOutFile, "\txorBitwise\t\n");
+                fflush(assemblyOutFile);
+
+                printf("\tpop %s\t%s\t%s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+                return type1;
+            }
+        }
+        break;
+        case SHIFTR_ASSIGN:
+        {
+            open_assembly_file();
+
+            type1 = write_to_assembly(p->opr.op[1], p);
+            if (type1 == 0)
+            {
+                break;
+            }
+            printf("===============================type of constant %s\n", get_data_type(type1));
+            // check if it is constant
+            printf("===========================p->opr.op[0]->id.qualifier = %d\n", p->opr.op[0]->id.qualifier);
+            bool isConstant = is_constant(p->opr.op[0]);
+
+            if (isConstant)
+            {
+                yyerror("Semantic ERROR: Assignment to constant", p->line_number);
+            }
+            if (check_variable(p->opr.op[0], false) != NULL)
+            {
+
+                if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
+                {
+                    mark_used(p->opr.op[0]);
+                    // check if it is constant
+                    if (p->opr.op[1]->type == CONSTANT)
+                    {
+                        //
+                    }
+                    else
+                    {
+                        // Call
+                        if (p->opr.op[1]->opr.symbol == CALL)
+                        {
+
+                            // printf("=================================================p->opr.op[1]->opr.symbol = %d\n",p->opr.op[1]->opr.symbol);
+                            printf("=================================================p->opr.op[1]->opr.symbol = %d\n", p->opr.op[1]->opr.symbol);
+                            fprintf(assemblyOutFile, "\tpush\t%s\n", "Call");
+                            fflush(assemblyOutFile);
+                        }
+                    }
+                }
+                else
+                {
+                    printf("Semantic Error: type mismatch \n");
+                    yyerror("type mismatch in declaration and initialization", p->line_number);
+                    return 0;
+                }
+                // push x
+                printf("\tpush\t%s\n", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpush\t%s\n", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+
+                // add
+                printf("\tshiftR\t\n");
+                fprintf(assemblyOutFile, "\tshiftR\t\n");
+                fflush(assemblyOutFile);
+
+                printf("\tpop %s\t%s\t%s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+                return type1;
+            }
+        }
+        break;
+        case SHIFTL_ASSIGN:
+        {
+            open_assembly_file();
+
+            type1 = write_to_assembly(p->opr.op[1], p);
+            if (type1 == 0)
+            {
+                break;
+            }
+            printf("===============================type of constant %s\n", get_data_type(type1));
+            // check if it is constant
+            printf("===========================p->opr.op[0]->id.qualifier = %d\n", p->opr.op[0]->id.qualifier);
+            bool isConstant = is_constant(p->opr.op[0]);
+
+            if (isConstant)
+            {
+                yyerror("Semantic ERROR: Assignment to constant", p->line_number);
+            }
+            if (check_variable(p->opr.op[0], false) != NULL)
+            {
+
+                if (get_data_type(type1) == get_type_from_name(p->opr.op[0]->id.name)) // variable assignment
+                {
+                    mark_used(p->opr.op[0]);
+                    // check if it is constant
+                    if (p->opr.op[1]->type == CONSTANT)
+                    {
+                        //
+                    }
+                    else
+                    {
+                        // Call
+                        if (p->opr.op[1]->opr.symbol == CALL)
+                        {
+
+                            // printf("=================================================p->opr.op[1]->opr.symbol = %d\n",p->opr.op[1]->opr.symbol);
+                            printf("=================================================p->opr.op[1]->opr.symbol = %d\n", p->opr.op[1]->opr.symbol);
+                            fprintf(assemblyOutFile, "\tpush\t%s\n", "Call");
+                            fflush(assemblyOutFile);
+                        }
+                    }
+                }
+                else
+                {
+                    printf("Semantic Error: type mismatch \n");
+                    yyerror("type mismatch in declaration and initialization", p->line_number);
+                    return 0;
+                }
+                // push x
+                printf("\tpush\t%s\n", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpush\t%s\n", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+
+                // add
+                printf("\tshiftL\t\n");
+                fprintf(assemblyOutFile, "\tshiftL\t\n");
+                fflush(assemblyOutFile);
+
+                printf("\tpop %s\t%s\t%s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fprintf(assemblyOutFile, "\tpop %s\t%s %s\n", get_type_from_name(p->opr.op[0]->id.name), p->opr.op[0]->id.qualifier == 1 ? "const" : "", p->opr.op[0]->id.name);
+                fflush(assemblyOutFile);
+                return type1;
+            }
+        }
+        break;
+
         case NEGATIVE:
             open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0], p);
@@ -723,6 +1383,16 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             fprintf(assemblyOutFile, "\tnot\t\n");
             fflush(assemblyOutFile);
             return BOOL_TYPE;
+        case NOT_LOG:
+            open_assembly_file();
+            type1 = write_to_assembly(p->opr.op[0], p);
+            if (type1 == 0)
+                break;
+
+            printf("\tnot_log\t\n");
+            fprintf(assemblyOutFile, "\tnot_log\t\n");
+            fflush(assemblyOutFile);
+            return INT_TYPE;
         case POST_DEC:
             open_assembly_file();
             type1 = write_to_assembly(p->opr.op[0], p);
@@ -866,8 +1536,15 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             }
 
             // Process function body
-            write_to_assembly(p->opr.op[2], p);
-            write_to_assembly(p->opr.op[3], p);
+            if (p->opr.op[2] != NULL)
+            {
+                write_to_assembly(p->opr.op[2], p);
+            }
+            if (p->opr.op[3] != NULL)
+            {
+                write_to_assembly(p->opr.op[3], p);
+            }
+
 
             remove_block_scope();
             return funcEntry->type;
@@ -1070,6 +1747,32 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
                 fprintf(assemblyOutFile, "\tcompOR\t\n");
                 fflush(assemblyOutFile);
                 return BOOL_TYPE;
+
+            case OR_LOG:
+                printf("\torBitwise\t\n");
+                fprintf(assemblyOutFile, "\torBitwise\t\n");
+                fflush(assemblyOutFile);
+                return type1;
+            case AND_LOG:
+                printf("\tandBitwise\t\n");
+                fprintf(assemblyOutFile, "\tandBitwise\t\n");
+                fflush(assemblyOutFile);
+                return type1;
+            case XOR_LOG:
+                printf("\txorBitwise\t\n");
+                fprintf(assemblyOutFile, "\txorBitwise\t\n");
+                fflush(assemblyOutFile);
+                return type1;
+            case SHIFTR_LOG:
+                printf("\tshiftR\t\n");
+                fprintf(assemblyOutFile, "\tshiftR\t\n");
+                fflush(assemblyOutFile);
+                return type1;
+            case SHIFTL_LOG:
+                printf("\tshiftL\t\n");
+                fprintf(assemblyOutFile, "\tshiftL\t\n");
+                fflush(assemblyOutFile);
+                return type1;
             }
         }
     }

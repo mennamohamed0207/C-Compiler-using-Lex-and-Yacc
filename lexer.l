@@ -55,10 +55,7 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
     /************/
     /* Operators */
 "++"      {printf("\nOperator: %s\n", yytext); if(check_postfix) {check_postfix=0; return POST_INC;} else return PRE_INC;}              
-"--"      {printf("\nOperator: %s\n", yytext); if(check_postfix) {check_postfix=0; return POST_DEC;} else return PRE_DEC;}              
-"<<="     |              
-">>="     |              
-"<=>"     |              
+"--"      {printf("\nOperator: %s\n", yytext); if(check_postfix) {check_postfix=0; return POST_DEC;} else return PRE_DEC;}                      
 "<="      {printf("\nOperator: %s\n", yytext); return LTE;}
 ">="      {printf("\nOperator: %s\n", yytext); return GTE;}
 "=="      {printf("\nOperator: %s\n", yytext); return EQ;}
@@ -67,13 +64,6 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 ">>"      {printf("\nOperator: %s\n", yytext); return SHIFTL_LOG;}                 
 "&&"      {printf("\nOperator: %s\n", yytext); return AND;}             
 "||"      {printf("\nOperator: %s\n", yytext); return OR;}                            
-"->*"     |              
-"->"      |              
-"::"      |              
-".*"      |              
-"sizeof"  |              
-"new"     |              
-"delete"  |              
 "+"       {printf("\nOperator: %s\n", yytext); return '+';}              
 "-"       {printf("\nOperator: %s\n", yytext); return '-';}              
 "*"       {printf("\nOperator: %s\n", yytext); return '*';}              
@@ -86,7 +76,17 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 "&"       {printf("\nOperator: %s\n", yytext); return AND_LOG;}              
 "|"          {printf("\nOperator: %s\n", yytext); return OR_LOG;}              
 "^"       {printf("\nOperator: %s\n", yytext); return XOR_LOG;}             
-"~"       {printf("\nOperator: %s\n", yytext); return NOT_LOG;}                 
+"~"       {printf("\nOperator: %s\n", yytext); return NOT_LOG;}      
+"+="      {printf("\nOperator: %s\n", yytext); return PLUS_ASSIGN;} 
+"-="      {printf("\nOperator: %s\n", yytext); return SUB_ASSIGN;} 
+"/="      {printf("\nOperator: %s\n", yytext); return DIV_ASSIGN;} 
+"*="      {printf("\nOperator: %s\n", yytext); return MUL_ASSIGN;} 
+"%="      {printf("\nOperator: %s\n", yytext); return MOD_ASSIGN;}
+"&="      {printf("\nOperator: %s\n", yytext); return BITWISE_AND_ASSIGN;}               
+"|="      {printf("\nOperator: %s\n", yytext); return BITWISE_OR_ASSIGN;}               
+"^="      {printf("\nOperator: %s\n", yytext); return BITWISE_XOR_ASSIGN;}               
+"<<="     {printf("\nOperator: %s\n", yytext); return SHIFTL_ASSIGN;}              
+">>="     {printf("\nOperator: %s\n", yytext); return SHIFTR_ASSIGN;}  
 "="       |              
 "."       |              
 ","       |              

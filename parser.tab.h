@@ -84,16 +84,32 @@
      BLOCK = 289,
      FUNCTION = 290,
      DECLARATION = 291,
-     OR = 292,
-     AND = 293,
-     MOD = 294,
-     POST_DEC = 295,
-     POST_INC = 296,
-     PRE_DEC = 297,
-     PRE_INC = 298,
-     NEGATIVE = 299,
-     LOWER_THAN_ELSE = 300,
-     FUNC = 301
+     NOT_LOG = 292,
+     AND_LOG = 293,
+     SHIFTR_LOG = 294,
+     SHIFTL_LOG = 295,
+     OR_LOG = 296,
+     XOR_LOG = 297,
+     OR = 298,
+     AND = 299,
+     SUB_ASSIGN = 300,
+     PLUS_ASSIGN = 301,
+     MOD_ASSIGN = 302,
+     DIV_ASSIGN = 303,
+     MUL_ASSIGN = 304,
+     MOD = 305,
+     POST_DEC = 306,
+     POST_INC = 307,
+     BITWISE_OR_ASSIGN = 308,
+     BITWISE_XOR_ASSIGN = 309,
+     BITWISE_AND_ASSIGN = 310,
+     SHIFTR_ASSIGN = 311,
+     SHIFTL_ASSIGN = 312,
+     PRE_DEC = 313,
+     PRE_INC = 314,
+     NEGATIVE = 315,
+     LOWER_THAN_ELSE = 316,
+     FUNC = 317
    };
 #endif
 
@@ -118,7 +134,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 122 "parser.tab.h"
+#line 138 "parser.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
