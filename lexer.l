@@ -63,8 +63,8 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 ">="      {printf("\nOperator: %s\n", yytext); return GTE;}
 "=="      {printf("\nOperator: %s\n", yytext); return EQ;}
 "!="      {printf("\nOperator: %s\n", yytext); return NEQ;}
-"<<"      |              
-">>"      |              
+"<<"      {printf("\nOperator: %s\n", yytext); return SHIFTR_LOG;}                 
+">>"      {printf("\nOperator: %s\n", yytext); return SHIFTL_LOG;}                 
 "&&"      {printf("\nOperator: %s\n", yytext); return AND;}             
 "||"      {printf("\nOperator: %s\n", yytext); return OR;}                            
 "->*"     |              
@@ -83,10 +83,10 @@ COMMENT  "//".*|"/"\*(.|\n)*?\*"/"
 ">"       {printf("\nOperator: %s\n", yytext); return '>';}
 "!"       {printf("\nOperator: %s\n", yytext); return NOT;}                    
 "not"       {printf("\nOperator: %s\n", yytext); return NOT;}                    
-"&"       |              
-"|"       |              
-"^"       |              
-"~"       |              
+"&"       {printf("\nOperator: %s\n", yytext); return AND_LOG;}              
+"|"          {printf("\nOperator: %s\n", yytext); return OR_LOG;}              
+"^"       {printf("\nOperator: %s\n", yytext); return XOR_LOG;}             
+"~"       {printf("\nOperator: %s\n", yytext); return NOT_LOG;}                 
 "="       |              
 "."       |              
 ","       |              

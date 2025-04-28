@@ -52,6 +52,7 @@
 %token BLOCK
 %token FUNCTION
 %token DECLARATION
+%token NOT_LOG AND_LOG SHIFTR_LOG SHIFTL_LOG OR_LOG XOR_LOG
 
 
 /* Precedence (lowest to highest) */
@@ -63,6 +64,11 @@
 %left '+' '-'
 %left '*' '/' MOD
 %left POST_INC POST_DEC
+%left OR_LOG
+%left XOR_LOG
+%left AND_LOG
+%left NOT_LOG
+%left SHIFTL_LOG SHIFTR_LOG
 %right PRE_INC PRE_DEC
 %right NOT
 %nonassoc NEGATIVE

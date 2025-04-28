@@ -1,0 +1,29 @@
+int main()
+{
+    int scoped = 0;
+    int i=0;
+    {
+        scoped+=1;
+        int scoped=5;
+        scoped+=1;
+        {
+            i+=scoped;
+            int scoped =10;
+            i+=scoped;
+        }
+    }
+
+    {
+        int scoped=5;
+        i+=scoped;
+        {
+            int scoped =10;
+            i+=scoped;
+            {
+                int scoped = 2;
+            }
+        }
+    }
+
+    return 0;
+}
