@@ -1,0 +1,126 @@
+	proc	add
+	pop int	a
+	pop int	b
+	pop int	c
+	push	a
+	push	b
+	add	
+	push	c
+	add	
+	ret	
+	endproc	
+	proc	power
+	pop float	base
+	pop int	exp
+	push float	1.000000
+	pop float	res
+	push int	0
+	pop int	i
+L000:
+	push	i
+	push	exp
+	compareLessThan	
+	jz	L001
+	push	base
+	push	res
+	multiply	
+	pop float	 res
+L002:
+	push	i
+	inc	i
+	jmp	L000
+L001:
+	push	res
+	ret	
+	endproc	
+	proc	is_even
+	pop int	n
+	push	n
+	push int	2
+	mod	
+	push int	0
+	compEQ	
+	ret	
+	endproc	
+	proc	toggle
+	pop bool	v
+	push	v
+	not	
+	ret	
+	endproc	
+	proc	main
+	push int	3
+	pop int	i
+	pop float	f
+	push int	3
+	push float	2.000000
+	call	power
+	push	Call
+	pop float	 f
+	pop bool	flag1
+	call	toggle
+	push	Call
+	pop bool	 flag1
+	pop bool	flag2
+	push bool	0
+	call	toggle
+	push	Call
+	pop bool	 flag2
+	push int	5
+	pop int	scoped
+	push int	10
+	pop int	scoped
+	push	scoped
+	push	i
+	add	
+	pop int	 i
+	push int	3
+	push int	2
+	push int	1
+	call	add
+	push	Call
+	push	scoped
+	add	
+	pop int	 scoped
+	push int	2
+	push int	1
+	call	add
+	push	Call
+	push	scoped
+	add	
+	pop int	 scoped
+	push int	1
+	call	add
+	push	Call
+	push	scoped
+	add	
+	pop int	 scoped
+	push float	1.500000
+	call	power
+	push	Call
+	push	f
+	multiply	
+	pop float	 f
+	push int	1
+	push	i
+	shiftL	
+	pop int	 i
+	push int	2
+	push	i
+	shiftR	
+	pop int	 i
+	push int	3
+	push	i
+	orBitwise	
+	pop int	 i
+	push int	7
+	push	i
+	andBitwise	
+	pop int	 i
+	push int	1
+	push	i
+	xorBitwise	
+	pop int	 i
+	push	i
+	ret	
+	endproc	

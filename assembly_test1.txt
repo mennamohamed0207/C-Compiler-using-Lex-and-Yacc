@@ -1,0 +1,212 @@
+	proc	add
+	pop int	a
+	pop int	b
+	push int	1
+	pop int	a
+	push	b
+	push	a
+	add	
+	pop int	 a
+	push	a
+	push	b
+	add	
+	ret	
+	endproc	
+	proc	func
+	ret	
+	endproc	
+	proc	main
+	push int	0
+	pop int	i
+	push int	5
+	pop int	j
+	push bool	1
+	pop bool	flag
+	push char	X
+	pop char	ch
+	push float	2.500000
+	pop float	f
+	push string	"foo"
+	pop string	s
+	push string	"bar"
+	pop string	t
+	push int	3
+	pop int	i
+	push	j
+	push	i
+	add	
+	pop int	 i
+	push int	0
+	pop int	k
+L000:
+	push	k
+	push int	3
+	compareLessThan	
+	jz	L001
+	push	k
+	push	i
+	add	
+	pop int	 i
+L0003:
+	push	i
+	push int	10
+	compareLessThan	
+	jz	L004
+	push	i
+	push int	1
+	andBitwise	
+	push int	0
+	compEQ	
+	pop bool	 flag
+	push	flag
+	jz	L006
+	push string	"string"
+	pop string	name
+	jmp	L008
+L006:
+	push	k
+	inc	k
+L008:
+	inc	i
+	push	i
+	push int	7
+	compGTE	
+	jz	L010
+	jmp	L004
+L010:
+	jmp	L003
+L004:
+L011:
+	push	i
+	dec	i
+	push	i
+	push int	4
+	compEQ	
+	jz	L014
+	jmp	L011
+L014:
+	push	i
+	push int	0
+	compEQ	
+	jnz	L011
+L012:
+L002:
+	push	k
+	inc	k
+	jmp	L000
+L001:
+	push int	2
+	pop int	var
+	pop i	
+L016:
+	push	i
+	push int	0
+	compEQ	
+	jz	L018
+	push int	5
+	pop int	 var
+	jmp	L1111
+L018:
+	push	i
+	push int	1
+	compEQ	
+	jz	L020
+	push int	5
+	pop int	 var
+	jmp	L1111
+L020:
+	push	i
+	push int	2
+	compEQ	
+	jz	L999
+	push int	5
+	pop int	 var
+	jmp	L1111
+L999:
+	push	i
+	inc	i
+	jmp	L1111
+L1111:
+	push int	2
+	push	i
+	add	
+	pop int	 i
+	push int	1
+	push	i
+	subtract	
+	pop int	 i
+	push int	3
+	push	i
+	multiply	
+	pop int	 i
+	push int	2
+	push	i
+	divide	
+	pop int	 i
+	push int	5
+	push	i
+	mod	
+	pop int	 i
+	push int	1
+	push	i
+	andBitwise	
+	pop int	 i
+	push int	2
+	push	i
+	orBitwise	
+	pop int	 i
+	push int	3
+	push	i
+	xorBitwise	
+	pop int	 i
+	push int	1
+	push	i
+	shiftL	
+	pop int	 i
+	push int	1
+	push	i
+	shiftR	
+	pop int	 i
+	push	i
+	not_log	
+	pop int	 i
+	push	ch
+	inc	ch
+	dec	ch
+	push	ch
+	push float	0.500000
+	push	f
+	subtract	
+	pop float	 f
+	push float	2.000000
+	push	f
+	multiply	
+	pop float	 f
+	push float	2.000000
+	push	f
+	divide	
+	pop float	 f
+	push bool	1
+	pop bool	q
+	push	flag
+	not	
+	push	q
+	not	
+	compAND	
+	push	i
+	push	j
+	compGTE	
+	compOR	
+	pop bool	 flag
+	push	t
+	push	s
+	add	
+	pop string	 s
+	push	j
+	push	i
+	call	add
+	push	Call
+	pop int	 var
+	push	var
+	ret	
+	endproc	

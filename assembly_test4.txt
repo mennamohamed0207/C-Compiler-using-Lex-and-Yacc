@@ -1,0 +1,42 @@
+	proc	main
+	push int	0
+	pop int	scoped
+	push int	0
+	pop int	i
+	push int	1
+	push	scoped
+	add	
+	pop int	 scoped
+	push int	5
+	pop int	scoped
+	push int	1
+	push	scoped
+	add	
+	pop int	 scoped
+	push	scoped
+	push	i
+	add	
+	pop int	 i
+	push int	10
+	pop int	scoped
+	push	scoped
+	push	i
+	add	
+	pop int	 i
+	push int	5
+	pop int	scoped
+	push	scoped
+	push	i
+	add	
+	pop int	 i
+	push int	10
+	pop int	scoped
+	push	scoped
+	push	i
+	add	
+	pop int	 i
+	push int	2
+	pop int	scoped
+	push int	0
+	ret	
+	endproc	

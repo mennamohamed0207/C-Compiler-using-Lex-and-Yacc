@@ -22,12 +22,21 @@ $testFiles = @(
     "test_inc_dec.c"
 )
 
+$deliver_files=@(
+    "test1.txt",
+    "test2.txt",
+    "test3.txt",
+    "test4.txt",
+    "test5.txt"
+)
+
 # Step 3: Run each test
-foreach ($testFile in $testFiles) {
+foreach ($testFile in $deliver_files) {
     $testName = [System.IO.Path]::GetFileNameWithoutExtension($testFile)
 
     Write-Host "`n-----------------------------------Running $testFile-----------------------------------"
 
     # Pipe the content and pass the test name to the compiler
-    Get-Content "testcases\$testFile" | ./mycompiler.exe $testName
+    # Get-Content ".\testcases\$testFile" | ./mycompiler.exe $testName
+    Get-Content ".\testcases\deliver\$testFile" | ./mycompiler.exe $testName
 }

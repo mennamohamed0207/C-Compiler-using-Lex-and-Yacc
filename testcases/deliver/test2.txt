@@ -1,13 +1,13 @@
 int main() {
-    int ia = 12
+    int ia = 12;
     int ib = 5;
-    float fa = 7.5
+    float fa = 7.5;
     float fb = 2.5;
-    bool ba = true
+    bool ba = true;
     bool bb = false;
-    char ca = 65
+    char ca = 65;
     char cb = 3;
-    string sa = "foo"
+    string sa = "foo";
     string sb = "bar";
 
     int  r0  = ia + ib;
@@ -32,7 +32,8 @@ int main() {
     fa *= fa;
     fa /= fb;
 
-    int ua = 1, ub = 2;
+    int ua = 1;
+    int  ub = 2;
     int u0 = ua & ia;
     int u1 = ua | ib;
     int u2 = ua ^ ib;

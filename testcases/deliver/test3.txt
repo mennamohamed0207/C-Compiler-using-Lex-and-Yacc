@@ -21,9 +21,12 @@ bool toggle(bool v=true){
 int main()
 {
     int i=3;
-    float f=power(2.0,3);
-    bool flag1=toggle();
-    bool flag2=toggle(false);
+    float f;
+    f=power(2.0,3);
+    bool flag1;
+    flag1=toggle();
+    bool flag2;
+    flag2=toggle(false);
 
     {
         int scoped=5;

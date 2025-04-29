@@ -1,0 +1,6 @@
+- we don't support multiple declarations
+- do while instead of repeat until
+- limitation: we can't call the function when declaration
+- no case without break
+- no empty if 
+- no call function in return statement

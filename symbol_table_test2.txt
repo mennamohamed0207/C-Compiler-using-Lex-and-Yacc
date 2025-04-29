@@ -1,0 +1,31 @@
+----------------------------------------------------------------------------------------------
+| Name                 | DataType   | Qualifier  | TimeStep | Scope  | Initialized | Used   | Function  |
+----------------------------------------------------------------------------------------------
+| main                 | int        | Variable   | 0        | 1      | True        | False  | True      |
+| ia                   | int        | Variable   | 1        | 1      | True        | True   | False     |
+| ib                   | int        | Variable   | 2        | 1      | True        | True   | False     |
+| fa                   | float      | Variable   | 3        | 1      | True        | True   | False     |
+| fb                   | float      | Variable   | 4        | 1      | True        | True   | False     |
+| ba                   | bool       | Variable   | 5        | 1      | True        | False  | False     |
+| bb                   | bool       | Variable   | 6        | 1      | True        | False  | False     |
+| ca                   | char       | Variable   | 7        | 1      | True        | False  | False     |
+| cb                   | char       | Variable   | 8        | 1      | True        | False  | False     |
+| sa                   | string     | Variable   | 9        | 1      | True        | True   | False     |
+| sb                   | string     | Variable   | 10       | 1      | True        | True   | False     |
+| r0                   | int        | Variable   | 11       | 1      | True        | False  | False     |
+| r1                   | int        | Variable   | 12       | 1      | True        | False  | False     |
+| r2                   | int        | Variable   | 13       | 1      | True        | False  | False     |
+| r3                   | int        | Variable   | 14       | 1      | True        | False  | False     |
+| r4                   | int        | Variable   | 15       | 1      | True        | False  | False     |
+| rf0                  | float      | Variable   | 16       | 1      | True        | False  | False     |
+| rf1                  | float      | Variable   | 17       | 1      | True        | False  | False     |
+| rf2                  | float      | Variable   | 18       | 1      | True        | False  | False     |
+| rf3                  | float      | Variable   | 19       | 1      | True        | False  | False     |
+| ua                   | int        | Variable   | 20       | 1      | True        | True   | False     |
+| ub                   | int        | Variable   | 21       | 1      | True        | True   | False     |
+| u0                   | int        | Variable   | 22       | 1      | True        | False  | False     |
+| u1                   | int        | Variable   | 23       | 1      | True        | False  | False     |
+| u2                   | int        | Variable   | 24       | 1      | True        | False  | False     |
+| u3                   | int        | Variable   | 25       | 1      | True        | False  | False     |
+| u4                   | int        | Variable   | 26       | 1      | True        | False  | False     |
+----------------------------------------------------------------------------------------------

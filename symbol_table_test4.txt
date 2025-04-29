@@ -1,0 +1,12 @@
+----------------------------------------------------------------------------------------------
+| Name                 | DataType   | Qualifier  | TimeStep | Scope  | Initialized | Used   | Function  |
+----------------------------------------------------------------------------------------------
+| main                 | int        | Variable   | 0        | 1      | True        | False  | True      |
+| scoped               | int        | Variable   | 1        | 1      | True        | True   | False     |
+| i                    | int        | Variable   | 2        | 1      | True        | True   | False     |
+| scoped               | int        | Variable   | 3        | 2      | True        | True   | False     |
+| scoped               | int        | Variable   | 4        | 3      | True        | True   | False     |
+| scoped               | int        | Variable   | 5        | 2      | True        | True   | False     |
+| scoped               | int        | Variable   | 6        | 3      | True        | True   | False     |
+| scoped               | int        | Variable   | 7        | 4      | True        | False  | False     |
+----------------------------------------------------------------------------------------------

@@ -1,0 +1,67 @@
+	proc	main
+	push int	2
+	pop int	sel
+	push int	0
+	pop int	x
+	push int	0
+	pop int	y
+	pop sel	
+L001:
+	push	sel
+	push int	1
+	compEQ	
+	jz	L003
+	push	x
+	inc	x
+	jmp	L1111
+L003:
+	push	sel
+	push int	2
+	compEQ	
+	jz	L005
+	inc	x
+	push	x
+	jmp	L1111
+L005:
+	push	sel
+	push int	3
+	compEQ	
+	jz	L999
+	inc	y
+	push	y
+	jmp	L1111
+L999:
+	push	y
+	inc	y
+	jmp	L1111
+L1111:
+	push bool	1
+	pop bool	b1
+	push	b1
+	jz	L007
+	push int	1
+	push	x
+	add	
+	pop int	 x
+	jmp	L009
+L007:
+	push	b1
+	push	b1
+	not	
+	compAND	
+	jz	L011
+	push int	2
+	push	x
+	add	
+	pop int	 x
+	jmp	L013
+L011:
+	push int	3
+	push	x
+	add	
+	pop int	 x
+L013:
+L009:
+	push	x
+	ret	
+	endproc	

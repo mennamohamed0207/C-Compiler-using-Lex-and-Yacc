@@ -1,0 +1,24 @@
+----------------------------------------------------------------------------------------------
+| Name                 | DataType   | Qualifier  | TimeStep | Scope  | Initialized | Used   | Function  |
+----------------------------------------------------------------------------------------------
+| add                  | int        | Variable   | 0        | 1      | True        | False  | True      |
+| a                    | int        | Variable   | 1        | 1      | True        | True   | False     |
+| b                    | int        | Variable   | 2        | 1      | True        | True   | False     |
+| c                    | int        | Variable   | 3        | 1      | True        | True   | False     |
+| power                | float      | Variable   | 4        | 1      | True        | False  | True      |
+| base                 | float      | Variable   | 5        | 1      | True        | True   | False     |
+| exp                  | int        | Variable   | 6        | 1      | True        | True   | False     |
+| res                  | float      | Variable   | 7        | 1      | True        | True   | False     |
+| i                    | int        | Variable   | 8        | 2      | True        | True   | False     |
+| is_even              | bool       | Variable   | 9        | 1      | True        | False  | True      |
+| n                    | int        | Variable   | 10       | 1      | True        | True   | False     |
+| toggle               | bool       | Variable   | 11       | 1      | True        | False  | True      |
+| v                    | bool       | Variable   | 12       | 1      | True        | True   | False     |
+| main                 | int        | Variable   | 13       | 1      | True        | False  | True      |
+| i                    | int        | Variable   | 14       | 1      | True        | True   | False     |
+| f                    | float      | Variable   | 15       | 1      | False       | True   | False     |
+| flag1                | bool       | Variable   | 16       | 1      | False       | True   | False     |
+| flag2                | bool       | Variable   | 17       | 1      | False       | True   | False     |
+| scoped               | int        | Variable   | 18       | 2      | True        | True   | False     |
+| scoped               | int        | Variable   | 19       | 3      | True        | True   | False     |
+----------------------------------------------------------------------------------------------
