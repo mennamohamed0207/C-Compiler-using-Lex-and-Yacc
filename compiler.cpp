@@ -239,22 +239,20 @@ SymbolTable *declare_parameter(Node *p)
 }
 const char *get_type_from_name(const char *name)
 {
-    for (int j = level; j >= 0; j--)
+    for(int j=level;j>=0;j--)
 
+    {for (int i = 0; i < symbolTable.size(); i++)
     {
-        for (int i = 0; i < symbolTable.size(); i++)
+        // if (symbolTable[i]->scope < level)
         {
-            // if (symbolTable[i]->scope < level)
+            if (symbolTable[i]->name == name&&symbolTable[i]->scope==j)
             {
-                if (symbolTable[i]->name == name && symbolTable[i]->scope == j)
-                {
-                    printf("=================================================variable name%s\n", name);
-                    printf("================================================variable type%s\n", get_data_type(symbolTable[i]->type));
-                    return get_data_type(symbolTable[i]->type);
-                }
+                printf("=================================================variable name%s\n", name);
+                printf("================================================variable type%s\n", get_data_type(symbolTable[i]->type));
+                return get_data_type(symbolTable[i]->type);
             }
         }
-    }
+    }}
     return NULL;
 }
 
@@ -292,18 +290,14 @@ void mark_used(Node *p)
 {
     if (p->type == VARIABLE)
     {
-        // for (int j = level; j >= 0; j--)
-
+        for (int i = 0; i < symbolTable.size(); i++)
         {
-            for (int i = 0; i < symbolTable.size(); i++)
+            // if (symbolTable[i]->scope < level)
             {
-                // if (symbolTable[i]->scope < level)
+                if (symbolTable[i]->name == p->id.name)
                 {
-                    if (symbolTable[i]->name == p->id.name)
-                    {
-                        symbolTable[i]->used = true;
-                        break;
-                    }
+                    symbolTable[i]->used = true;
+                    break;
                 }
             }
         }
@@ -1552,6 +1546,7 @@ int write_to_assembly(Node *p, Node *parent = NULL, int cont = -1, int brk = -1,
             {
                 write_to_assembly(p->opr.op[3], p);
             }
+
 
             remove_block_scope();
             return funcEntry->type;

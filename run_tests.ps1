@@ -31,12 +31,12 @@ $deliver_files=@(
 )
 
 # Step 3: Run each test
-foreach ($testFile in $deliver_files) {
+foreach ($testFile in $testFiles) {
     $testName = [System.IO.Path]::GetFileNameWithoutExtension($testFile)
 
     Write-Host "`n-----------------------------------Running $testFile-----------------------------------"
 
     # Pipe the content and pass the test name to the compiler
     # Get-Content ".\testcases\$testFile" | ./mycompiler.exe $testName
-    Get-Content ".\testcases\deliver\$testFile" | ./mycompiler.exe $testName
+    Get-Content ".\testcases\$testFile" | ./mycompiler.exe $testName
 }

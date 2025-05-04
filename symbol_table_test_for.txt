@@ -2,8 +2,5 @@
 | Name                 | DataType   | Qualifier  | TimeStep | Scope  | Initialized | Used   | Function  |
 ----------------------------------------------------------------------------------------------
 | main                 | int        | Variable   | 0        | 1      | True        | False  | True      |
-| i                    | int        | Variable   | 1        | 2      | True        | True   | False     |
-| y                    | int        | Variable   | 2        | 2      | True        | False  | False     |
-| x                    | int        | Variable   | 3        | 2      | True        | True   | False     |
-| z                    | int        | Variable   | 4        | 2      | True        | False  | False     |
+| x                    | int        | Variable   | 1        | 1      | True        | False  | False     |
 ----------------------------------------------------------------------------------------------

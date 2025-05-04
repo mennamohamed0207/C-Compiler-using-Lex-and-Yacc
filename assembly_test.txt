@@ -1,11 +1,7 @@
 	proc	main
-	push int	3
-	push int	4
-	add	
+	push int	10
 	pop int	x
-	push	x
-	push int	4
-	orBitwise	
+	push int	20
 	pop int	 x
 	push int	0
 	ret	

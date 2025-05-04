@@ -241,7 +241,7 @@ class CompilerGUI:
             
             # Create the process with stdin pipe
             self.compiler_process = subprocess.Popen(
-                ["compiler.exe"],
+                ["mycompiler.exe","test"],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -295,8 +295,8 @@ class CompilerGUI:
         
         # Check and display each output file
         output_files = [
-            ("assembly.txt", self.asm_tab),
-            ("symbol_table.txt", self.symbol_tab),
+            ("assembly_test.txt", self.asm_tab),
+            ("symbol_table_test.txt", self.symbol_tab),
             ("errors.txt", self.error_tab)
         ]
         

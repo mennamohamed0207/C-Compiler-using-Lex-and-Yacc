@@ -1,0 +1,15 @@
+Error: ===============================================test1=========================
+
+Error: Unused variables: name, 
+Error: ===============================================test2=========================
+
+Error at line 8: type mismatch in declaration and initialization
+Error at line 9: type mismatch in declaration and initialization
+Error: Unused variables: ba, bb, ca, cb, r0, r1, r2, r3, r4, rf0, rf1, rf2, rf3, u0, u1, u2, u3, u4, 
+Error: ===============================================test3=========================
+
+Error: ===============================================test4=========================
+
+Error: Unused variables: scoped, 
+Error: ===============================================test5=========================
+
