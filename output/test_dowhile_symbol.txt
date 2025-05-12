@@ -1,8 +1,0 @@
-----------------------------------------------------------------------------------------------
-| Name                 | DataType   | Qualifier  | TimeStep | Scope  | Initialized | Used   | Function  |
-----------------------------------------------------------------------------------------------
-| main                 | int        | Variable   | 0        | 1      | True        | False  | True      |
-| num                  | int        | Variable   | 1        | 1      | True        | True   | False     |
-| flag                 | int        | Variable   | 2        | 1      | True        | True   | False     |
-| s                    | string     | Variable   | 3        | 2      | True        | False  | False     |
-----------------------------------------------------------------------------------------------

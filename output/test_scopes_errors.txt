@@ -1,2 +1,0 @@
-Error at line 16: Semantic Error: variable 'd' not declared within scope 
-Error: Unused variables: e, y, x, 
